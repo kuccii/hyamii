@@ -1,0 +1,5 @@
+<li x-data="{ active: <?php if ((object) ('active') instanceof \Livewire\WireDirective) : ?>window.Livewire.find('<?php echo e($__livewire->getId()); ?>').entangle('<?php echo e('active'->value()); ?>')<?php echo e('active'->hasModifier('live') ? '.live' : ''); ?><?php else : ?>window.Livewire.find('<?php echo e($__livewire->getId()); ?>').entangle('<?php echo e('active'); ?>')<?php endif; ?> }" x-init="if (active) { setTimeout(() => { $el.scrollIntoView({ behavior: 'smooth' }); }, 400); }">
+    <a href="<?php echo e($link); ?>" wire:navigate
+        class="<?php echo \Illuminate\Support\Arr::toCssClasses(['flex items-center p-1 text-sm text-gray-400 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700', 'text-skin-base font-bold' => $active]); ?>"><?php echo e($name); ?></a>
+</li>
+<?php /**PATH C:\xamp\htdocs\Hyamii\resources\views/livewire/sidebar-dropdown-menu.blade.php ENDPATH**/ ?>

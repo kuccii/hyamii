@@ -1,0 +1,10 @@
+<li>
+    <a href="<?php echo e($link); ?>" <?php if($navigate): ?> wire:navigate <?php endif; ?>
+    class="<?php echo \Illuminate\Support\Arr::toCssClasses(['flex items-center gap-2.5 px-2 py-2 rounded-lg text-sm font-medium cursor-pointer w-full text-gray-500', 'hover:text-gray-800  text-skin-base  font-bold bg-skin-base/[.20]' => $active]); ?>">
+        <span class="<?php echo \Illuminate\Support\Arr::toCssClasses(['w-4 h-4 rounded bg-brand-600 flex items-center justify-center text-[9px]', 'text-skin-base' => $active]); ?>"><?php echo $customIcon ?? $icon; ?></span>
+        <?php echo e($name); ?>
+
+    </a>
+    
+</li>
+<?php /**PATH C:\xamp\htdocs\Hyamii\resources\views/livewire/sidebar-menu-item.blade.php ENDPATH**/ ?>
