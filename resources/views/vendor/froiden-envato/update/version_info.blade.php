@@ -224,9 +224,7 @@
                             </svg>
                         </button>
 
-                        <a href="{{route('verify-purchase')}}" class="ml-4 text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-400 font-medium">
-                            Change Purchase Code
-                        </a>
+
                     </div>
                 </div>
 
