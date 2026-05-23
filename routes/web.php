@@ -473,3 +473,15 @@ Route::middleware(['auth', config('jetstream.auth_session'), 'verified'])->group
         Route::get('/hotel/stays', [PosAjaxController::class, 'getHotelStays'])->name('ajax.pos.hotel.stays');
     });
 });
+
+// Deploy webhook — auto-pull on git push
+Route::post('deploy-webhook/{secret}', function ($secret) {
+    if ($secret !== env('DEPLOY_SECRET', 'changeme')) {
+        abort(401, 'Invalid secret');
+    }
+    $output = [];
+    $resultCode = 0;
+    exec('cd ' . base_path() . ' && git pull origin master 2>&1', $output, $resultCode);
+    exec('cd ' . base_path() . ' && php artisan optimize:clear 2>&1', $output, $resultCode);
+    return response()->json(['status' => $resultCode === 0 ? 'ok' : 'fail', 'output' => $output]);
+});
