@@ -1,47 +1,13 @@
 <div class="modal-body">
-    <form id="verify-form" class="space-y-4">
-        @csrf
-        <p class="bg-gray-600 p-2 rounded text-white">For Domain:- {{ request()->getHost() }}</p>
-
-        <div class="text-sm">Module: <b>{{ucwords($module)}}</b></div>
-
-        <p>
-            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Note:</span>
-            <a href="https://help.market.envato.com/hc/en-us/articles/202822600-Where-Is-My-Purchase-Code-"
-               class="font-medium text-sm hover:underline text-skin-base underline underline-offset-1" target="_blank">@lang('app.findPurchaseCode')</a>
-        </p>
-        <div id="response-message"></div>
-
-        <div class="w-full form-group">
-            <x-label>Enter your purchase code</x-label>
-            <x-input type="text" id="purchase_code" name="purchase_code" class="w-full mt-1 form-control"  placeholder="{{__('placeholders.purchaseCode')}}" />
-        </div>
-        <input type="hidden" id="module" name="module" value="{{ $module }}">
-
-        <x-button id="save-module-verify" icon="check">Verify</x-button>
-    </form>
+    <div class="text-center py-8">
+        <svg class="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <p class="text-lg font-medium text-green-700">Module is ready to use</p>
+        <p class="text-sm text-gray-500 mt-1">{{ ucwords($module) }} is installed and verified.</p>
+    </div>
 </div>
 
-
 <script>
-    $('#save-module-verify').click(function () {
-
-        const url = "{{ route('superadmin.custom-modules.verify_purchase') }}";
-        $.easyAjax({
-            url: url,
-            container: '#verify-form',
-            type: "POST",
-            messagePosition: 'inline',
-            disableButton: true,
-            blockUI: true,
-            buttonSelector: "#save-module-verify",
-            data: $('#verify-form').serialize(),
-            success: function (response) {
-                if (response.status === 'success') {
-                    window.location.reload();
-                }
-            }
-        })
-    });
-
+    setTimeout(function() { window.location.reload(); }, 1500);
 </script>

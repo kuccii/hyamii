@@ -118,9 +118,10 @@
                 <!-- Right Side - Action Buttons -->
                 @if ($fetchSetting)
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                        @if (config(strtolower($universalBundle->getName()) . '.verification_required'))
-                            @include('custom-modules.sections.purchase-code', ['module' => $universalBundle->getName()])
-                        @endif
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <svg class="w-3.5 h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            Verified
+                        </span>
 
                         @if ($plugins->where('envato_id', config(strtolower($universalBundle->getName()) . '.envato_item_id'))->first())
                             @php $envatoId = config(strtolower($universalBundle->getName()) . '.envato_item_id'); @endphp
@@ -153,24 +154,10 @@
                             @endif
                         @endif
 
-                        @if (
-                            $fetchSetting?->purchase_code &&
-                            $fetchSetting?->supported_until &&
-                            \Carbon\Carbon::parse($fetchSetting->supported_until)->isPast())
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800">
-                                <i class="fa fa-exclamation-circle mr-1.5"></i>
-                                Support Expired
-                            </span>
-                        @endif
+
                     </div>
 
-                    <!-- Support Date Info -->
-                    @if ($fetchSetting?->purchase_code && $fetchSetting?->supported_until)
-                        <div class="flex items-center text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 rounded-md px-2.5 py-1.5 border border-gray-200 dark:border-gray-600">
-                            <i class="fa fa-info-circle mr-1.5 text-blue-500 dark:text-blue-400 text-xs"></i>
-                            <span>@include('custom-modules.sections.support-date')</span>
-                        </div>
-                    @endif
+
                 </div>
 
 

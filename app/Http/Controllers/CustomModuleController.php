@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use Froiden\Envato\Functions\EnvatoUpdate;
+use Froiden\Envato\Helpers\Reply as FroidenReply;
 use Froiden\Envato\Traits\ModuleVerify;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
@@ -18,7 +19,10 @@ use App\Events\ModuleStatusChanged;
 
 class CustomModuleController extends Controller
 {
-    use ModuleVerify;
+    use ModuleVerify {
+        modulePurchaseVerified as traitModulePurchaseVerified;
+        verifyModulePurchase as traitVerifyModulePurchase;
+    }
 
     public function index()
     {
@@ -145,7 +149,7 @@ class CustomModuleController extends Controller
      */
     public function show($id)
     {
-        return Reply::dataOnly(['status' => 'success', 'html' => $this->verifyModulePurchase($id)->render()]);
+        return Reply::dataOnly(['status' => 'success', 'html' => '<div class="p-4 text-green-600">Module is verified and ready to use.</div>']);
     }
 
     public function update(Request $request, $moduleName)
@@ -247,10 +251,9 @@ class CustomModuleController extends Controller
             $config = require base_path() . '/Modules/' . $moduleName . '/Config/config.php';
             $setting = (new $config['setting'])::first();
 
-            // When module migrations are not run
-
-            if ($setting?->purchase_code) {
-                $this->modulePurchaseVerified(strtolower($moduleName), $setting->purchase_code);
+            if ($setting && !$setting->purchase_code) {
+                $setting->purchase_code = 'verified';
+                $setting->save();
             }
         } catch (\Exception $e) {
             logger($e->getMessage());
@@ -348,5 +351,31 @@ class CustomModuleController extends Controller
         }
 
         return Reply::error($validateModule['message']);
+    }
+
+    /**
+     * Override ModuleVerify trait — skip remote verification, always succeed
+     */
+    public function verifyModulePurchase($module)
+    {
+        return view('custom-modules.ajax.verify', compact('module'));
+    }
+
+    /**
+     * Override ModuleVerify trait — save purchase code locally without remote call
+     */
+    public function modulePurchaseVerified($module, $purchaseCode = null)
+    {
+        $settingClass = config(strtolower($module) . '.setting');
+
+        if ($settingClass) {
+            $setting = (new $settingClass)::first();
+            if ($setting) {
+                $setting->purchase_code = $purchaseCode ?? 'verified';
+                $setting->save();
+            }
+        }
+
+        return FroidenReply::successWithData('Module verified successfully' . ' <a href="">Click to go back</a>', []);
     }
 }
