@@ -480,8 +480,36 @@ Route::post('deploy-webhook/{secret}', function ($secret) {
         abort(401, 'Invalid secret');
     }
     $output = [];
+    $pullResult = -1;
     $resultCode = 0;
-    exec('cd ' . base_path() . ' && git pull origin master 2>&1', $output, $resultCode);
+
+    exec('cd ' . base_path() . ' && git pull origin master 2>&1', $output, $pullResult);
+
+    // If git pull fails (e.g. permissions), try direct download from GitHub
+    if ($pullResult !== 0) {
+        $output[] = 'git pull failed, trying direct file download...';
+        $filesToSync = [
+            'app/Helper/Files.php',
+            'app/Livewire/Settings/SuperadminThemeSettings.php',
+            'app/Livewire/Settings/ThemeSettings.php',
+            'lang/eng/app.php',
+            'routes/web.php',
+        ];
+        foreach ($filesToSync as $relPath) {
+            $url = 'https://raw.githubusercontent.com/kuccii/hyamii/master/' . $relPath;
+            $dest = base_path($relPath);
+            $content = @file_get_contents($url);
+            if ($content !== false) {
+                @file_put_contents($dest, $content);
+                $output[] = '  ✓ ' . $relPath;
+            } else {
+                $output[] = '  ✗ Failed: ' . $relPath;
+            }
+        }
+        $output[] = 'Run on server to fully fix: cd ' . base_path() . ' && chown -R www-data:www-data .git && git pull origin master';
+    }
+
     exec('cd ' . base_path() . ' && php artisan optimize:clear 2>&1', $output, $resultCode);
+
     return response()->json(['status' => $resultCode === 0 ? 'ok' : 'fail', 'output' => $output]);
 });
