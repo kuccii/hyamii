@@ -129,6 +129,7 @@ return array(
     'reject' => 'Reject',
     'example' => 'Example',
     'fileNotUploaded' => 'File not uploaded',
+    'directoryNotWritable' => 'Upload directory is not writable:',
     'moduleVersion' => 'Version',
     'moduleUpdateMessage' => 'New update available for :name module. Please update to version :version',
     'newModuleUpdateMessage' => 'New update available for <strong>:name</strong> module.',

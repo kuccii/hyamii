@@ -99,48 +99,57 @@ class ThemeSettings extends Component
             return;
         }
 
-        $this->themeColorRgb = $this->hex2rgba($this->themeColor);
+        try {
+            $this->themeColorRgb = $this->hex2rgba($this->themeColor);
 
-        $this->settings->theme_hex = $this->themeColor;
-        $this->settings->theme_rgb = $this->themeColorRgb;
-        $this->settings->show_logo_text = $this->showLogoText;
-        $this->settings->save();
+            $this->settings->theme_hex = $this->themeColor;
+            $this->settings->theme_rgb = $this->themeColorRgb;
+            $this->settings->show_logo_text = $this->showLogoText;
+            $this->settings->save();
 
-
-        if ($this->photo) {
-            $this->settings->logo = Files::uploadLocalOrS3($this->photo, dir: 'logo', width: 150, height: 150);
-        }
-
-        $faviconBasePath = $this->settings->getFaviconBasePath();
-
-        foreach (GlobalSetting::FAVICONS as $property => $filename) {
-            if ($this->$property) {
-                Files::deleteFile($this->settings->$property, $faviconBasePath);
-                $this->settings->$property = Files::uploadLocalOrS3($this->$property, dir: $faviconBasePath, width: $filename['width'], height: $filename['height'], name: $filename['name']);
+            if ($this->photo) {
+                $this->settings->logo = Files::uploadLocalOrS3($this->photo, dir: 'logo', width: 150, height: 150);
             }
+
+            $faviconBasePath = $this->settings->getFaviconBasePath();
+
+            foreach (GlobalSetting::FAVICONS as $property => $filename) {
+                if ($this->$property) {
+                    Files::deleteFile($this->settings->$property, $faviconBasePath);
+                    $this->settings->$property = Files::uploadLocalOrS3($this->$property, dir: $faviconBasePath, width: $filename['width'], height: $filename['height'], name: $filename['name']);
+                }
+            }
+
+            $this->settings->save();
+
+            session()->forget(['restaurant', 'timezone', 'currency']);
+
+            $this->reset([
+                'upload_fav_icon_android_chrome_192',
+                'upload_fav_icon_android_chrome_512',
+                'upload_fav_icon_apple_touch_icon',
+                'upload_favicon_16',
+                'upload_favicon_32',
+                'favicon'
+            ]);
+            $this->redirect(route('settings.index') . '?tab=theme', navigate: true);
+
+            $this->alert('success', __('messages.settingsUpdated'), [
+                'toast' => true,
+                'position' => 'top-end',
+                'showCancelButton' => false,
+                'cancelButtonText' => __('app.close')
+            ]);
+        } catch (\Exception $e) {
+            $this->alert('error', $e->getMessage(), [
+                'toast' => false,
+                'position' => 'center',
+                'showCancelButton' => true,
+                'showConfirmButton' => true,
+                'confirmButtonText' => __('app.ok'),
+                'cancelButtonText' => __('app.close')
+            ]);
         }
-
-
-        $this->settings->save();
-
-        session()->forget(['restaurant', 'timezone', 'currency']);
-
-        $this->reset([
-            'upload_fav_icon_android_chrome_192',
-            'upload_fav_icon_android_chrome_512',
-            'upload_fav_icon_apple_touch_icon',
-            'upload_favicon_16',
-            'upload_favicon_32',
-            'favicon'
-        ]);
-        $this->redirect(route('settings.index') . '?tab=theme', navigate: true);
-
-        $this->alert('success', __('messages.settingsUpdated'), [
-            'toast' => true,
-            'position' => 'top-end',
-            'showCancelButton' => false,
-            'cancelButtonText' => __('app.close')
-        ]);
     }
 
     public function hex2rgba($color)

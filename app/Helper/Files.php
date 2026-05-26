@@ -202,27 +202,26 @@ class Files
         try {
             self::validateUploadedFile($uploadedFile);
         } catch (Exception $e) {
-            dd($e->getMessage());
+            throw new \Exception($e->getMessage());
         }
 
-        // Create directory and store temp file
-        self::createDirectoryIfNotExist($dir);
-
         try {
+            self::createDirectoryIfNotExist($dir);
+
+            if (!is_writable(public_path(self::UPLOAD_FOLDER . '/' . $dir))) {
+                throw new \Exception(__('app.directoryNotWritable') . ' ' . public_path(self::UPLOAD_FOLDER . '/' . $dir));
+            }
+
             $newName = $name ?: self::generateNewFileName($uploadedFile->getClientOriginalName());
 
-            // Process image if dimensions provided
             if ($width && $height) {
                 self::processImage($uploadedFile, $dir, $newName, $width, $height);
             } else {
-                // Store file directly
                 $uploadedFile->storeAs($dir, $newName, config('filesystems.default'));
             }
 
-            // Store file metadata
             self::fileStore($uploadedFile, $dir, $newName);
 
-            // Verify upload for Livewire files
             if ($uploadedFile instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
                 Storage::disk(config('filesystems.default'))->exists($dir . '/' . $newName);
             }
@@ -247,7 +246,8 @@ class Files
         $tempPath = public_path(self::UPLOAD_FOLDER . '/temp/' . $newName);
         $newPath = $dir . '/' . $newName;
 
-        // store temp file
+        self::createDirectoryIfNotExist('temp');
+
         $uploadedFile->storeAs('temp', $newName, 'local');
 
         // Check if image can be resized
@@ -350,7 +350,12 @@ class Files
 
     public static function createDirectoryIfNotExist($folder)
     {
-        $directoryPath = public_path(self::UPLOAD_FOLDER . '/' . $folder);
+        $basePath = public_path(self::UPLOAD_FOLDER);
+        $directoryPath = $basePath . '/' . $folder;
+
+        if (!File::exists($basePath)) {
+            File::makeDirectory($basePath, 0775, true);
+        }
 
         if (!File::exists($directoryPath)) {
             File::makeDirectory($directoryPath, 0775, true);
