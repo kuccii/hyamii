@@ -121,20 +121,6 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                     </h1>
                 </div>
                 @elseif($headerType === 'image' && count($headerImages) > 0)
-                <!-- Image Carousel -->
-                <div id="default-carousel" class="relative w-full touch-pan-y" data-carousel="slide">
-                    <!-- Carousel wrapper -->
-                    <div class="relative h-24 overflow-hidden border border-gray-200 rounded-lg shadow-lg sm:h-32 md:h-40 lg:h-48 dark:border-gray-700">
-                        @foreach($headerImages as $index => $image)
-                            <!-- Item {{ $index + 1 }} -->
-                            <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                                <img src="{{ $image->image_url }}"
-                                    class="absolute block object-cover w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                                    alt="{{ $image->alt_text ?? 'Header Image' }}">
-                            </div>
-                        @endforeach
-                    </div>
-                @elseif($headerType === 'image' && count($headerImages) > 0)
                     <!-- Image Carousel -->
                     <div id="default-carousel" class="relative w-full touch-pan-y" data-carousel="slide">
                         <!-- Carousel wrapper -->
@@ -367,7 +353,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
     @endif
 
     @if ($showMenu && !$showOrderTypeModal)
-        <div class="px-4 mb-32 space-y-4 lg:gap-8"
+        <div class="px-4 mb-32 space-y-4 lg:gap-8 lg:mb-20"
             x-data="{
                 loadedCount: @entangle('menuItemsLoaded'),
                 totalCount: {{ $this->totalMenuItemsCount }},
@@ -448,9 +434,9 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                             @endif
                                         </div>
 
-                                        @if ($canCreateOrder)
+                                                    @if ($canCreateOrder)
                                             @if (!$item->in_stock)
-                                                <div class="text-red-500">Out of stock</div>
+                                                <div class="text-red-500">@lang('app.outOfStock')</div>
                                             @elseif ($restaurant->allow_customer_orders)
                                                 @if (isset($cartItemQty[$item->id]) && $cartItemQty[$item->id] > 0)
                                                     <div class="relative flex items-center justify-start max-w-24 me-2"
@@ -473,7 +459,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
 
                                                         <input type="text"
                                                             wire:model='cartItemQty.{{ $item->id }}'
-                                                            class="min-w-10 bg-white border-x-0 border-gray-300 h-8 text-center text-gray-900 text-sm  block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white "
+                                                            class="min-w-10 bg-white border-x-0 border-gray-300 h-8 text-center text-gray-900 text-sm block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                                             value="1" readonly />
                                                         <button type="button"
                                                             wire:click="
@@ -497,8 +483,18 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                                     @endphp
                                                     @if(($orderStats['unlimited'] || $orderStats['current_count'] < $orderStats['order_limit']))
                                                         <x-cart-button
-                                                                wire:click='addCartItems({{ $item->id }}, {{ $item->variations_count }} , {{ $item->modifier_groups_count }})'
-                                                                wire:key='item-input-{{ $item->id . microtime() }}'>@lang('app.add')</x-cart-button>
+                                                            wire:click='addCartItems({{ $item->id }}, {{ $item->variations_count }} , {{ $item->modifier_groups_count }})'
+                                                            wire:key='item-input-{{ $item->id . microtime() }}'
+                                                            wire:loading.attr="disabled"
+                                                            wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
+                                                            <span wire:loading.remove wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">@lang('app.add')</span>
+                                                            <span wire:loading wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
+                                                                <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                                                                </svg>
+                                                            </span>
+                                                        </x-cart-button>
                                                     @endif
                                                 @endif
                                             @elseif ($item->variations_count > 0 && $restaurant->allow_customer_orders)
@@ -568,24 +564,35 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
             </div>
 
             @if ($cartQty > 0)
-                <div
-                    class="fixed inset-x-0 bottom-1 z-10 mx-3 flex items-center justify-between gap-3 rounded-md bg-skin-base p-3 text-white shadow-lg dark:bg-gray-800 sm:mx-auto sm:max-w-lg lg:max-w-screen-xl">
-                    <div class="min-w-0 text-sm font-bold leading-5 sm:text-base">
-                        <div class="truncate">@lang('modules.order.totalItem'): {{ $cartQty }}</div>
-                        <div class="truncate">{{ currency_format($subTotal, $restaurant->currency_id) }} + @lang('modules.order.taxes')</div>
+                <button type="button" wire:click="showCartItems"
+                    class="fixed inset-x-0 bottom-0 z-30 mx-0 flex items-center justify-between gap-3 bg-[rgb(var(--color-base))] text-white shadow-lg py-3.5 px-5 lg:mx-auto lg:max-w-6xl lg:rounded-t-xl lg:bottom-2 lg:inset-x-4 lg:shadow-xl hover:brightness-110 transition-all">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="relative flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                            </svg>
+                            <span class="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-[rgb(var(--color-base))] bg-white rounded-full shadow-sm">{{ $cartQty }}</span>
+                        </div>
+                        <div class="min-w-0 text-left">
+                            <div class="text-sm font-bold leading-tight">{{ $cartQty }} @lang('modules.order.item', ['count' => $cartQty])</div>
+                            <div class="text-xs opacity-80">{{ currency_format($subTotal, $restaurant->currency_id) }}</div>
+                        </div>
                     </div>
-
-                    <x-secondary-button wire:click="showCartItems" class="flex-shrink-0 whitespace-nowrap">@lang('modules.order.viewCart')</x-secondary-button>
-
-                </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <span class="text-sm font-semibold">@lang('modules.order.viewCart')</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+                </button>
             @endif
         </div>
     @endif
 
     @if ($showCart)
-        {{-- Bottom Sheet Overlay --}}
+        {{-- Cart Overlay --}}
         <div @class([
-            'fixed inset-0 z-50 flex items-end',
+            'fixed inset-0 z-50 flex items-end lg:items-center lg:justify-center',
             'hidden' => !$showCart,
         ])>
             {{-- Backdrop --}}
@@ -596,13 +603,13 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                 x-transition:enter-end="opacity-100"></div>
 
             {{-- Sheet Content --}}
-            <div class="relative w-full bg-white dark:bg-gray-950 rounded-t-2xl shadow-xl max-h-[85vh] flex flex-col"
+            <div class="relative w-full bg-white dark:bg-gray-950 rounded-t-2xl shadow-xl max-h-[85vh] flex flex-col lg:max-w-lg lg:rounded-2xl lg:max-h-[90vh]"
                 x-transition:enter="transition-transform duration-300 ease-out"
-                x-transition:enter-start="translate-y-full"
-                x-transition:enter-end="translate-y-0"
+                x-transition:enter-start="translate-y-full lg:scale-95 lg:translate-y-0 lg:opacity-0"
+                x-transition:enter-end="translate-y-0 lg:scale-100 lg:opacity-100"
                 x-transition:leave="transition-transform duration-200 ease-in"
-                x-transition:leave-start="translate-y-0"
-                x-transition:leave-end="translate-y-full">
+                x-transition:leave-start="translate-y-0 lg:scale-100 lg:opacity-100"
+                x-transition:leave-end="translate-y-full lg:scale-95 lg:translate-y-0 lg:opacity-0">
 
                 {{-- Drag Handle --}}
                 <div class="flex justify-center pt-3 pb-1">
@@ -1277,8 +1284,16 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                 @if ($selectedItem && ($restaurant?->allow_customer_orders ?? false))
                     <x-cart-button
                         wire:click="addCartItems({{ $selectedItem->id }}, {{ $selectedItem->variations_count ?? 0 }}, {{ $selectedItem->modifier_groups_count ?? 0 }})"
-                        wire:key="item-input-{{ $selectedItem->id . microtime() }}">
-                        @lang('app.add')
+                        wire:key="item-input-{{ $selectedItem->id . microtime() }}"
+                        wire:loading.attr="disabled"
+                        wire:target="addCartItems({{ $selectedItem->id }}, {{ $selectedItem->variations_count ?? 0 }}, {{ $selectedItem->modifier_groups_count ?? 0 }})">
+                        <span wire:loading.remove wire:target="addCartItems({{ $selectedItem->id }}, {{ $selectedItem->variations_count ?? 0 }}, {{ $selectedItem->modifier_groups_count ?? 0 }})">@lang('app.add')</span>
+                        <span wire:loading wire:target="addCartItems({{ $selectedItem->id }}, {{ $selectedItem->variations_count ?? 0 }}, {{ $selectedItem->modifier_groups_count ?? 0 }})">
+                            <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                            </svg>
+                        </span>
                     </x-cart-button>
                 @endif
 

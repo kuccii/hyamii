@@ -77,7 +77,7 @@
 
     <div class="min-h-svh flex flex-col">
         {{-- Navigation --}}
-        <header class="sticky top-0 z-50 bg-white/90 dark:bg-gray-950/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
+        <header class="sticky top-0 z-50 bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-b border-[rgb(var(--color-base))]/10 dark:border-gray-800">
             <div class="max-w-6xl mx-auto px-4">
                 @livewire('shopNavigation', ['restaurant' => $restaurant, 'shopBranch' => $shopBranch])
             </div>
