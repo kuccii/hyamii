@@ -31,9 +31,10 @@ class SeedTaniaRestaurant extends Command
 
     public function handle(): int
     {
-        if (Restaurant::where('name', 'TANIA')->exists()) {
-            $this->warn('TANIA restaurant already exists — skipping.');
-            return self::SUCCESS;
+        $existing = Restaurant::where('name', 'TANIA')->first();
+        if ($existing) {
+            $this->warn('TANIA restaurant already exists — deleting and recreating.');
+            $existing->delete();
         }
 
         $country = Country::where('countries_code', 'RW')->first();
