@@ -223,7 +223,7 @@ class SeedTaniaRestaurant extends Command
             '1-4-grilled-chicken' => 'peri-peri-chicken',
             '1-2-grilled-chicken' => 'grilled-chicken',
             'whole-grilled-chicken' => 'whole-chicken',
-            'plate-of-samosa' => 'samosas',
+            'plate-of-samosas' => 'samosas',
             'plate-of-sombe' => 'sombe',
             'sombe-2kg' => 'sombe',
             'cheese-sausages' => 'cheese-sausages',
