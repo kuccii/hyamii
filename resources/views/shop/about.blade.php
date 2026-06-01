@@ -2,22 +2,12 @@
 
 @section('content')
 
-{{-- About Hero --}}
-<section class="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900{{ $heroImageUrl ? ' hero-cover' : '' }}" @if($heroImageUrl) style="background-image: url('{{ $heroImageUrl }}')" @endif>
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 text-center">
-        <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-medium text-gray-600 dark:text-gray-400 mb-5">
-            <svg class="w-3.5 h-3.5" style="color: rgb({{ $restaurant->theme_rgb }})" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            @lang('modules.settings.aboutUsSettings')
-        </span>
-        <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white tracking-tight">
-            {{ $restaurant->name }}
-        </h1>
+{{-- About Header --}}
+<section class="px-4 py-8 sm:py-10">
+    <div class="max-w-5xl mx-auto">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $restaurant->name }}</h1>
         @if($restaurant->short_description)
-            <p class="mt-4 text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
-                {{ $restaurant->short_description }}
-            </p>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $restaurant->short_description }}</p>
         @endif
     </div>
 </section>

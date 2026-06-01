@@ -2,17 +2,11 @@
 
 @section('content')
 
-{{-- Contact Hero --}}
-<section class="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900{{ $heroImageUrl ? ' hero-cover' : '' }}" @if($heroImageUrl) style="background-image: url('{{ $heroImageUrl }}')" @endif>
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 text-center">
-        <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-medium text-gray-600 dark:text-gray-400 mb-5">
-            <svg class="w-3.5 h-3.5" style="color: rgb({{ $restaurant->theme_rgb }})" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-            </svg>
-            @lang('landing.contactTitle')
-        </span>
-        <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white tracking-tight">@lang('landing.contactTitle')</h1>
-        <p class="mt-3 text-lg text-gray-500 dark:text-gray-400">@lang('messages.getInTouch')</p>
+{{-- Contact Header --}}
+<section class="px-4 py-8 sm:py-10">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">@lang('landing.contactTitle')</h1>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">@lang('messages.getInTouch')</p>
     </div>
 </section>
 

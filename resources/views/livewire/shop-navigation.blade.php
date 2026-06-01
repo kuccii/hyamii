@@ -1,44 +1,32 @@
-<div x-data="{ mobileOpen: false }" class="lg:hidden">
-    <nav class="py-3">
-        <div class="flex items-center justify-between gap-2">
-            <a href="{{ route('shop_restaurant', [$restaurant->hash]).'?branch=' . $shopBranch->id }}" wire:navigate class="flex items-center gap-2 min-w-0">
-                <img src="{{ $restaurant->logoUrl }}" class="h-8 w-8 rounded-lg object-cover ring-2 ring-white dark:ring-gray-800 shadow-sm flex-shrink-0" alt="" />
-                @if ($restaurant->show_logo_text)
-                    <span class="text-base font-semibold text-gray-900 dark:text-white truncate">{{ $restaurant->name }}</span>
+<div x-data="{ mobileOpen: false }">
+    <nav class="flex items-center justify-between gap-2 py-2.5">
+        <a href="{{ route('shop_restaurant', [$restaurant->hash]).'?branch=' . $shopBranch->id }}" wire:navigate class="flex items-center gap-2 min-w-0">
+            <img src="{{ $restaurant->logoUrl }}" class="h-7 w-7 rounded-lg object-cover flex-shrink-0" alt="" />
+            @if ($restaurant->show_logo_text)
+                <span class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $restaurant->name }}</span>
+            @endif
+        </a>
+
+        <div class="flex items-center gap-0.5 flex-shrink-0">
+            @if (languages()->count() > 1)
+                @livewire('shop.languageSwitcher')
+            @endif
+
+            <button @click="mobileOpen = !mobileOpen" type="button"
+                class="w-9 h-9 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all"
+                aria-controls="mobile-menu-2" :aria-expanded="mobileOpen">
+                <span class="sr-only">@lang('menu.openMainMenu')</span>
+                @if (!is_null(customer()))
+                    <img src="{{ customer()->profile_image_url ?? $restaurant->logoUrl }}" class="w-7 h-7 rounded-full object-cover border border-gray-200 dark:border-gray-700" alt="" />
+                @else
+                    <svg x-show="!mobileOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                    <svg x-show="mobileOpen" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 @endif
-            </a>
-
-            <div class="flex items-center gap-1 flex-shrink-0">
-                @if (languages()->count() > 1)
-                    @livewire('shop.languageSwitcher')
-                @endif
-
-                <button id="theme-toggle-mobile" type="button"
-                    class="w-9 h-9 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all">
-                    <svg id="theme-toggle-dark-icon-mobile" class="hidden w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                    </svg>
-                    <svg id="theme-toggle-light-icon-mobile" class="hidden w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
-                    </svg>
-                </button>
-
-                @if ($restaurant->show_wifi_icon && $restaurant->wifi_name && $restaurant->wifi_password)
-                    @livewire('forms.wifi-button', ['restaurant' => $restaurant])
-                @endif
-
-                <button @click="mobileOpen = !mobileOpen" type="button"
-                    class="w-9 h-9 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all"
-                    aria-controls="mobile-menu-2" :aria-expanded="mobileOpen">
-                    <span class="sr-only">@lang('menu.openMainMenu')</span>
-                    <svg x-show="!mobileOpen" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    <svg x-show="mobileOpen" x-cloak class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                    </svg>
-                </button>
-            </div>
+            </button>
         </div>
     </nav>
 
@@ -168,43 +156,4 @@
         @endif
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const themeToggleDarkIconMobile = document.getElementById('theme-toggle-dark-icon-mobile');
-            const themeToggleLightIconMobile = document.getElementById('theme-toggle-light-icon-mobile');
-            const themeToggleBtnMobile = document.getElementById('theme-toggle-mobile');
-
-            if (themeToggleDarkIconMobile && themeToggleLightIconMobile && themeToggleBtnMobile) {
-                if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    themeToggleLightIconMobile.classList.remove('hidden');
-                } else {
-                    themeToggleDarkIconMobile.classList.remove('hidden');
-                }
-
-                themeToggleBtnMobile.addEventListener('click', function() {
-                    themeToggleDarkIconMobile.classList.toggle('hidden');
-                    themeToggleLightIconMobile.classList.toggle('hidden');
-
-                    if (localStorage.getItem('color-theme')) {
-                        if (localStorage.getItem('color-theme') === 'light') {
-                            document.documentElement.classList.add('dark');
-                            localStorage.setItem('color-theme', 'dark');
-                        } else {
-                            document.documentElement.classList.remove('dark');
-                            localStorage.setItem('color-theme', 'light');
-                        }
-                    } else {
-                        if (document.documentElement.classList.contains('dark')) {
-                            document.documentElement.classList.remove('dark');
-                            localStorage.setItem('color-theme', 'light');
-                        } else {
-                            document.documentElement.classList.add('dark');
-                            localStorage.setItem('color-theme', 'dark');
-                        }
-                    }
-                    document.dispatchEvent(new Event('dark-mode'));
-                });
-            }
-        });
-    </script>
 </div>
