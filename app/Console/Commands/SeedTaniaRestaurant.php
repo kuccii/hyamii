@@ -9,6 +9,7 @@ use App\Models\ItemCategory;
 use App\Models\KotPlace;
 use App\Models\Menu;
 use App\Models\MenuItem;
+use App\Models\Module;
 use App\Models\ModifierGroup;
 use App\Models\ModifierOption;
 use App\Models\OnboardingStep;
@@ -535,9 +536,10 @@ class SeedTaniaRestaurant extends Command
         Role::create(['name' => 'Waiter_' . $restaurant->id, 'display_name' => 'Waiter', 'guard_name' => 'web', 'restaurant_id' => $restaurant->id]);
         Role::create(['name' => 'Chef_' . $restaurant->id, 'display_name' => 'Chef', 'guard_name' => 'web', 'restaurant_id' => $restaurant->id]);
 
-        $allPerms = \Spatie\Permission\Models\Permission::whereHas('module', fn($q) => $q->where('is_superadmin', 0))->get();
-        Role::where('name', 'Admin_' . $restaurant->id)->first()->syncPermissions($allPerms);
-        Role::where('name', 'Branch Head_' . $restaurant->id)->first()->syncPermissions($allPerms);
+        $restaurantModuleIds = Module::where('is_superadmin', 0)->pluck('id')->toArray();
+        $allPermissions = \Spatie\Permission\Models\Permission::whereIn('module_id', $restaurantModuleIds)->pluck('name')->toArray();
+        Role::where('name', 'Admin_' . $restaurant->id)->first()->syncPermissions($allPermissions);
+        Role::where('name', 'Branch Head_' . $restaurant->id)->first()->syncPermissions($allPermissions);
 
         $admin = User::create([
             'name' => 'Tania Admin',
