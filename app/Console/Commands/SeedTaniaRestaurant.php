@@ -15,12 +15,19 @@ use App\Models\OnboardingStep;
 use App\Models\OrderType;
 use App\Models\Restaurant;
 use App\Models\Tax;
+use App\Models\User;
 use Illuminate\Console\Command;
+use Spatie\Permission\Models\Role;
 
 class SeedTaniaRestaurant extends Command
 {
     protected $signature = 'hyamii:seed-tania';
     protected $description = 'Seed TANIA restaurant with full menu';
+
+    private const IMAGE_SOURCE = 'resources/images/tania-menu';
+    private const IMAGE_DEST = 'public/user-uploads/item';
+
+    private array $availableImages = [];
 
     public function handle(): int
     {
@@ -65,74 +72,27 @@ class SeedTaniaRestaurant extends Command
 
         $this->line('  ✓ Restaurant created (ID: ' . $restaurant->id . ')');
 
-        // Currencies
         $this->line('  Creating currencies...');
-        $currencies = [
-            ['currency_name' => 'Rwanda Franc', 'currency_symbol' => 'FRw', 'currency_code' => 'RWF', 'currency_position' => 'left', 'no_of_decimal' => 0, 'thousand_separator' => ',', 'decimal_separator' => '.'],
-            ['currency_name' => 'Dollars', 'currency_symbol' => '$', 'currency_code' => 'USD', 'currency_position' => 'left', 'no_of_decimal' => 2, 'thousand_separator' => ',', 'decimal_separator' => '.'],
-            ['currency_name' => 'Euros', 'currency_symbol' => '€', 'currency_code' => 'EUR', 'currency_position' => 'left', 'no_of_decimal' => 2, 'thousand_separator' => ',', 'decimal_separator' => '.'],
-            ['currency_name' => 'Pounds', 'currency_symbol' => '£', 'currency_code' => 'GBP', 'currency_position' => 'left', 'no_of_decimal' => 2, 'thousand_separator' => ',', 'decimal_separator' => '.'],
-        ];
-        foreach ($currencies as $c) {
-            $c['restaurant_id'] = $restaurant->id;
-            $c['created_at'] = now();
-            $c['updated_at'] = now();
-            Currency::create($c);
-        }
-        $rwfCurrency = Currency::where('restaurant_id', $restaurant->id)->where('currency_code', 'RWF')->first();
-        if ($rwfCurrency) {
-            $restaurant->currency_id = $rwfCurrency->id;
-            $restaurant->saveQuietly();
-        }
+        $this->createCurrencies($restaurant);
         $this->line('  ✓ Currencies created');
 
-        // Branch
         $this->line('  Creating branch...');
-        $branch = Branch::create([
-            'restaurant_id' => $restaurant->id,
-            'name' => 'TANIA Kigali',
-            'address' => 'Kigali, Rwanda',
-            'phone' => '+250 788 000 000',
-            'email' => 'info@tania.rw',
-        ]);
-        $branch->generateUniqueHash();
-        $branch->saveQuietly();
-
-        OnboardingStep::create(['branch_id' => $branch->id]);
-        $branch->generateQrCode();
-        $this->addOrderTypes($branch);
-        $branch->generateKotSetting();
+        $branch = $this->createBranch($restaurant);
         $this->line('  ✓ Branch created');
 
-        // Default KOT place
-        $defaultKot = KotPlace::create([
-            'branch_id' => $branch->id,
-            'name' => 'Main Kitchen',
-            'type' => 'kitchen',
-            'is_active' => true,
-            'is_default' => true,
-        ]);
-
-        // VAT 18%
-        Tax::create([
-            'restaurant_id' => $restaurant->id,
-            'branch_id' => $branch->id,
-            'tax_name' => 'VAT',
-            'tax_percent' => 18,
-            'status' => 'active',
-        ]);
-
-        // Menu
-        $menu = Menu::create([
-            'branch_id' => $branch->id,
-            'menu_name' => 'TANIA Menu',
-        ]);
+        $this->line('  Copying menu images...');
+        $this->copyImages();
+        $this->line('  ✓ Images copied');
 
         $this->line('  Creating menu categories and items...');
-        $this->seedMenu($branch, $menu, $defaultKot->id);
+        $menu = Menu::create(['branch_id' => $branch->id, 'menu_name' => 'TANIA Menu']);
+        $this->seedMenu($branch, $menu);
         $this->line('  ✓ Menu items created');
 
-        // License
+        $this->line('  Creating roles and users...');
+        $this->createUsers($restaurant, $branch);
+        $this->line('  ✓ Users created');
+
         $restaurant->license_type = 'paid';
         $restaurant->saveQuietly();
 
@@ -150,14 +110,70 @@ class SeedTaniaRestaurant extends Command
         return self::SUCCESS;
     }
 
+    private function createCurrencies(Restaurant $restaurant): void
+    {
+        $currencies = [
+            ['currency_name' => 'Rwanda Franc', 'currency_symbol' => 'FRw', 'currency_code' => 'RWF', 'currency_position' => 'left', 'no_of_decimal' => 0, 'thousand_separator' => ',', 'decimal_separator' => '.'],
+            ['currency_name' => 'Dollars', 'currency_symbol' => '$', 'currency_code' => 'USD', 'currency_position' => 'left', 'no_of_decimal' => 2, 'thousand_separator' => ',', 'decimal_separator' => '.'],
+            ['currency_name' => 'Euros', 'currency_symbol' => '€', 'currency_code' => 'EUR', 'currency_position' => 'left', 'no_of_decimal' => 2, 'thousand_separator' => ',', 'decimal_separator' => '.'],
+            ['currency_name' => 'Pounds', 'currency_symbol' => '£', 'currency_code' => 'GBP', 'currency_position' => 'left', 'no_of_decimal' => 2, 'thousand_separator' => ',', 'decimal_separator' => '.'],
+        ];
+        foreach ($currencies as $c) {
+            $c['restaurant_id'] = $restaurant->id;
+            $c['created_at'] = now();
+            $c['updated_at'] = now();
+            Currency::create($c);
+        }
+        $rwf = Currency::where('restaurant_id', $restaurant->id)->where('currency_code', 'RWF')->first();
+        if ($rwf) {
+            $restaurant->currency_id = $rwf->id;
+            $restaurant->saveQuietly();
+        }
+    }
+
+    private function createBranch(Restaurant $restaurant): Branch
+    {
+        $branch = Branch::create([
+            'restaurant_id' => $restaurant->id,
+            'name' => 'TANIA Kigali',
+            'address' => 'Kigali, Rwanda',
+            'phone' => '+250 788 000 000',
+            'email' => 'info@tania.rw',
+        ]);
+        $branch->generateUniqueHash();
+        $branch->saveQuietly();
+
+        OnboardingStep::create(['branch_id' => $branch->id]);
+        $branch->generateQrCode();
+        $this->addOrderTypes($branch);
+        $branch->generateKotSetting();
+
+        KotPlace::create([
+            'branch_id' => $branch->id,
+            'name' => 'Main Kitchen',
+            'type' => 'kitchen',
+            'is_active' => true,
+            'is_default' => true,
+        ]);
+
+        Tax::create([
+            'restaurant_id' => $restaurant->id,
+            'branch_id' => $branch->id,
+            'tax_name' => 'VAT',
+            'tax_percent' => 18,
+            'status' => 'active',
+        ]);
+
+        return $branch;
+    }
+
     private function addOrderTypes(Branch $branch): void
     {
-        $types = [
+        foreach ([
             ['order_type_name' => 'Dine In', 'slug' => 'dine_in'],
             ['order_type_name' => 'Delivery', 'slug' => 'delivery'],
             ['order_type_name' => 'Pickup', 'slug' => 'pickup'],
-        ];
-        foreach ($types as $t) {
+        ] as $t) {
             OrderType::firstOrCreate([
                 'order_type_name' => $t['order_type_name'],
                 'branch_id' => $branch->id,
@@ -166,27 +182,122 @@ class SeedTaniaRestaurant extends Command
         }
     }
 
-    private function parsePrice(string $price): float
+    private function copyImages(): void
     {
-        return (float) str_replace(',', '', explode(' ', trim($price))[0]);
+        $src = base_path(self::IMAGE_SOURCE);
+        $dst = base_path(self::IMAGE_DEST);
+
+        if (!is_dir($src)) {
+            $this->warn('    Image source not found: ' . $src);
+            return;
+        }
+
+        if (!is_dir($dst)) {
+            mkdir($dst, 0755, true);
+        }
+
+        foreach (glob($src . '/*.jpg') as $file) {
+            $filename = basename($file);
+            copy($file, $dst . '/' . $filename);
+        }
     }
 
-    private function parseMinutes(?string $note): ?int
+    private function resolveImage(string $itemName): ?string
     {
-        if (!$note) return null;
-        if (preg_match('/(\d+)\s*(min|hour)/i', $note, $m)) {
-            $val = (int) $m[1];
-            return str_starts_with(strtolower($m[2]), 'h') ? $val * 60 : $val;
+        if (empty($this->availableImages)) {
+            $dir = base_path(self::IMAGE_SOURCE);
+            if (is_dir($dir)) {
+                foreach (glob($dir . '/*.jpg') as $file) {
+                    $this->availableImages[] = basename($file);
+                }
+            }
         }
+
+        $slug = strtolower(trim(preg_replace('/[^a-z0-9]+/', '-', $itemName), '-'));
+
+        $nameMap = [
+            'espresso-single' => 'espresso',
+            'espresso-double' => 'espresso',
+            'caffe-latte' => 'latte',
+            '1-4-grilled-chicken' => 'peri-peri-chicken',
+            '1-2-grilled-chicken' => 'grilled-chicken',
+            'whole-grilled-chicken' => 'whole-chicken',
+            'plate-of-samosa' => 'samosas',
+            'plate-of-sombe' => 'sombe',
+            'sombe-2kg' => 'sombe',
+            'cheese-sausages' => 'cheese-sausages',
+            'ginger-carrot-soup' => 'carrot-soup',
+            'cream-tomato-soup' => 'tomato-soup',
+            'twatundi-beef' => 'beef-twatundi',
+            'beef-brochettes' => 'beef-brochette',
+            'sizzling-twatundi-beef' => 'beef-twatundi',
+            'beef-fillet-steak' => 'beef-fillet',
+            'twatundi-pork' => 'pork-sausages',
+            'fresh-sausage-brochette' => 'pork-sausages',
+            'saucisse-pili-brochette' => 'pork-sausages',
+            'twatundi-goat' => 'goat-grilled',
+            'sizzling-twatundi-goat' => 'goat-grilled',
+            'chevre-de-mr-seguin' => 'goat-stew',
+            'ragout-de-chevre' => 'goat-stew',
+            'chevre-grille' => 'goat-grilled',
+            'twatundi-chicken' => 'chicken-brochette',
+            'chicken-brochette' => 'chicken-brochette',
+            'chicken-with-peanut-sauce' => 'chicken-yassa',
+            'chicken-stroganoff' => 'chicken-stew',
+            'poulet-mayo' => 'grilled-chicken',
+            'peri-peri-1-4-chicken' => 'peri-peri-chicken',
+            'twatundi-fish' => 'fish-brochette',
+            'fish-brochette' => 'fish-brochette',
+            'whole-tilapia-fish' => 'whole-tilapia',
+            'makayabu-stew' => 'makayabu',
+            'lengalenga-with-smoked-fish' => 'lengalenga-fish',
+            'spinach-with-cream' => 'spinach-cream',
+            'haricots-de-goma' => 'beans',
+            'steamed-rice' => 'rice-steamed',
+            'fried-rice' => 'rice-fried',
+            'chicken-fried-rice' => 'chicken-fried-rice',
+            'cassava-ugali' => 'ugali',
+            'maize-ugali' => 'ugali',
+            'ugali-mix' => 'ugali',
+            'pure-lemonade' => 'lemonade',
+            '1-scoop-ice-cream' => 'ice-cream-1',
+            '2-scoops-ice-cream' => 'ice-cream-2',
+            'iced-cappuccino' => 'iced-coffee',
+            'iced-latte' => 'iced-coffee',
+            'iced-americano' => 'iced-coffee',
+            'iced-caramel' => 'iced-coffee',
+            'iced-chocolate' => 'iced-coffee',
+            'iced-espresso-tonic' => 'iced-coffee',
+            'iced-spanish' => 'iced-coffee',
+            'customer-choice-iced-coffee' => 'iced-coffee',
+            'customer-choice-hot-coffee' => 'espresso',
+            'customer-choice-smoothie' => 'mix-smoothie',
+            'customer-choice-shake' => 'vanilla-shake',
+            'spinach' => 'spinach',
+            'poulet-gomb' => 'poulet-gombo',
+            'poulet-maffe' => 'poulet-maffe',
+        ];
+
+        $targetSlug = $nameMap[$slug] ?? $slug;
+        $targetFile = $targetSlug . '.jpg';
+
+        if (in_array($targetFile, $this->availableImages)) {
+            return $targetFile;
+        }
+
+        if (in_array($slug . '.jpg', $this->availableImages)) {
+            return $slug . '.jpg';
+        }
+
         return null;
     }
 
-    private function seedMenu(Branch $branch, Menu $menu, int $defaultKotId): void
+    private function seedMenu(Branch $branch, Menu $menu): void
     {
         $branchId = $branch->id;
         $menuId = $menu->id;
+        $defaultKotId = KotPlace::where('branch_id', $branchId)->where('is_default', true)->value('id');
 
-        // ===== 1. Snacks & Starters =====
         $cat1 = ItemCategory::create(['category_name' => 'Snacks & Starters', 'branch_id' => $branchId]);
         $this->insertItems($menuId, $cat1->id, $branchId, $defaultKotId, [
             ['name' => 'Snacks Platter', 'price' => '25,000 FRW', 'note' => 'Preparation: 45 min'],
@@ -199,7 +310,6 @@ class SeedTaniaRestaurant extends Command
             ['name' => 'Fish Fingers', 'price' => '12,000 FRW'],
         ]);
 
-        // ===== 2. Soups & Salads =====
         $cat2 = ItemCategory::create(['category_name' => 'Soups & Salads', 'branch_id' => $branchId]);
         $this->insertItems($menuId, $cat2->id, $branchId, $defaultKotId, [
             ['name' => 'Vegetable Soup', 'price' => '8,000 FRW'],
@@ -212,7 +322,6 @@ class SeedTaniaRestaurant extends Command
             ['name' => 'Chef Salad', 'price' => '12,000 FRW'],
         ]);
 
-        // ===== 3. Beef & Pork (subcategory groups as prefix) =====
         $cat3 = ItemCategory::create(['category_name' => 'Beef & Pork', 'branch_id' => $branchId]);
         $this->insertItems($menuId, $cat3->id, $branchId, $defaultKotId, [
             ['name' => 'Twatundi Beef', 'price' => '18,000 FRW'],
@@ -227,7 +336,6 @@ class SeedTaniaRestaurant extends Command
             ['name' => 'Pork Ribs', 'price' => '15,000 FRW'],
         ]);
 
-        // ===== 4. Goat Specialties =====
         $cat4 = ItemCategory::create(['category_name' => 'Goat Specialties', 'branch_id' => $branchId]);
         $this->insertItems($menuId, $cat4->id, $branchId, $defaultKotId, [
             ['name' => 'Twatundi Goat', 'price' => '18,000 FRW'],
@@ -236,12 +344,10 @@ class SeedTaniaRestaurant extends Command
             ['name' => 'Ragoût de Chèvre', 'price' => '22,000 FRW', 'note' => 'Preparation: 40 min'],
             ['name' => 'Chèvre Grillé', 'price' => '18,000 FRW'],
             ['name' => 'Cabri', 'price' => '25,000 FRW'],
-            // Chef's Special items also in this category
             ['name' => 'Poulet Gombo', 'price' => '25,000 FRW', 'note' => 'Preparation: 45 min', 'desc' => 'Chef\'s Special'],
             ['name' => 'Poulet Maffé', 'price' => '25,000 FRW', 'note' => 'Preparation: 45 min', 'desc' => 'Chef\'s Special'],
         ]);
 
-        // ===== 5. Chicken =====
         $cat5 = ItemCategory::create(['category_name' => 'Chicken', 'branch_id' => $branchId]);
         $this->insertItems($menuId, $cat5->id, $branchId, $defaultKotId, [
             ['name' => 'Twatundi Chicken', 'price' => '15,000 FRW'],
@@ -257,7 +363,6 @@ class SeedTaniaRestaurant extends Command
             ['name' => 'Chicken Stew', 'price' => '18,000 FRW'],
         ]);
 
-        // ===== 6. Fish =====
         $cat6 = ItemCategory::create(['category_name' => 'Fish', 'branch_id' => $branchId]);
         $this->insertItems($menuId, $cat6->id, $branchId, $defaultKotId, [
             ['name' => 'Fish Brochette', 'price' => '18,000 FRW'],
@@ -269,7 +374,6 @@ class SeedTaniaRestaurant extends Command
             ['name' => 'Makayabu Stew', 'price' => '20,000 FRW'],
         ]);
 
-        // ===== 7. Extras & Sides =====
         $cat7 = ItemCategory::create(['category_name' => 'Extras & Sides', 'branch_id' => $branchId]);
         $this->insertItems($menuId, $cat7->id, $branchId, $defaultKotId, [
             ['name' => 'Plate of Sombe', 'price' => '4,000'],
@@ -296,7 +400,6 @@ class SeedTaniaRestaurant extends Command
             ['name' => 'Ugali Mix', 'price' => '4,000'],
         ]);
 
-        // ===== 8. Coffee & Tea =====
         $cat8 = ItemCategory::create(['category_name' => 'Coffee & Tea', 'branch_id' => $branchId]);
         $this->insertItems($menuId, $cat8->id, $branchId, $defaultKotId, [
             ['name' => 'Espresso (Single)', 'price' => '2,500'],
@@ -329,7 +432,6 @@ class SeedTaniaRestaurant extends Command
             ['name' => 'Lemon Tea', 'price' => '3,500'],
         ]);
 
-        // ===== 9. Smoothies & Juices =====
         $cat9 = ItemCategory::create(['category_name' => 'Smoothies & Juices', 'branch_id' => $branchId]);
         $this->insertItems($menuId, $cat9->id, $branchId, $defaultKotId, [
             ['name' => 'Mango Smoothie', 'price' => '10,000'],
@@ -354,7 +456,6 @@ class SeedTaniaRestaurant extends Command
             ['name' => '2 Scoops Ice Cream', 'price' => '6,000'],
         ]);
 
-        // Create sauce modifiers
         $this->createModifiers($branch, $branchId);
     }
 
@@ -362,6 +463,7 @@ class SeedTaniaRestaurant extends Command
     {
         $rows = [];
         foreach ($items as $item) {
+            $image = $this->resolveImage($item['name']);
             $rows[] = [
                 'item_name' => $item['name'],
                 'menu_id' => $menuId,
@@ -370,6 +472,7 @@ class SeedTaniaRestaurant extends Command
                 'type' => MenuItem::NONVEG,
                 'price' => $this->parsePrice($item['price']),
                 'description' => $item['desc'] ?? null,
+                'image' => $image,
                 'preparation_time' => $this->parseMinutes($item['note'] ?? null),
                 'kot_place_id' => $defaultKotId,
                 'is_available' => 1,
@@ -383,21 +486,18 @@ class SeedTaniaRestaurant extends Command
 
     private function createModifiers(Branch $branch, int $branchId): void
     {
-        // Sauce group
         $sauceGroup = ModifierGroup::create([
             'name' => 'Sauce Choice',
             'branch_id' => $branchId,
         ]);
-
-        $sauces = [
+        foreach ([
             ['name' => 'Mushroom Sauce', 'price' => 1000, 'is_available' => 1],
             ['name' => 'Peppercorn Sauce', 'price' => 1000, 'is_available' => 1],
             ['name' => 'Garlic Sauce', 'price' => 1000, 'is_available' => 1],
             ['name' => 'Lemon Butter Sauce', 'price' => 1000, 'is_available' => 1],
             ['name' => 'Coconut Sauce', 'price' => 1000, 'is_available' => 1],
             ['name' => 'Peanut Sauce', 'price' => 1000, 'is_available' => 1],
-        ];
-        foreach ($sauces as $s) {
+        ] as $s) {
             ModifierOption::create([
                 'name' => $s['name'],
                 'modifier_group_id' => $sauceGroup->id,
@@ -406,18 +506,16 @@ class SeedTaniaRestaurant extends Command
             ]);
         }
 
-        // Extra group
         $extraGroup = ModifierGroup::create([
             'name' => 'Extras',
             'branch_id' => $branchId,
         ]);
-        $extras = [
+        foreach ([
             ['name' => 'Extra Cheese', 'price' => 500, 'is_available' => 1],
             ['name' => 'Extra Sauce', 'price' => 300, 'is_available' => 1],
             ['name' => 'Grilled Onions', 'price' => 400, 'is_available' => 1],
             ['name' => 'French Fries', 'price' => 2000, 'is_available' => 1],
-        ];
-        foreach ($extras as $e) {
+        ] as $e) {
             ModifierOption::create([
                 'name' => $e['name'],
                 'modifier_group_id' => $extraGroup->id,
@@ -426,13 +524,54 @@ class SeedTaniaRestaurant extends Command
             ]);
         }
 
-        // Attach sauce group to beef fillet steak and fish items
-        $steakItems = MenuItem::where('branch_id', $branchId)
-            ->whereIn('item_name', ['Beef Fillet Steak', 'Fish Fillet', 'Tilapia Fillet', 'Swahili Fish'])
-            ->get();
-
-        foreach ($steakItems as $item) {
+        foreach (MenuItem::where('branch_id', $branchId)->whereIn('item_name', ['Beef Fillet Steak', 'Fish Fillet', 'Tilapia Fillet', 'Swahili Fish'])->get() as $item) {
             $item->modifierGroups()->attach($sauceGroup->id);
         }
+    }
+
+    private function createUsers(Restaurant $restaurant, Branch $branch): void
+    {
+        Role::create(['name' => 'Admin_' . $restaurant->id, 'display_name' => 'Admin', 'guard_name' => 'web', 'restaurant_id' => $restaurant->id]);
+        Role::create(['name' => 'Branch Head_' . $restaurant->id, 'display_name' => 'Branch Head', 'guard_name' => 'web', 'restaurant_id' => $restaurant->id]);
+        Role::create(['name' => 'Waiter_' . $restaurant->id, 'display_name' => 'Waiter', 'guard_name' => 'web', 'restaurant_id' => $restaurant->id]);
+        Role::create(['name' => 'Chef_' . $restaurant->id, 'display_name' => 'Chef', 'guard_name' => 'web', 'restaurant_id' => $restaurant->id]);
+
+        $allPerms = \Spatie\Permission\Models\Permission::whereHas('module', fn($q) => $q->where('is_superadmin', 0))->get();
+        Role::where('name', 'Admin_' . $restaurant->id)->first()->syncPermissions($allPerms);
+        Role::where('name', 'Branch Head_' . $restaurant->id)->first()->syncPermissions($allPerms);
+
+        $admin = User::create([
+            'name' => 'Tania Admin',
+            'email' => 'admin@tania.rw',
+            'password' => bcrypt(123456),
+            'restaurant_id' => $restaurant->id,
+        ]);
+        $admin->assignRole('Admin_' . $restaurant->id);
+
+        $waiter = User::create([
+            'name' => 'Tania Waiter',
+            'email' => 'waiter@tania.rw',
+            'password' => bcrypt(123456),
+            'restaurant_id' => $restaurant->id,
+            'branch_id' => $branch->id,
+        ]);
+        $waiter->assignRole('Waiter_' . $restaurant->id);
+
+        $this->info('    Admin: admin@tania.rw / 123456');
+        $this->info('    Waiter: waiter@tania.rw / 123456');
+    }
+
+    private function parsePrice(string $price): float
+    {
+        return (float) str_replace(',', '', explode(' ', trim($price))[0]);
+    }
+
+    private function parseMinutes(?string $note): ?int
+    {
+        if (!$note) return null;
+        if (preg_match('/(\d+)\s*(min|hour)/i', $note, $m)) {
+            return (int) $m[1] * (str_starts_with(strtolower($m[2]), 'h') ? 60 : 1);
+        }
+        return null;
     }
 }
