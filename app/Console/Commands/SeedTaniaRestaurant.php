@@ -213,7 +213,8 @@ class SeedTaniaRestaurant extends Command
             }
         }
 
-        $slug = strtolower(trim(preg_replace('/[^a-z0-9]+/', '-', $itemName), '-'));
+        $name = strtr(strtolower($itemName), ['é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e', 'à' => 'a', 'â' => 'a', 'ä' => 'a', 'ù' => 'u', 'û' => 'u', 'ü' => 'u', 'ô' => 'o', 'ö' => 'o', 'î' => 'i', 'ï' => 'i', 'ç' => 'c']);
+        $slug = trim(preg_replace('/[^a-z0-9]+/', '-', $name), '-');
 
         $nameMap = [
             'espresso-single' => 'espresso',
