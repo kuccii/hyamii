@@ -1,5 +1,19 @@
-<div x-data="{ mobileOpen: false, cartCount: 0 }"
-    x-init="window.addEventListener('updateCartCount', (e) => { cartCount = e.detail.count ?? 0 })">
+<div x-data="{ mobileOpen: false, cartCount: 0, badgePulse: false }"
+    x-init="
+        window.addEventListener('updateCartCount', (e) => {
+            let newCount = e.detail.count ?? 0;
+            if (newCount !== cartCount) {
+                cartCount = newCount;
+                badgePulse = true;
+                setTimeout(() => badgePulse = false, 500);
+            }
+        });
+        window.addEventListener('addToCart', () => {
+            cartCount++;
+            badgePulse = true;
+            setTimeout(() => badgePulse = false, 500);
+        });
+    ">
     <nav class="flex items-center justify-between gap-2 py-2.5">
         <a href="{{ route('shop_restaurant', [$restaurant->hash]).'?branch=' . $shopBranch->id }}" wire:navigate class="flex items-center gap-2 min-w-0">
             <img src="{{ $restaurant->logoUrl }}" class="h-7 w-7 rounded-lg object-cover flex-shrink-0" alt="" />
@@ -14,13 +28,15 @@
             @endif
 
             {{-- Cart badge --}}
-            <button type="button" x-show="cartCount > 0" x-cloak
-                x-on:click="$dispatch('showCartItems')"
-                class="relative w-9 h-9 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+            <button type="button" x-on:click="$dispatch('showCartItems')"
+                class="relative w-9 h-9 flex items-center justify-center rounded-lg transition-all hover:bg-[rgb(var(--color-base))]/10">
+                <svg class="w-5 h-5" :class="cartCount > 0 ? 'text-[rgb(var(--color-base))]' : 'text-gray-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                 </svg>
-                <span class="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center w-4.5 h-4.5 text-[10px] font-bold text-white bg-[rgb(var(--color-base))] rounded-full min-w-[18px] min-h-[18px]" x-text="cartCount"></span>
+                <span x-show="cartCount > 0" x-cloak
+                    class="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[22px] h-[22px] px-1 text-[11px] font-bold text-white bg-[rgb(var(--color-base))] rounded-full shadow-lg border-2 border-white dark:border-gray-950"
+                    :class="{ 'badge-pop': badgePulse }"
+                    x-text="cartCount"></span>
             </button>
 
             <button @click="mobileOpen = !mobileOpen" type="button"

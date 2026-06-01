@@ -486,7 +486,8 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                                             wire:click='addCartItems({{ $item->id }}, {{ $item->variations_count }} , {{ $item->modifier_groups_count }})'
                                                             wire:key='item-input-{{ $item->id . microtime() }}'
                                                             wire:loading.attr="disabled"
-                                                            wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
+                                                            wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})"
+                                                            x-on:click="window.dispatchEvent(new CustomEvent('addToCart'))">
                                                             <span wire:loading.remove wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">@lang('app.add')</span>
                                                             <span wire:loading wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
                                                                 <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
@@ -565,12 +566,21 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
 
             @if ($cartQty > 0)
                 <button type="button" wire:click="showCartItems"
+                    wire:loading.class="opacity-80"
                     class="fixed inset-x-0 bottom-0 z-30 mx-0 flex items-center justify-between gap-3 bg-[rgb(var(--color-base))] text-white shadow-lg py-3.5 px-5 lg:mx-auto lg:max-w-6xl lg:rounded-t-xl lg:bottom-2 lg:inset-x-4 lg:shadow-xl hover:brightness-110 transition-all">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="relative flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                            </svg>
+                            <span wire:loading.remove class="flex items-center justify-center w-full h-full">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                                </svg>
+                            </span>
+                            <span wire:loading class="flex items-center justify-center w-full h-full">
+                                <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                                </svg>
+                            </span>
                             <span class="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-[rgb(var(--color-base))] bg-white rounded-full shadow-sm">{{ $cartQty }}</span>
                         </div>
                         <div class="min-w-0 text-left">
@@ -1286,7 +1296,8 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                         wire:click="addCartItems({{ $selectedItem->id }}, {{ $selectedItem->variations_count ?? 0 }}, {{ $selectedItem->modifier_groups_count ?? 0 }})"
                         wire:key="item-input-{{ $selectedItem->id . microtime() }}"
                         wire:loading.attr="disabled"
-                        wire:target="addCartItems({{ $selectedItem->id }}, {{ $selectedItem->variations_count ?? 0 }}, {{ $selectedItem->modifier_groups_count ?? 0 }})">
+                        wire:target="addCartItems({{ $selectedItem->id }}, {{ $selectedItem->variations_count ?? 0 }}, {{ $selectedItem->modifier_groups_count ?? 0 }})"
+                        x-on:click="window.dispatchEvent(new CustomEvent('addToCart'))">
                         <span wire:loading.remove wire:target="addCartItems({{ $selectedItem->id }}, {{ $selectedItem->variations_count ?? 0 }}, {{ $selectedItem->modifier_groups_count ?? 0 }})">@lang('app.add')</span>
                         <span wire:loading wire:target="addCartItems({{ $selectedItem->id }}, {{ $selectedItem->variations_count ?? 0 }}, {{ $selectedItem->modifier_groups_count ?? 0 }})">
                             <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">

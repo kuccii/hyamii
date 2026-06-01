@@ -64,6 +64,15 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        @keyframes badge-pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        .badge-pop {
+            animation: badge-pop 0.4s ease-in-out;
+        }
     </style>
 
     @if (File::exists(public_path() . '/css/app-custom.css'))
