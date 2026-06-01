@@ -137,8 +137,6 @@ class SeedTaniaRestaurant extends Command
             'restaurant_id' => $restaurant->id,
             'name' => 'TANIA Kigali',
             'address' => 'Kigali, Rwanda',
-            'phone' => '+250 788 000 000',
-            'email' => 'info@tania.rw',
         ]);
         $branch->generateUniqueHash();
         $branch->saveQuietly();
