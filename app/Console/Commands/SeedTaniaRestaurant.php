@@ -122,8 +122,8 @@ class SeedTaniaRestaurant extends Command
             $c['restaurant_id'] = $restaurant->id;
             $c['created_at'] = now();
             $c['updated_at'] = now();
-            Currency::create($c);
         }
+        Currency::insert($currencies);
         $rwf = Currency::where('restaurant_id', $restaurant->id)->where('currency_code', 'RWF')->first();
         if ($rwf) {
             $restaurant->currency_id = $rwf->id;
