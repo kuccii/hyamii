@@ -286,8 +286,7 @@ class RraSaleSubmissionService
         return match ($paymentMethod) {
             'cash' => '01',
             'card' => '02',
-            'stripe', 'flutterwave', 'paypal', 'razorpay',
-            'mollie', 'paystack', 'xendit', 'payfast', 'tap' => '03',
+            'stripe', 'flutterwave' => '03',
             'due' => '04',
             'mobile_money', 'mtn_momo', 'airtel_money' => '05',
             default => '01',
