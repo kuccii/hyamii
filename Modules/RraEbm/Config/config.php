@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'name' => 'RraEbm',
+    'verification_required' => false,
+    'envato_item_id' => null,
+    'setting' => \Modules\RraEbm\Entities\RraEbmSetting::class,
+
     /*
     |--------------------------------------------------------------------------
     | RRA EBM API Endpoints
