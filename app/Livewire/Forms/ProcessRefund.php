@@ -164,6 +164,12 @@ class ProcessRefund extends Component
             $refund->processed_at = now();
             $refund->save();
 
+            // Submit credit note to RRA EBM if order was submitted
+            if (\Nwidart\Modules\Facades\Module::has('RraEbm') && \Nwidart\Modules\Facades\Module::isEnabled('RraEbm')) {
+                \Modules\RraEbm\Jobs\SubmitCreditNoteToRraJob::dispatch($refund->id)
+                    ->onConnection(config('rraebm.queue.connection', 'sync'));
+            }
+
             $this->dispatch('refundProcessed');
             $this->alert('success', __('messages.refundProcessed'), [
                 'toast' => true,

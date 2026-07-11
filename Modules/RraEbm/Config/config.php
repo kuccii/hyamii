@@ -15,6 +15,7 @@ return [
         'initialization' => env('RRA_EBM_INIT_ENDPOINT', '/initializer/selectInitInfo'),
         'save_item' => env('RRA_EBM_SAVE_ITEM_ENDPOINT', '/items/saveItems'),
         'sale_transaction' => env('RRA_EBM_SALE_ENDPOINT', '/trnsSales/saveSales'),
+        'get_sales' => env('RRA_EBM_GET_SALES_ENDPOINT', '/trnsSales/getSales'),
         'cancel_sale' => env('RRA_EBM_CANCEL_ENDPOINT', '/trnsSales/cancelSales'),
         'daily_sales_report' => env('RRA_EBM_DAILY_SALES_ENDPOINT', '/report/dailySales'),
         'close_report' => env('RRA_EBM_CLOSE_ENDPOINT', '/report/close'),
@@ -33,6 +34,9 @@ return [
     'tax_codes' => [
         0 => 'A',
         18 => 'B',
+        -1 => 'C',  // Export (use negative key as sentinel)
+        -2 => 'D',  // Non-taxable
+        -3 => 'E',  // Other
     ],
 
     'default_tax_code' => 'A',
