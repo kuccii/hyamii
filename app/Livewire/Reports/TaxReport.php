@@ -7,9 +7,11 @@ use Livewire\Component;
 use App\Models\Order;
 use App\Models\Tax;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
  use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TaxReportExport;
+use Nwidart\Modules\Facades\Module;
 
 class TaxReport extends Component
 {
@@ -141,6 +143,10 @@ class TaxReport extends Component
                 break;
             case 'byOrder':
                 $data = $orderDetails;
+                break;
+            case 'byRraEbm':
+                $rraData = $this->getRraEbmData();
+                $data = $rraData['submissions']->toArray();
                 break;
         }
 
@@ -582,6 +588,94 @@ class TaxReport extends Component
         ];
     }
 
+    /**
+     * Get RRA EBM submission data for the date range
+     */
+    private function getRraEbmData()
+    {
+        if (!Module::has('RraEbm') || !Module::isEnabled('RraEbm')) {
+            return ['submissions' => collect(), 'summary' => []];
+        }
+
+        $dateTimeData = $this->prepareDateTimeData();
+
+        // Get submitted orders with receipt signature data
+        $submittedOrders = Order::with(['items.menuItem', 'items.menuItemVariation', 'taxes.tax'])
+            ->leftJoin('rra_ebm_receipt_signatures', 'orders.id', '=', 'rra_ebm_receipt_signatures.order_id')
+            ->select(
+                'orders.*',
+                'rra_ebm_receipt_signatures.receipt_number',
+                'rra_ebm_receipt_signatures.receipt_signature',
+                'rra_ebm_receipt_signatures.vsdc_receipt_publish_date',
+                'rra_ebm_receipt_signatures.sdc_id',
+                'rra_ebm_receipt_signatures.invoice_number'
+            )
+            ->where('orders.branch_id', branch()->id)
+            ->where('orders.status', 'paid')
+            ->where('orders.rra_ebm_submitted', true)
+            ->whereBetween('orders.date_time', [$dateTimeData['startDateTime'], $dateTimeData['endDateTime']])
+            ->orderBy('orders.date_time', 'desc')
+            ->get();
+
+        $submissions = [];
+        foreach ($submittedOrders as $order) {
+            $orderTaxAmount = 0;
+            $orderTaxBreakdown = [];
+
+            foreach ($order->items as $item) {
+                $this->processItemTaxes($item, $orderTaxAmount, $orderTaxBreakdown, $order, false);
+            }
+
+            $this->processOrderTaxes($order, $orderTaxAmount, $orderTaxBreakdown);
+
+            if ($orderTaxAmount == 0 && isset($order->total_tax_amount) && $order->total_tax_amount > 0) {
+                $orderTaxAmount = $order->total_tax_amount;
+            }
+
+            $submissions[] = [
+                'order' => $order,
+                'receipt_number' => $order->receipt_number,
+                'receipt_signature' => $order->receipt_signature,
+                'vsdc_publish_date' => $order->vsdc_receipt_publish_date,
+                'sdc_id' => $order->sdc_id,
+                'invoice_number' => $order->invoice_number,
+                'tax_amount' => round($orderTaxAmount, 2),
+                'tax_breakdown' => $orderTaxBreakdown,
+                'subtotal' => $order->sub_total ?? 0,
+                'total' => $order->total ?? 0,
+            ];
+        }
+
+        // Summary stats
+        $totalSubmittedTax = round(array_sum(array_column($submissions, 'tax_amount')), 2);
+        $totalSubmittedRevenue = round(array_sum(array_column($submissions, 'total')), 2);
+        $totalSubmittedCount = count($submissions);
+
+        // Count pending/failed in same date range
+        $pendingCount = Order::where('branch_id', branch()->id)
+            ->where('status', 'paid')
+            ->where('rra_ebm_submitted', false)
+            ->whereBetween('date_time', [$dateTimeData['startDateTime'], $dateTimeData['endDateTime']])
+            ->count();
+
+        $summary = [
+            'total_submitted' => $totalSubmittedCount,
+            'total_tax' => $totalSubmittedTax,
+            'total_revenue' => $totalSubmittedRevenue,
+            'pending_count' => $pendingCount,
+        ];
+
+        return ['submissions' => collect($submissions), 'summary' => $summary];
+    }
+
+    /**
+     * Check if RRA EBM module is available
+     */
+    private function isRraEbmEnabled(): bool
+    {
+        return Module::has('RraEbm') && Module::isEnabled('RraEbm');
+    }
+
     private function prepareDateTimeData()
     {
         $timezone = timezone();
@@ -677,6 +771,10 @@ class TaxReport extends Component
         // Build tax by date from order details
         $taxByDate = $this->buildTaxByDateFromOrderDetails($orderDetails, $dateTimeData['timezone']);
 
+        // Get RRA EBM data
+        $rraEbmEnabled = $this->isRraEbmEnabled();
+        $rraData = $rraEbmEnabled ? $this->getRraEbmData() : ['submissions' => collect(), 'summary' => []];
+
         return view('livewire.reports.tax-report', [
             'orders' => $orders,
             'orderDetails' => $orderDetails,
@@ -691,6 +789,9 @@ class TaxReport extends Component
             'todayRevenue' => $todayRevenue,
             'allTaxes' => $allTaxes,
             'taxByDate' => $taxByDate,
+            'rraEbmEnabled' => $rraEbmEnabled,
+            'rraSubmissions' => $rraData['submissions'],
+            'rraSummary' => $rraData['summary'],
         ]);
     }
 

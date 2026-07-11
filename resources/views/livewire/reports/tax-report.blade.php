@@ -183,6 +183,20 @@
                         Tax Details by Order
                     </span>
                 </li>
+                @if($rraEbmEnabled)
+                <li class="me-2">
+                    <span wire:click="$set('activeTab', 'byRraEbm')" @class([
+                        'inline-flex items-center gap-x-2 cursor-pointer select-none p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300',
+                        'border-transparent' => $activeTab != 'byRraEbm',
+                        'active border-blue-600 dark:text-blue-500 dark:border-blue-500 text-blue-600 font-semibold' => $activeTab == 'byRraEbm',
+                    ])>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        RRA EBM Submissions
+                    </span>
+                </li>
+                @endif
             </ul>
         </div>
     </div>
@@ -399,6 +413,124 @@
                         <tr>
                             <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                 @lang('app.noDataFound')
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @endif
+
+    <!-- RRA EBM Submissions -->
+    @if($activeTab == 'byRraEbm' && $rraEbmEnabled)
+    <div class="p-4 bg-white dark:bg-gray-800 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white">RRA EBM Submissions</h2>
+            <a href="javascript:;" wire:click='exportReport("byRraEbm")'
+                class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+                <svg class="w-5 h-5 mr-2 -ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7.414A2 2 0 0 0 15.414 6L12 2.586A2 2 0 0 0 10.586 2zm5 6a1 1 0 1 0-2 0v3.586l-1.293-1.293a1 1 0 1 0-1.414 1.414l3 3a1 1 0 0 0 1.414 0l3-3a1 1 0 0 0-1.414-1.414L11 11.586z" clip-rule="evenodd"/></svg>
+                @lang('app.export')
+            </a>
+        </div>
+
+        <!-- RRA Summary Cards -->
+        <div class="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 md:grid-cols-4">
+            <div class="p-4 bg-green-50 rounded-xl shadow-sm dark:bg-green-900/10 border border-green-100 dark:border-green-800">
+                <h3 class="text-sm font-medium text-green-600 dark:text-green-400 mb-1">Submitted to RRA</h3>
+                <p class="text-2xl font-bold text-green-700 dark:text-green-300">{{ $rraSummary['total_submitted'] ?? 0 }}</p>
+            </div>
+            <div class="p-4 bg-blue-50 rounded-xl shadow-sm dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800">
+                <h3 class="text-sm font-medium text-blue-600 dark:text-blue-400 mb-1">Tax (RRA View)</h3>
+                <p class="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                    {{ currency_format($rraSummary['total_tax'] ?? 0, restaurant()->currency_id) }}
+                </p>
+            </div>
+            <div class="p-4 bg-emerald-50 rounded-xl shadow-sm dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800">
+                <h3 class="text-sm font-medium text-emerald-600 dark:text-emerald-400 mb-1">Revenue Submitted</h3>
+                <p class="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+                    {{ currency_format($rraSummary['total_revenue'] ?? 0, restaurant()->currency_id) }}
+                </p>
+            </div>
+            <div class="p-4 bg-amber-50 rounded-xl shadow-sm dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800">
+                <h3 class="text-sm font-medium text-amber-600 dark:text-amber-400 mb-1">Pending / Not Submitted</h3>
+                <p class="text-2xl font-bold text-amber-700 dark:text-amber-300">{{ $rraSummary['pending_count'] ?? 0 }}</p>
+            </div>
+        </div>
+
+        <!-- Submissions Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Order #</th>
+                        <th scope="col" class="px-6 py-3">Date</th>
+                        <th scope="col" class="px-6 py-3">Receipt #</th>
+                        <th scope="col" class="px-6 py-3">Invoice #</th>
+                        <th scope="col" class="px-6 py-3">Subtotal</th>
+                        <th scope="col" class="px-6 py-3">Tax Breakdown</th>
+                        <th scope="col" class="px-6 py-3">Total Tax</th>
+                        <th scope="col" class="px-6 py-3">Total</th>
+                        <th scope="col" class="px-6 py-3">RRA Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($rraSubmissions as $submission)
+                        @php
+                            $dateFormat = restaurant()->date_format ?? 'd-m-Y';
+                            $timeFormat = restaurant()->time_format ?? 'h:i A';
+                        @endphp
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                                #{{ $submission['order']->formatted_order_number ?? 'N/A' }}
+                            </td>
+                            <td class="px-6 py-4">
+                                @php
+                                    $orderDate = \Carbon\Carbon::parse($submission['order']->date_time)->setTimezone(timezone());
+                                @endphp
+                                {{ $orderDate->format($dateFormat . ' ' . $timeFormat) }}
+                            </td>
+                            <td class="px-6 py-4 font-mono text-xs">
+                                {{ $submission['receipt_number'] ?? '—' }}
+                            </td>
+                            <td class="px-6 py-4 font-mono text-xs">
+                                {{ $submission['invoice_number'] ?? '—' }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ currency_format($submission['subtotal'], restaurant()->currency_id) }}
+                            </td>
+                            <td class="px-6 py-4">
+                                @if(count($submission['tax_breakdown']) > 0)
+                                    <div class="space-y-1">
+                                        @foreach($submission['tax_breakdown'] as $taxName => $taxInfo)
+                                            <div class="text-xs">
+                                                <span class="font-medium">{{ $taxName }}</span>
+                                                <span class="text-green-600 dark:text-green-400">({{ number_format($taxInfo['percent'], 2) }}%)</span>:
+                                                <span class="font-semibold">{{ currency_format($taxInfo['amount'], restaurant()->currency_id) }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span class="text-gray-400 text-xs">No tax breakdown</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 font-semibold text-blue-600 dark:text-blue-400">
+                                {{ currency_format($submission['tax_amount'], restaurant()->currency_id) }}
+                            </td>
+                            <td class="px-6 py-4 font-bold text-emerald-600 dark:text-emerald-400">
+                                {{ currency_format($submission['total'], restaurant()->currency_id) }}
+                            </td>
+                            <td class="px-6 py-4 text-xs text-gray-500">
+                                {{ $submission['vsdc_publish_date'] ?? '—' }}
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="9" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <p>No RRA EBM submissions found for this date range.</p>
                             </td>
                         </tr>
                     @endforelse

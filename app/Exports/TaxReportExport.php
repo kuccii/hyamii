@@ -80,6 +80,22 @@ class TaxReportExport implements WithMapping, FromCollection, WithHeadings, With
                     ]
                 ];
 
+            case 'byRraEbm':
+                return [
+                    [__('menu.taxReport') . ' - RRA EBM Submissions ' . $headingTitle],
+                    [
+                        __('modules.order.orderNumber'),
+                        __('app.dateTime'),
+                        'Receipt #',
+                        'Invoice #',
+                        __('modules.order.subtotal'),
+                        __('modules.report.taxBreakdown'),
+                        __('modules.report.totalTaxAmount'),
+                        __('modules.order.total'),
+                        'RRA Publish Date',
+                    ]
+                ];
+
             default:
                 return [];
         }
@@ -131,6 +147,27 @@ class TaxReportExport implements WithMapping, FromCollection, WithHeadings, With
                     $taxBreakdown ?: '-',
                     currency_format($item['tax_amount'] ?? 0, $this->currencyId),
                     currency_format($item['total'] ?? 0, $this->currencyId),
+                ];
+
+            case 'byRraEbm':
+                $taxBreakdown = '';
+                if (isset($item['tax_breakdown']) && count($item['tax_breakdown']) > 0) {
+                    $breakdowns = [];
+                    foreach ($item['tax_breakdown'] as $taxName => $taxInfo) {
+                        $breakdowns[] = "{$taxName} (" . number_format($taxInfo['percent'], 2) . "%): " . currency_format($taxInfo['amount'], $this->currencyId);
+                    }
+                    $taxBreakdown = implode('; ', $breakdowns);
+                }
+                return [
+                    '#' . ($item['order']->order_number ?? 'N/A'),
+                    isset($item['order']->date_time) ? Carbon::parse($item['order']->date_time)->format(dateFormat() . ' ' . timeFormat()) : 'N/A',
+                    $item['receipt_number'] ?? '-',
+                    $item['invoice_number'] ?? '-',
+                    currency_format($item['subtotal'] ?? 0, $this->currencyId),
+                    $taxBreakdown ?: '-',
+                    currency_format($item['tax_amount'] ?? 0, $this->currencyId),
+                    currency_format($item['total'] ?? 0, $this->currencyId),
+                    $item['vsdc_publish_date'] ?? '-',
                 ];
 
             default:
