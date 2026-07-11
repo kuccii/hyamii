@@ -1,0 +1,25 @@
+{
+    "name": "hyamii/rra-ebm",
+    "description": "RRA EBM integration module for Hyamii",
+    "authors": [
+        {
+            "name": "Hyamii",
+            "email": "dev@hyamii.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\RraEbm\\": ""
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\RraEbm\\Providers\\RraEbmServiceProvider"
+            ]
+        }
+    }
+}

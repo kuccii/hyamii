@@ -18,6 +18,24 @@ class OrderObserver
     {
     }
 
+    private function dispatchRraEbmSubmission(Order $order): void
+    {
+        if (!\Nwidart\Modules\Facades\Module::has('RraEbm') || !\Nwidart\Modules\Facades\Module::isEnabled('RraEbm')) {
+            return;
+        }
+
+        $setting = \Modules\RraEbm\Entities\RraEbmSetting::where('branch_id', $order->branch_id)->first();
+
+        if (!$setting || !$setting->enabled || !$setting->shouldSubmitFor($order->order_type)) {
+            return;
+        }
+
+        $order->updateQuietly(['rra_ebm_queued' => true]);
+
+        \Modules\RraEbm\Jobs\SubmitSaleToRraJob::dispatch($order->id)
+            ->onConnection(config('rraebm.queue.connection', 'sync'));
+    }
+
     public function creating(Order $order)
     {
         if (branch() && $order->branch_id == null) {
@@ -67,6 +85,10 @@ class OrderObserver
 
         if ($order->isDirty('status') && $order->status == 'canceled') {
             OrderCancelled::dispatch($order);
+        }
+
+        if ($order->isDirty('status') && $order->status == 'paid' && !$order->rra_ebm_submitted) {
+            $this->dispatchRraEbmSubmission($order);
         }
 
         if ($order->wasChanged('order_status')) {

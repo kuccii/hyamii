@@ -1,0 +1,11 @@
+{
+    "name": "RraEbm",
+    "alias": "rraebm",
+    "description": "RRA EBM (Electronic Billing Machine) integration for submitting sales transactions to Rwanda Revenue Authority",
+    "keywords": ["rra", "ebm", "rwanda", "revenue", "billing", "tax"],
+    "priority": 0,
+    "providers": [
+        "Modules\\RraEbm\\Providers\\RraEbmServiceProvider"
+    ],
+    "files": []
+}
