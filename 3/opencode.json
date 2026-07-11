@@ -1,0 +1,25 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "anthropic/claude-sonnet-4-5",
+  "small_model": "anthropic/claude-haiku-4-5",
+  "plugin": ["ecc-universal"],
+  "mcpServers": {
+    "n8n": {
+      "command": "n8n-mcp"
+    }
+  },
+  "instructions": [
+    "node_modules/ecc-universal/skills/coding-standards/SKILL.md",
+    "node_modules/ecc-universal/skills/backend-patterns/SKILL.md",
+    "node_modules/ecc-universal/skills/frontend-patterns/SKILL.md",
+    "node_modules/ecc-universal/skills/security-review/SKILL.md",
+    "node_modules/ecc-universal/skills/tdd-workflow/SKILL.md",
+    "node_modules/ecc-universal/skills/eval-harness/SKILL.md",
+    "node_modules/ecc-universal/skills/verification-loop/SKILL.md",
+    "node_modules/ecc-universal/skills/api-design/SKILL.md",
+    "node_modules/ecc-universal/skills/laravel-patterns/SKILL.md",
+    "node_modules/ecc-universal/skills/laravel-tdd/SKILL.md",
+    "node_modules/ecc-universal/skills/laravel-security/SKILL.md",
+    "node_modules/ecc-universal/skills/database-migrations/SKILL.md"
+  ]
+}

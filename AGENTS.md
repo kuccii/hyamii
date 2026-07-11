@@ -129,3 +129,46 @@ Replace all purple/indigo/violet/fuchsia/magenta Tailwind color classes in `.bla
 
 ### Database Dump
 - `database/hyamii_dump.sql` — fresh dump after `migrate:fresh --seed`
+
+## RRA EBM Module (✅ Built + Deployed)
+
+### Overview
+**RRA EBM** (Rwanda Revenue Authority Electronic Billing Machine) is a toggle-able nwidart module (`Modules/RraEbm/`) integrating Hyamii with RRA EBM API v8.2 (VSDC model). Supports global on/off (`modules_statuses.json`) plus per-branch per-sale-type toggles.
+
+### Module Activation
+```bash
+php artisan module:enable RraEbm      # enable globally
+# OR set in storage/app/modules_statuses.json: {"RraEbm": true}
+php artisan migrate --force            # run 5 migrations
+# FK fix migration fails on old Doctrine — FK is already in migration 1
+```
+
+### Architecture
+- **5 migrations** — rra_ebm_settings, rra_ebm_receipt_signatures, rra_ebm_invoice_sequences, order columns (+rra_response_code, +rra_receipt_signature), FK on settings.branch_id
+- **3 Entities** — `RraEbmSetting`, `RraEbmReceiptSignature`, `RraEbmInvoiceSequence`
+- **4 Services** — `RraEbmService` (HTTP/URL builder), `RraInitializationService` (TIN/branch init), `RraSaleSubmissionService` (sale payload → `/trnsSales/saveSales`), `RraProductSyncService` (menu sync → `/items/saveItems`)
+- **3 Queue Jobs** — `SubmitSaleToRraJob` (paid orders), `SyncProductToRraJob` (menu item CRUD), `RetryFailedRraSubmissionJob`
+- **Observers** — `OrderObserver.php` (status=paid → dispatch), `MenuItemObserver.php` (create/update → dispatch)
+- **Admin UI** — `AdminRraEbmController` (CRUD + initialize), 3 Blade views under superadmin sidebar
+- **18 Unit Tests** — in `tests/Unit/Modules/` (RraEbmSettingTest, RraEbmServiceTest, RraProductSyncServiceTest)
+
+### Configuration
+| Setting | Description |
+|---------|-------------|
+| `enabled` | Per-branch toggle |
+| `tin_number` | RRA TIN for the branch |
+| `branch_id_rra` | Branch ID registered with RRA |
+| `server_url` | RRA API base URL (e.g. `https://ebm.rra.gov.rw/ebm` or sandbox) |
+| `app_name` | Application name registered with RRA |
+| `device_serial_no` / `machine_reference_code` / `security_key` | Device identity |
+| `auto_sync_products` | Auto-sync menu items to RRA |
+| `submit_on_pos_complete` / `submit_on_online_order` / `submit_on_kiosk` | Per-sale-type toggle |
+
+### Tax Codes
+- **A**: 0% (VAT exempt)
+- **B**: 18% (standard VAT)
+
+### Deployment
+- **VPS**: `72.60.188.94`, module enabled, all 5 migrations ran, FK exists
+- **VPS PHP**: 8.3.6 (not 8.4+) — use `--ignore-platform-req=php` for composer
+- **Code**: committed `b4d6e8c` to `origin/master`
