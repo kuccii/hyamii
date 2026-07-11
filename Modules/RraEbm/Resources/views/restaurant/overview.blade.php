@@ -106,7 +106,7 @@
                 @if(!$editingSetting)
                     <div class="p-3 bg-skin-base/5 dark:bg-skin-base/20 border border-skin-base/30 rounded-lg">
                         <p class="text-sm text-gray-700 dark:text-gray-300">
-                            Selected branch: <strong>{{ Branch::find($branch_id)?->name ?? 'Unknown' }}</strong>
+                            Selected branch: <strong>{{ \App\Models\Branch::find($branch_id)?->name ?? 'Unknown' }}</strong>
                         </p>
                     </div>
                 @endif
@@ -198,6 +198,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <div class="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
                     <x-secondary-button wire:click="closeConfig" class="mr-3">Cancel</x-secondary-button>
