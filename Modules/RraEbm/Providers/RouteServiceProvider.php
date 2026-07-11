@@ -19,11 +19,22 @@ class RouteServiceProvider extends ServiceProvider
     public function map(): void
     {
         $this->mapWebRoutes();
+        $this->mapRestaurantRoutes();
     }
 
     protected function mapWebRoutes(): void
     {
         $routesPath = module_path($this->name, '/Routes/web.php');
+        if (!file_exists($routesPath)) {
+            return;
+        }
+
+        Route::middleware('web')->group($routesPath);
+    }
+
+    protected function mapRestaurantRoutes(): void
+    {
+        $routesPath = module_path($this->name, '/Routes/restaurant.php');
         if (!file_exists($routesPath)) {
             return;
         }
