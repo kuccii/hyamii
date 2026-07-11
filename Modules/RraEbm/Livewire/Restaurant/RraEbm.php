@@ -3,6 +3,7 @@
 namespace Modules\RraEbm\Livewire\Restaurant;
 
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Modules\RraEbm\Entities\RraEbmSetting;
@@ -10,6 +11,7 @@ use Modules\RraEbm\Services\RraInitializationService;
 use App\Models\Branch;
 use App\Models\Order;
 
+#[Layout('layouts.app')]
 class RraEbm extends Component
 {
     use LivewireAlert;
