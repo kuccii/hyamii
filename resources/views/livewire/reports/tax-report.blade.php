@@ -456,6 +456,10 @@
                 <h3 class="text-sm font-medium text-amber-600 dark:text-amber-400 mb-1">Pending / Not Submitted</h3>
                 <p class="text-2xl font-bold text-amber-700 dark:text-amber-300">{{ $rraSummary['pending_count'] ?? 0 }}</p>
             </div>
+            <div class="p-4 bg-red-50 rounded-xl shadow-sm dark:bg-red-900/10 border border-red-100 dark:border-red-800">
+                <h3 class="text-sm font-medium text-red-600 dark:text-red-400 mb-1">Cancelled from RRA</h3>
+                <p class="text-2xl font-bold text-red-700 dark:text-red-300">{{ $rraSummary['cancelled_count'] ?? 0 }}</p>
+            </div>
         </div>
 
         <!-- Submissions Table -->
@@ -471,6 +475,7 @@
                         <th scope="col" class="px-6 py-3">Tax Breakdown</th>
                         <th scope="col" class="px-6 py-3">Total Tax</th>
                         <th scope="col" class="px-6 py-3">Total</th>
+                        <th scope="col" class="px-6 py-3">Status</th>
                         <th scope="col" class="px-6 py-3">RRA Date</th>
                     </tr>
                 </thead>
@@ -520,13 +525,25 @@
                             <td class="px-6 py-4 font-bold text-emerald-600 dark:text-emerald-400">
                                 {{ currency_format($submission['total'], restaurant()->currency_id) }}
                             </td>
+                            <td class="px-6 py-4">
+                                @if($submission['status'] === 'cancelled')
+                                    <span class="px-2 py-1 bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-400 rounded-full text-xs font-medium">Cancelled</span>
+                                @elseif($submission['status'] === 'submitted')
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400 rounded-full text-xs font-medium">Submitted</span>
+                                @else
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 rounded-full text-xs font-medium">{{ $submission['status'] }}</span>
+                                @endif
+                                @if($submission['error'])
+                                    <p class="text-xs text-red-500 mt-1 max-w-[200px] truncate" title="{{ $submission['error'] }}">{{ $submission['error'] }}</p>
+                                @endif
+                            </td>
                             <td class="px-6 py-4 text-xs text-gray-500">
                                 {{ $submission['vsdc_publish_date'] ?? '—' }}
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                            <td colspan="10" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                                 <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>

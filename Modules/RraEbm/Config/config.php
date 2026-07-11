@@ -15,6 +15,9 @@ return [
         'initialization' => env('RRA_EBM_INIT_ENDPOINT', '/initializer/selectInitInfo'),
         'save_item' => env('RRA_EBM_SAVE_ITEM_ENDPOINT', '/items/saveItems'),
         'sale_transaction' => env('RRA_EBM_SALE_ENDPOINT', '/trnsSales/saveSales'),
+        'cancel_sale' => env('RRA_EBM_CANCEL_ENDPOINT', '/trnsSales/cancelSales'),
+        'daily_sales_report' => env('RRA_EBM_DAILY_SALES_ENDPOINT', '/report/dailySales'),
+        'close_report' => env('RRA_EBM_CLOSE_ENDPOINT', '/report/close'),
         'save_stock_items' => env('RRA_EBM_STOCK_ENDPOINT', '/stock/saveStockItems'),
         'save_stock_master' => env('RRA_EBM_STOCK_MASTER_ENDPOINT', '/stockMaster/saveStockMaster'),
         'save_purchases' => env('RRA_EBM_PURCHASE_ENDPOINT', '/trnsPurchase/savePurchases'),
@@ -33,6 +36,28 @@ return [
     ],
 
     'default_tax_code' => 'A',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cancellation Reason Codes
+    |--------------------------------------------------------------------------
+    */
+    'cancel_reason_codes' => [
+        'duplicate' => '01',
+        'wrong_amount' => '02',
+        'order_cancelled' => '03',
+        'other' => '09',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | End-of-Day Settings
+    |--------------------------------------------------------------------------
+    */
+    'eod' => [
+        'filing_time' => env('RRA_EBM_EOD_TIME', '23:59'),
+        'auto_close' => env('RRA_EBM_AUTO_CLOSE', false),
+    ],
 
     /*
     |--------------------------------------------------------------------------

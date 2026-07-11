@@ -31,6 +31,12 @@ class RraEbmServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'Database/Migrations'));
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \Modules\RraEbm\Console\Commands\RraEodFilingCommand::class,
+            ]);
+        }
     }
 
     public function register(): void

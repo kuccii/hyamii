@@ -100,6 +100,11 @@ class Order extends BaseModel
         return $this->hasMany(Payment::class);
     }
 
+    public function rraEbmReceiptSignature(): HasOne
+    {
+        return $this->hasOne(\Modules\RraEbm\Entities\RraEbmReceiptSignature::class);
+    }
+
     public function orderCashCollection(): HasOne
     {
         return $this->hasOne(OrderCashCollection::class);

@@ -632,6 +632,11 @@ class TaxReport extends Component
                 $orderTaxAmount = $order->total_tax_amount;
             }
 
+            $status = 'submitted';
+            if ($order->rra_ebm_cancelled) {
+                $status = 'cancelled';
+            }
+
             $submissions[] = [
                 'order' => $order,
                 'receipt_number' => $order->receipt_number,
@@ -643,6 +648,8 @@ class TaxReport extends Component
                 'tax_breakdown' => $orderTaxBreakdown,
                 'subtotal' => $order->sub_total ?? 0,
                 'total' => $order->total ?? 0,
+                'status' => $status,
+                'error' => $order->rra_ebm_error,
             ];
         }
 
@@ -650,6 +657,7 @@ class TaxReport extends Component
         $totalSubmittedTax = round(array_sum(array_column($submissions, 'tax_amount')), 2);
         $totalSubmittedRevenue = round(array_sum(array_column($submissions, 'total')), 2);
         $totalSubmittedCount = count($submissions);
+        $cancelledCount = count(array_filter($submissions, fn($s) => $s['status'] === 'cancelled'));
 
         // Count pending/failed in same date range
         $pendingCount = Order::where('branch_id', branch()->id)
@@ -663,6 +671,7 @@ class TaxReport extends Component
             'total_tax' => $totalSubmittedTax,
             'total_revenue' => $totalSubmittedRevenue,
             'pending_count' => $pendingCount,
+            'cancelled_count' => $cancelledCount,
         ];
 
         return ['submissions' => collect($submissions), 'summary' => $summary];

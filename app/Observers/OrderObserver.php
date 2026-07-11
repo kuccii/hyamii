@@ -36,6 +36,20 @@ class OrderObserver
             ->onConnection(config('rraebm.queue.connection', 'sync'));
     }
 
+    private function dispatchRraEbmCancellation(Order $order): void
+    {
+        if (!\Nwidart\Modules\Facades\Module::has('RraEbm') || !\Nwidart\Modules\Facades\Module::isEnabled('RraEbm')) {
+            return;
+        }
+
+        if (!$order->rra_ebm_submitted || $order->rra_ebm_cancelled) {
+            return;
+        }
+
+        \Modules\RraEbm\Jobs\CancelSaleToRraJob::dispatch($order->id, 'order_cancelled', "Order #{$order->formatted_order_number} cancelled")
+            ->onConnection(config('rraebm.queue.connection', 'sync'));
+    }
+
     public function creating(Order $order)
     {
         if (branch() && $order->branch_id == null) {
@@ -85,6 +99,7 @@ class OrderObserver
 
         if ($order->isDirty('status') && $order->status == 'canceled') {
             OrderCancelled::dispatch($order);
+            $this->dispatchRraEbmCancellation($order);
         }
 
         if ($order->isDirty('status') && $order->status == 'paid' && !$order->rra_ebm_submitted) {
