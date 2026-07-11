@@ -20,6 +20,7 @@ return [
         'daily_sales_report' => env('RRA_EBM_DAILY_SALES_ENDPOINT', '/report/dailySales'),
         'close_report' => env('RRA_EBM_CLOSE_ENDPOINT', '/report/close'),
         'save_stock_items' => env('RRA_EBM_STOCK_ENDPOINT', '/stock/saveStockItems'),
+        'get_stock_items' => env('RRA_EBM_GET_STOCK_ENDPOINT', '/stock/getStockItems'),
         'save_stock_master' => env('RRA_EBM_STOCK_MASTER_ENDPOINT', '/stockMaster/saveStockMaster'),
         'save_purchases' => env('RRA_EBM_PURCHASE_ENDPOINT', '/trnsPurchase/savePurchases'),
     ],

@@ -5,12 +5,14 @@ namespace Modules\RraEbm\Services;
 use App\Models\Order;
 use App\Models\Refund;
 use Illuminate\Support\Facades\Log;
+use Modules\RraEbm\Entities\RraEbmRefundItem;
 use Modules\RraEbm\Entities\RraEbmSetting;
 
 class RraRefundService
 {
     public function __construct(
-        protected RraEbmService $ebmService
+        protected RraEbmService $ebmService,
+        protected RraProductSyncService $productSyncService
     ) {}
 
     public function submitCreditNote(Refund $refund): bool
@@ -44,6 +46,32 @@ class RraRefundService
         $regrId = config('rraebm.regr_id', 'Hyamii');
         $regrNm = config('rraebm.regr_nm', 'Hyamii');
 
+        $refundItems = RraEbmRefundItem::where('refund_id', $refund->id)->get();
+
+        $itemList = [];
+        foreach ($refundItems as $index => $refundItem) {
+            $orderItem = $refundItem->orderItem;
+            if (!$orderItem) {
+                continue;
+            }
+
+            $itemList[] = [
+                'itemSeq' => $index + 1,
+                'itemCd' => $this->productSyncService->generateItemCode($setting, [
+                    'id' => $orderItem->menu_item_id,
+                    'name' => $orderItem->menuItem?->item_name ?? "Item #{$orderItem->menu_item_id}",
+                    'price' => $orderItem->price,
+                ]),
+                'itemNm' => $orderItem->menuItem?->item_name ?? "Item #{$orderItem->menu_item_id}",
+                'qty' => $refundItem->quantity,
+                'prc' => round($orderItem->price, 2),
+                'splyAmt' => round($refundItem->amount, 2),
+                'taxblAmt' => round($refundItem->amount, 2),
+                'taxTyCd' => $refundItem->tax_code,
+                'taxAmt' => round($refundItem->tax_amount, 2),
+            ];
+        }
+
         $payload = [
             'tin' => $setting->tin_number,
             'bhfId' => $setting->branch_id_rra,
@@ -56,6 +84,10 @@ class RraRefundService
             'regrNm' => $regrNm,
         ];
 
+        if (!empty($itemList)) {
+            $payload['itemList'] = $itemList;
+        }
+
         $endpoint = config('rraebm.endpoints.cancel_sale', '/trnsSales/cancelSales');
 
         try {
@@ -66,6 +98,7 @@ class RraRefundService
                     'refund_id' => $refund->id,
                     'order_id' => $order->id,
                     'amount' => $refund->amount,
+                    'items' => count($itemList),
                 ]);
 
                 return true;
@@ -85,6 +118,20 @@ class RraRefundService
             ]);
 
             throw $e;
+        }
+    }
+
+    public function createRefundItems(Refund $refund, array $items): void
+    {
+        foreach ($items as $item) {
+            RraEbmRefundItem::create([
+                'refund_id' => $refund->id,
+                'order_item_id' => $item['order_item_id'],
+                'quantity' => $item['quantity'] ?? 1,
+                'amount' => $item['amount'] ?? 0,
+                'tax_amount' => $item['tax_amount'] ?? 0,
+                'tax_code' => $item['tax_code'] ?? 'B',
+            ]);
         }
     }
 
