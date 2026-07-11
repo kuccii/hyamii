@@ -47,8 +47,8 @@ class RraEbm extends Component
     {
         $this->settings = RraEbmSetting::with('branch')->get()->keyBy('branch_id');
 
-        $this->submissionStats = Order::whereNotNull('rra_receipt_signature')
-            ->selectRaw('branch_id, COUNT(*) as count, MAX(created_at) as last_at')
+        $this->submissionStats = Order::where('rra_ebm_submitted', true)
+            ->selectRaw('branch_id, COUNT(*) as count, MAX(rra_ebm_submitted_at) as last_at')
             ->groupBy('branch_id')
             ->get()
             ->keyBy('branch_id');
