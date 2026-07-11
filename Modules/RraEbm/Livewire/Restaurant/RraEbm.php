@@ -3,10 +3,12 @@
 namespace Modules\RraEbm\Livewire\Restaurant;
 
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Modules\RraEbm\Entities\RraEbmSetting;
+use Modules\RraEbm\Services\RraEbmService;
 use Modules\RraEbm\Services\RraInitializationService;
 use App\Models\Branch;
 use App\Models\Order;
@@ -33,11 +35,41 @@ class RraEbm extends Component
     public $app_name;
     public $device_serial_no;
     public $machine_reference_code;
+    #[\Livewire\Attributes\Visible(false)]
     public $security_key;
     public $auto_sync_products = true;
     public $submit_on_pos_complete = true;
     public $submit_on_online_order = false;
     public $submit_on_kiosk = false;
+
+    protected function rules(): array
+    {
+        return [
+            'branch_id' => 'required|exists:branches,id',
+            'enabled' => 'boolean',
+            'tin_number' => 'nullable|string|max:20',
+            'branch_id_rra' => 'nullable|string|max:20',
+            'server_url' => ['nullable', 'string', 'max:255', function ($attribute, $value, $fail) {
+                if ($value && !app(RraEbmService::class)->validateServerUrl($value)) {
+                    $fail('The server URL must point to a valid RRA EBM server (no localhost, private IPs, or link-local addresses).');
+                }
+            }],
+            'app_name' => 'nullable|string|max:255',
+            'device_serial_no' => 'nullable|string|max:255',
+            'machine_reference_code' => 'nullable|string|max:255',
+            'security_key' => 'nullable|string|max:255',
+            'auto_sync_products' => 'boolean',
+            'submit_on_pos_complete' => 'boolean',
+            'submit_on_online_order' => 'boolean',
+            'submit_on_kiosk' => 'boolean',
+        ];
+    }
+
+    protected $messages = [
+        'server_url.*' => 'Please enter a valid RRA EBM server URL.',
+        'tin_number.max' => 'TIN number must not exceed 20 characters.',
+        'branch_id_rra.max' => 'Branch ID must not exceed 20 characters.',
+    ];
 
     public function mount()
     {
@@ -57,6 +89,7 @@ class RraEbm extends Component
                 ->keyBy('branch_id');
         } catch (\Exception $e) {
             $this->submissionStats = collect();
+            Log::error('RRA EBM: failed to load submission stats', ['error' => $e->getMessage()]);
         }
     }
 
@@ -74,7 +107,7 @@ class RraEbm extends Component
             $this->app_name = $existing->app_name;
             $this->device_serial_no = $existing->device_serial_no;
             $this->machine_reference_code = $existing->machine_reference_code;
-            $this->security_key = $existing->security_key;
+            $this->security_key = null;
             $this->auto_sync_products = $existing->auto_sync_products;
             $this->submit_on_pos_complete = $existing->submit_on_pos_complete;
             $this->submit_on_online_order = $existing->submit_on_online_order;
@@ -106,6 +139,8 @@ class RraEbm extends Component
 
     public function save()
     {
+        $this->validate();
+
         $data = [
             'branch_id' => $this->branch_id,
             'enabled' => $this->enabled,
@@ -115,12 +150,15 @@ class RraEbm extends Component
             'app_name' => $this->app_name,
             'device_serial_no' => $this->device_serial_no,
             'machine_reference_code' => $this->machine_reference_code,
-            'security_key' => $this->security_key,
             'auto_sync_products' => $this->auto_sync_products,
             'submit_on_pos_complete' => $this->submit_on_pos_complete,
             'submit_on_online_order' => $this->submit_on_online_order,
             'submit_on_kiosk' => $this->submit_on_kiosk,
         ];
+
+        if ($this->security_key !== null) {
+            $data['security_key'] = $this->security_key;
+        }
 
         if ($this->editingSetting) {
             $this->editingSetting->update($data);

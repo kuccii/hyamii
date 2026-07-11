@@ -69,7 +69,9 @@
                             <td class="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
                                 @if($stats)
                                     <span class="font-semibold">{{ $stats->count }}</span>
-                                    <span class="text-xs text-gray-400 ml-1">last {{ $stats->last_at->diffForHumans() }}</span>
+                                    @if($stats->last_at)
+                                        <span class="text-xs text-gray-400 ml-1">last {{ $stats->last_at->diffForHumans() }}</span>
+                                    @endif
                                 @else
                                     <span class="text-gray-400">—</span>
                                 @endif
@@ -159,7 +161,7 @@
                         </div>
                         <div>
                             <x-label value="Security Key"/>
-                            <x-input wire:model="security_key" class="w-full"/>
+                            <input type="password" wire:model="security_key" autocomplete="new-password" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:border-skin-base focus:ring-skin-base"/>
                         </div>
                     </div>
                 </div>

@@ -58,7 +58,7 @@
                     </div>
                     <div class="col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1">Security Key</label>
-                        <input type="text" name="security_key" value="{{ old('security_key') }}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-skin-base focus:ring-skin-base">
+                        <input type="password" name="security_key" value="{{ old('security_key') }}" autocomplete="new-password" class="w-full rounded-md border-gray-300 shadow-sm focus:border-skin-base focus:ring-skin-base">
                     </div>
                 </div>
             </fieldset>

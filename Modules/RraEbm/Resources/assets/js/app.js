@@ -1,1 +1,0 @@
-// RRA EBM Module JavaScript

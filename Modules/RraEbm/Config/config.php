@@ -55,4 +55,12 @@ return [
         'retry_times' => env('RRA_EBM_HTTP_RETRY', 3),
         'retry_delay' => env('RRA_EBM_HTTP_RETRY_DELAY', 100),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Registrar Identity
+    |--------------------------------------------------------------------------
+    */
+    'regr_id' => env('RRA_EBM_REGR_ID', 'Hyamii'),
+    'regr_nm' => env('RRA_EBM_REGR_NM', 'Hyamii'),
 ];

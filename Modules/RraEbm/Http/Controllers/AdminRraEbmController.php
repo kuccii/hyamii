@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Modules\RraEbm\Entities\RraEbmSetting;
+use Modules\RraEbm\Services\RraEbmService;
 use Modules\RraEbm\Services\RraInitializationService;
 
 class AdminRraEbmController extends Controller
@@ -37,7 +38,11 @@ class AdminRraEbmController extends Controller
             'enabled' => 'boolean',
             'tin_number' => 'nullable|string|max:20',
             'branch_id_rra' => 'nullable|string|max:20',
-            'server_url' => 'nullable|string|max:255',
+            'server_url' => ['nullable', 'string', 'max:255', function ($attribute, $value, $fail) {
+                if ($value && !app(RraEbmService::class)->validateServerUrl($value)) {
+                    $fail('The server URL must point to a valid RRA EBM server (no localhost, private IPs, or link-local addresses).');
+                }
+            }],
             'app_name' => 'nullable|string|max:255',
             'device_serial_no' => 'nullable|string|max:255',
             'machine_reference_code' => 'nullable|string|max:255',
@@ -73,7 +78,11 @@ class AdminRraEbmController extends Controller
             'enabled' => 'boolean',
             'tin_number' => 'nullable|string|max:20',
             'branch_id_rra' => 'nullable|string|max:20',
-            'server_url' => 'nullable|string|max:255',
+            'server_url' => ['nullable', 'string', 'max:255', function ($attribute, $value, $fail) {
+                if ($value && !app(RraEbmService::class)->validateServerUrl($value)) {
+                    $fail('The server URL must point to a valid RRA EBM server (no localhost, private IPs, or link-local addresses).');
+                }
+            }],
             'app_name' => 'nullable|string|max:255',
             'device_serial_no' => 'nullable|string|max:255',
             'machine_reference_code' => 'nullable|string|max:255',
@@ -89,6 +98,10 @@ class AdminRraEbmController extends Controller
         $validated['submit_on_pos_complete'] = $request->boolean('submit_on_pos_complete', true);
         $validated['submit_on_online_order'] = $request->boolean('submit_on_online_order', false);
         $validated['submit_on_kiosk'] = $request->boolean('submit_on_kiosk', false);
+
+        if (empty($validated['security_key'])) {
+            unset($validated['security_key']);
+        }
 
         $setting->update($validated);
 

@@ -17,6 +17,7 @@ class RraEbmSetting extends Model
         'submit_on_online_order' => 'boolean',
         'submit_on_kiosk' => 'boolean',
         'last_initialized_at' => 'datetime',
+        'security_key' => 'encrypted',
     ];
 
     public function branch(): BelongsTo
@@ -49,5 +50,10 @@ class RraEbmSetting extends Model
             && $this->tin_number
             && $this->branch_id_rra
             && $this->server_url;
+    }
+
+    public function getDecryptedSecurityKeyAttribute(): ?string
+    {
+        return $this->security_key;
     }
 }

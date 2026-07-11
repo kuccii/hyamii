@@ -2,7 +2,6 @@
 
 namespace Modules\RraEbm\Services;
 
-use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -10,15 +9,16 @@ use Modules\RraEbm\Entities\RraEbmSetting;
 
 class RraEbmService
 {
+    private const ALLOWED_HOSTS = [
+        'ebm.rra.gov.rw',
+    ];
+
     public function buildUrl(string $serverUrl, string $appName, string $endpoint): string
     {
         $serverUrl = trim($serverUrl);
-        $isValidUrl = filter_var($serverUrl, FILTER_VALIDATE_URL);
-        $isValidIp = filter_var($serverUrl, FILTER_VALIDATE_IP) ||
-            filter_var('http://' . $serverUrl, FILTER_VALIDATE_URL);
 
         $baseUrl = rtrim($serverUrl, '/');
-        if (!preg_match('#^https?://#', $baseUrl) && $isValidIp) {
+        if (!preg_match('#^https?://#', $baseUrl)) {
             $baseUrl = 'http://' . $baseUrl;
         }
 
@@ -28,13 +28,33 @@ class RraEbmService
         return $baseUrl . '/' . $appPart . ($endpointPart ? '/' . $endpointPart : '');
     }
 
-    public function client(RraEbmSetting $setting): PendingRequest
+    public function validateServerUrl(string $serverUrl): bool
     {
-        return Http::timeout(config('rraebm.http.timeout', 30))
-            ->withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-            ]);
+        $url = preg_match('#^https?://#', $serverUrl) ? $serverUrl : 'http://' . $serverUrl;
+        $parsed = parse_url($url);
+
+        if (!$parsed || !isset($parsed['host'])) {
+            return false;
+        }
+
+        $host = strtolower($parsed['host']);
+
+        if (in_array($host, ['localhost', '127.0.0.1', '::1', '0.0.0.0'])) {
+            Log::warning('RRA EBM: blocked localhost URL', ['url' => $serverUrl]);
+            return false;
+        }
+
+        if (preg_match('/^10\./', $host) || preg_match('/^172\.(1[6-9]|2\d|3[01])\./', $host) || preg_match('/^192\.168\./', $host)) {
+            Log::warning('RRA EBM: blocked private IP URL', ['url' => $serverUrl]);
+            return false;
+        }
+
+        if (preg_match('/^169\.254\./', $host)) {
+            Log::warning('RRA EBM: blocked link-local URL', ['url' => $serverUrl]);
+            return false;
+        }
+
+        return true;
     }
 
     public function post(RraEbmSetting $setting, string $endpoint, array $payload): Response

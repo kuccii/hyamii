@@ -19,6 +19,9 @@ class RraProductSyncService
 
         $taxCode = $this->resolveTaxCode($productData['tax_percent'] ?? 0);
 
+        $regrId = config('rraebm.regr_id', 'Hyamii');
+        $regrNm = config('rraebm.regr_nm', 'Hyamii');
+
         $payload = [
             'tin' => $setting->tin_number,
             'bhfId' => $setting->branch_id_rra,
@@ -34,10 +37,10 @@ class RraProductSyncService
             'bcd' => $productData['barcode'] ?? '',
             'dftPrc' => $productData['price'],
             'useYn' => 'Y',
-            'regrId' => 'Hyamii',
-            'regrNm' => 'Hyamii',
-            'modrId' => 'Hyamii',
-            'modrNm' => 'Hyamii',
+            'regrId' => $regrId,
+            'regrNm' => $regrNm,
+            'modrId' => $regrId,
+            'modrNm' => $regrNm,
         ];
 
         $endpoint = config('rraebm.endpoints.save_item', '/items/saveItems');
@@ -62,8 +65,17 @@ class RraProductSyncService
     public function resolveTaxCode(float $taxPercent): string
     {
         $taxCodes = config('rraebm.tax_codes', [0 => 'A', 18 => 'B']);
+        $taxPercentInt = (int) $taxPercent;
 
-        return $taxCodes[(int) $taxPercent] ?? config('rraebm.default_tax_code', 'A');
+        if (isset($taxCodes[$taxPercentInt])) {
+            return $taxCodes[$taxPercentInt];
+        }
+
+        Log::warning('RRA EBM: unknown tax rate, defaulting to exempt', [
+            'tax_percent' => $taxPercent,
+        ]);
+
+        return config('rraebm.default_tax_code', 'A');
     }
 
     public function generateItemCode(RraEbmSetting $setting, array $productData): string

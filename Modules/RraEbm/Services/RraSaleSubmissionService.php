@@ -30,15 +30,24 @@ class RraSaleSubmissionService
             return false;
         }
 
-        if ($order->rra_ebm_submitted) {
+        $alreadySubmitted = DB::table('orders')
+            ->where('id', $order->id)
+            ->lockForUpdate()
+            ->value('rra_ebm_submitted');
+
+        if ($alreadySubmitted) {
             Log::info('Order already submitted to RRA', ['order_id' => $order->id]);
             return true;
         }
 
-        $order->update([
-            'rra_ebm_queued' => true,
-            'rra_ebm_attempts' => DB::raw('rra_ebm_attempts + 1'),
-        ]);
+        DB::table('orders')
+            ->where('id', $order->id)
+            ->update([
+                'rra_ebm_queued' => true,
+                'rra_ebm_attempts' => DB::raw('rra_ebm_attempts + 1'),
+            ]);
+
+        $order->refresh();
 
         try {
             return $this->doSubmit($order, $setting);
@@ -65,6 +74,9 @@ class RraSaleSubmissionService
 
         $itemData = $this->buildItemList($order);
         $paymentTypeCode = $this->resolvePaymentTypeCode($order);
+
+        $regrId = config('rraebm.regr_id', 'Hyamii');
+        $regrNm = config('rraebm.regr_nm', 'Hyamii');
 
         $payload = [
             'tin' => $setting->tin_number,
@@ -95,10 +107,10 @@ class RraSaleSubmissionService
             'totTaxAmt' => 0,
             'totAmt' => 0,
             'prchrAcptcYn' => 'N',
-            'regrId' => 'Hyamii',
-            'regrNm' => 'Hyamii',
-            'modrId' => 'Hyamii',
-            'modrNm' => 'Hyamii',
+            'regrId' => $regrId,
+            'regrNm' => $regrNm,
+            'modrId' => $regrId,
+            'modrNm' => $regrNm,
             'remark' => "Order #{$order->formatted_order_number}",
             'receipt' => [
                 'rptNo' => $invoiceNumber,
@@ -274,7 +286,8 @@ class RraSaleSubmissionService
         return match ($paymentMethod) {
             'cash' => '01',
             'card' => '02',
-            'stripe', 'flutterwave', 'paypal', 'razorpay' => '03',
+            'stripe', 'flutterwave', 'paypal', 'razorpay',
+            'mollie', 'paystack', 'xendit', 'payfast', 'tap' => '03',
             'due' => '04',
             'mobile_money', 'mtn_momo', 'airtel_money' => '05',
             default => '01',
