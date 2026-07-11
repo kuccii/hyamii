@@ -110,7 +110,9 @@ Route::get('/restaurant-signup', [HomeController::class, 'signup'])->name('resta
 Route::get('/customer-logout', [HomeController::class, 'customerLogout'])->name('customer_logout');
 Route::get('page/{slug}', [CustomMenuController::class, 'index'])->name('customMenu');
 
-
+Route::get('/privacy-policy', [\App\Http\Controllers\PolicyController::class, 'privacy'])->name('privacy-policy');
+Route::get('/terms-conditions', [\App\Http\Controllers\PolicyController::class, 'terms'])->name('terms-conditions');
+Route::get('/refund-policy', [\App\Http\Controllers\PolicyController::class, 'refund'])->name('refund-policy');
 
 Route::post('stripe/order-payment', [StripeController::class, 'orderPayment'])->name('stripe.order_payment');
 Route::get('/stripe/success-callback', [StripeController::class, 'success'])->name('stripe.success');

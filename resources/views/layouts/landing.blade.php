@@ -199,6 +199,11 @@
 
                 <div class="mt-10 pt-8 border-t border-gray-200 dark:border-gray-800">
                     <p class="text-sm text-gray-400 dark:text-gray-500 text-center">© {{ now()->year }} <a href="{{ url('/') }}" class="hover:underline">{{ global_setting()->name }}</a>. @lang('landing.rightsReserved')</p>
+                    <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-3">
+                        <a href="{{ route('privacy-policy') }}" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Privacy Policy</a>
+                        <a href="{{ route('terms-conditions') }}" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Terms & Conditions</a>
+                        <a href="{{ route('refund-policy') }}" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">Refund Policy</a>
+                    </div>
                 </div>
             </div>
         </footer>
