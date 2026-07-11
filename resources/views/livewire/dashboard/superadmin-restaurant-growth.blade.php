@@ -70,7 +70,7 @@
     </div>
 
     <!-- Growth Chart -->
-    <div id="restaurant-growth-chart" class="mb-6"></div>
+    <div id="restaurant-growth-chart" class="mb-6 @if($growthData->isEmpty()) hidden @endif"></div>
 
     <!-- Recent Restaurants Section -->
     <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
@@ -115,8 +115,9 @@
 
     @script
     <script>
-        if (document.getElementById('restaurant-growth-chart')) {
-            const chart = new ApexCharts(document.getElementById('restaurant-growth-chart'), getRestaurantGrowthChartOptions());
+        const growthChartEl = document.getElementById('restaurant-growth-chart');
+        if (growthChartEl && !growthChartEl.classList.contains('hidden')) {
+            const chart = new ApexCharts(growthChartEl, getRestaurantGrowthChartOptions());
             chart.render();
 
             // init again when toggling dark mode
@@ -185,7 +186,7 @@
                         name: "@lang('modules.dashboard.newRestaurants')",
                         data: [
                             @foreach ($growthData as $data)
-                                {{ $data->new_restaurants }},
+                                {{ $data->new_restaurants ?? 0 }},
                             @endforeach
                         ],
                         color: '#10B981'

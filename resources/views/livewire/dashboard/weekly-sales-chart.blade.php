@@ -27,15 +27,16 @@
         </div>
 
     </div>
-    <div id="main-chart" class="relative w-full h-44"></div>
+    <div id="main-chart" class="relative w-full h-44 @if($salesData->isEmpty()) hidden @endif"></div>
     <!-- Card Footer -->
 
 
     @script
     <script>
 
-        if (document.getElementById('main-chart')) {
-            const chart = new ApexCharts(document.getElementById('main-chart'), getMainChartOptions());
+        const mainChartEl = document.getElementById('main-chart');
+        if (mainChartEl && !mainChartEl.classList.contains('hidden')) {
+            const chart = new ApexCharts(mainChartEl, getMainChartOptions());
             chart.render();
 
             // init again when toggling dark mode
@@ -110,7 +111,7 @@
                         name: "{{ __('modules.dashboard.earnings') }}",
                         data: [
                             @foreach ($salesData as $label)
-                                {{ $label->total_sales }},
+                                {{ $label->total_sales ?? 0 }},
                             @endforeach
                         ],
                         color: '{{ restaurant()->theme_hex }}'

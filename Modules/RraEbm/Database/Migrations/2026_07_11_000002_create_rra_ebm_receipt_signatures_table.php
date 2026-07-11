@@ -8,6 +8,10 @@ class CreateRraEbmReceiptSignaturesTable extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('rra_ebm_receipt_signatures')) {
+            return;
+        }
+
         Schema::create('rra_ebm_receipt_signatures', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();

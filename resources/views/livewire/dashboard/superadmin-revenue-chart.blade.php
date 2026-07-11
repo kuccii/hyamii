@@ -77,7 +77,7 @@
         </div>
     </div>
 
-    <div id="superadmin-revenue-chart" class="mb-6"></div>
+    <div id="superadmin-revenue-chart" class="mb-6 @if($revenueData->isEmpty()) hidden @endif"></div>
 
     <!-- Top Paying Restaurants Section -->
     <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
@@ -112,8 +112,9 @@
 
     @script
     <script>
-        if (document.getElementById('superadmin-revenue-chart')) {
-            const chart = new ApexCharts(document.getElementById('superadmin-revenue-chart'), getSuperadminRevenueChartOptions());
+        const revenueChartEl = document.getElementById('superadmin-revenue-chart');
+        if (revenueChartEl && !revenueChartEl.classList.contains('hidden')) {
+            const chart = new ApexCharts(revenueChartEl, getSuperadminRevenueChartOptions());
             chart.render();
 
             // init again when toggling dark mode
@@ -182,7 +183,7 @@
                         name: "@lang('modules.dashboard.platformRevenue')",
                         data: [
                             @foreach ($revenueData as $data)
-                                {{ $data->total_revenue }},
+                                {{ $data->total_revenue ?? 0 }},
                             @endforeach
                         ],
                         color: '#3B82F6'
