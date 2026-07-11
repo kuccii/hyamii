@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\RraEbm\Http\Controllers\AdminRraEbmController;
 
 Route::prefix('superadmin/rra-ebm')
-    ->middleware(['auth', 'superadmin'])
+    ->middleware(['auth', \App\Http\Middleware\SuperAdmin::class])
     ->name('superadmin.rra-ebm.')
     ->group(function () {
         Route::get('/', [AdminRraEbmController::class, 'index'])->name('index');
