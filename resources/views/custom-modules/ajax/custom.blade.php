@@ -463,7 +463,7 @@
                             <div class="inline-block group relative" data-toggle="tooltip"
                                  data-original-title="@lang('app.moduleSwitchMessage', ['name' => $module])">
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" @if (in_array($key, custom_module_plugins())) checked @endif
+                                    <input type="checkbox" @if (in_array($moduleKey, custom_module_plugins())) checked @endif
                                         class="sr-only peer change-module-status {{ !$verificationRequired && $isInstalled ? 'opacity-50 cursor-not-allowed' : '' }}"
                                         id="module-{{ $key }}" data-module-name="{{ $module }}"
                                         >
