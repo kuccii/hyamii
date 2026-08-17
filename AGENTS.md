@@ -139,18 +139,20 @@ Replace all purple/indigo/violet/fuchsia/magenta Tailwind color classes in `.bla
 ```bash
 php artisan module:enable RraEbm      # enable globally
 # OR set in storage/app/modules_statuses.json: {"RraEbm": true}
-php artisan migrate --force            # run 5 migrations
-# FK fix migration fails on old Doctrine — FK is already in migration 1
+php artisan migrate --force            # run 10 migrations
+# NOTE: do NOT add a migration using getDoctrineSchemaManager() — doctrine/dbal not installed on VPS
 ```
 
 ### Architecture
-- **5 migrations** — rra_ebm_settings, rra_ebm_receipt_signatures, rra_ebm_invoice_sequences, order columns (+rra_response_code, +rra_receipt_signature), FK on settings.branch_id
-- **3 Entities** — `RraEbmSetting`, `RraEbmReceiptSignature`, `RraEbmInvoiceSequence`
-- **4 Services** — `RraEbmService` (HTTP/URL builder), `RraInitializationService` (TIN/branch init), `RraSaleSubmissionService` (sale payload → `/trnsSales/saveSales`), `RraProductSyncService` (menu sync → `/items/saveItems`)
-- **3 Queue Jobs** — `SubmitSaleToRraJob` (paid orders), `SyncProductToRraJob` (menu item CRUD), `RetryFailedRraSubmissionJob`
+- **10 migrations** — rra_ebm_settings, rra_ebm_receipt_signatures, rra_ebm_invoice_sequences, order columns (+rra_ebm_submitted/_at, attempts, error, queued), indexes/constraints, rra_ebm_eod_filings, cancellation columns on orders, rra_ebm_stock_items, rra_ebm_purchases, rra_ebm_refund_items
+- **7 Entities** — `RraEbmSetting`, `RraEbmReceiptSignature`, `RraEbmInvoiceSequence`, `RraEbmEodFiling`, `RraEbmStockItem`, `RraEbmPurchase`, `RraEbmRefundItem`
+- **11 Services** — `RraEbmService` (HTTP/URL builder + SSRF guard), `RraInitializationService` (TIN/branch init), `RraSaleSubmissionService` (sale payload → `/trnsSales/saveSales`), `RraProductSyncService` (menu sync → `/items/saveItems`), `RraCancellationService`, `RraRefundService` (credit notes), `RraPurchaseService`, `RraEodService` (daily sales + day close), `RraStockSyncService`, `RraVerificationService` (receipt verify + daily report), `RraBatchSubmissionService`
+- **9 Queue Jobs** — `SubmitSaleToRraJob`, `SyncProductToRraJob`, `RetryFailedRraSubmissionJob`, `BatchSubmitSalesToRraJob`, `CancelSaleToRraJob`, `EodFilingJob`, `SubmitCreditNoteToRraJob`, `SubmitPurchaseToRraJob`, `SyncStockToRraJob`
+- **Console command** — `RraEodFilingCommand` (scheduled EOD filing)
 - **Observers** — `OrderObserver.php` (status=paid → dispatch), `MenuItemObserver.php` (create/update → dispatch)
 - **Admin UI** — `AdminRraEbmController` (CRUD + initialize), 3 Blade views under superadmin sidebar
-- **18 Unit Tests** — in `tests/Unit/Modules/` (RraEbmSettingTest, RraEbmServiceTest, RraProductSyncServiceTest)
+- **Restaurant portal** — `Livewire/Restaurant/RraEbm.php` overview dashboard at `/rra-ebm` (auth+verified middleware), sidebar link via `sections/sidebar.blade.php`, settings tab via `sections/settings/restaurant/sidebar.blade.php`
+- **Tax report integration** — 4th "RRA EBM Submissions" tab in TaxReport Livewire + export
 
 ### Configuration
 | Setting | Description |
