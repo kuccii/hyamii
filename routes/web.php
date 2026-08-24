@@ -103,6 +103,10 @@ Route::get('/restaurant/{hash}', [ShopController::class, 'cart'])->name('shop_re
 // Only register the root route if Subdomain module is not enabled
 if (!function_exists('module_enabled') || !module_enabled('Subdomain')) {
     Route::get('/', [HomeController::class, 'landing'])->name('home')->middleware(DisableFrontend::class);
+    Route::get('/features', [HomeController::class, 'features'])->name('features')->middleware(DisableFrontend::class);
+    Route::get('/pricing', [HomeController::class, 'pricing'])->name('pricing')->middleware(DisableFrontend::class);
+    Route::get('/about', [HomeController::class, 'about'])->name('about')->middleware(DisableFrontend::class);
+    Route::get('/contact', [HomeController::class, 'contact'])->name('contact')->middleware(DisableFrontend::class);
     Route::get('/change-locale/{locale}', [HomeController::class, 'changeLocale'])->name('change.locale');
 }
 

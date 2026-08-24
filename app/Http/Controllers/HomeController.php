@@ -119,6 +119,58 @@ class HomeController extends Controller
         return view('landing.custom-home');
     }
 
+    public function features()
+    {
+        $this->showInstall();
+
+        $global = global_setting();
+
+        if ($global->disable_landing_site && !request()->ajax()) {
+            return redirect(route('login'));
+        }
+
+        return view('landing.features');
+    }
+
+    public function pricing()
+    {
+        $this->showInstall();
+
+        $global = global_setting();
+
+        if ($global->disable_landing_site && !request()->ajax()) {
+            return redirect(route('login'));
+        }
+
+        return view('landing.pricing');
+    }
+
+    public function about()
+    {
+        $this->showInstall();
+
+        $global = global_setting();
+
+        if ($global->disable_landing_site && !request()->ajax()) {
+            return redirect(route('login'));
+        }
+
+        return view('landing.about');
+    }
+
+    public function contact()
+    {
+        $this->showInstall();
+
+        $global = global_setting();
+
+        if ($global->disable_landing_site && !request()->ajax()) {
+            return redirect(route('login'));
+        }
+
+        return view('landing.contact');
+    }
+
     public function signup()
     {
         if (global_setting()->disable_landing_site) {
