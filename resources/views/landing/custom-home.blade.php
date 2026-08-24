@@ -153,6 +153,38 @@
         </div>
     </section>
 
+    <!-- localized pricing preview -->
+    <section class="hy-section" style="background:var(--hy-soft);">
+        <div class="container">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <span class="hy-pill mb-3"><span class="dot"></span> Pricing in your currency</span>
+                    <h2 class="hy-h2">Simple plans for {{ $countryName ?? 'your restaurant' }}</h2>
+                    <p class="hy-lead">All prices shown in {{ $currencyCode }}. Switch your country in the menu above to see local pricing.</p>
+                </div>
+            </div>
+            <div class="row g-4 justify-content-center">
+                @foreach (($tiers ?? []) as $t)
+                    <div class="col-lg-4 col-md-6">
+                        <div class="hy-price {{ $t['featured'] ? 'featured' : '' }}">
+                            @if ($t['featured'])
+                                <span class="hy-pill mb-2" style="align-self:flex-start;"><span class="dot"></span> Most popular</span>
+                            @endif
+                            <h3 style="font-size:22px;font-weight:700;">{{ $t['name'] }}</h3>
+                            <div class="amount">{{ $currencySymbol }} {{ number_format($t['monthly'], 0) }}<span style="font-size:16px;font-weight:600;color:var(--hy-muted);">/mo</span></div>
+                            <ul>
+                                @foreach (array_slice($t['features'], 0, 5) as $f)
+                                    <li><i class="fa-solid fa-check"></i> {{ $f }}</li>
+                                @endforeach
+                            </ul>
+                            <a href="{{ url('/pricing') }}" class="hy-btn {{ $t['featured'] ? 'hy-btn-primary' : 'hy-btn-ghost' }} w-100">View {{ $t['name'] }}</a>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
     <!-- testimonials -->
     <section class="hy-section">
         <div class="container">

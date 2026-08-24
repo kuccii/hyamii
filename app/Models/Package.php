@@ -33,6 +33,22 @@ class Package extends BaseModel
         return $this->belongsToMany(Module::class, 'package_modules');
     }
 
+    public function prices()
+    {
+        return $this->hasMany(PackagePrice::class);
+    }
+
+    /**
+     * Resolve a localized price for a currency, falling back to USD then the package base price.
+     */
+    public function localizedPrice(string $currencyCode): ?PackagePrice
+    {
+        return $this->prices()
+            ->where('currency_code', $currencyCode)
+            ->first()
+            ?? $this->prices()->where('currency_code', 'USD')->first();
+    }
+
     public function currency()
     {
         return $this->belongsTo(GlobalCurrency::class, 'currency_id');

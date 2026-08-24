@@ -17,53 +17,38 @@
     <section class="hy-section">
         <div class="container">
             <div class="row g-4 justify-content-center">
-                <div class="col-lg-4 col-md-6">
-                    <div class="hy-price">
-                        <h3 style="font-size:22px;font-weight:700;">Starter</h3>
-                        <p class="hy-lead">For a single location getting going.</p>
-                        <div class="amount">$0<span style="font-size:16px;font-weight:600;color:var(--hy-muted);">/mo</span></div>
-                        <ul>
-                            <li><i class="fa-solid fa-check"></i> 1 branch</li>
-                            <li><i class="fa-solid fa-check"></i> POS & kitchen display</li>
-                            <li><i class="fa-solid fa-check"></i> Up to 3 staff accounts</li>
-                            <li><i class="fa-solid fa-check"></i> Basic reports</li>
-                            <li><i class="fa-solid fa-check"></i> Email support</li>
-                        </ul>
-                        <a href="{{ url('/login') }}" class="hy-btn hy-btn-ghost w-100">Start free</a>
+                @foreach (($tiers ?? []) as $t)
+                    <div class="col-lg-4 col-md-6">
+                        <div class="hy-price {{ $t['featured'] ? 'featured' : '' }}">
+                            @if ($t['featured'])
+                                <span class="hy-pill mb-2" style="align-self:flex-start;"><span class="dot"></span> Most popular</span>
+                            @endif
+                            <h3 style="font-size:22px;font-weight:700;">{{ $t['name'] }}</h3>
+                            <p class="hy-lead">{{ $t['description'] }}</p>
+                            <div class="amount">{{ $currencySymbol }} {{ number_format($t['monthly'], 0) }}<span style="font-size:16px;font-weight:600;color:var(--hy-muted);">/mo</span></div>
+                            <div class="mb-1" style="font-size:13px;color:var(--hy-muted);">
+                                {{ $currencyCode }} {{ number_format($t['annual'], 0) }}/yr · 2 months free
+                            </div>
+                            <ul>
+                                @foreach (array_slice($t['features'], 0, 6) as $f)
+                                    <li><i class="fa-solid fa-check"></i> {{ $f }}</li>
+                                @endforeach
+                            </ul>
+                            @if ($t['featured'])
+                                <a href="{{ url('/login') }}" class="hy-btn hy-btn-primary w-100">Choose {{ $t['name'] }}</a>
+                            @elseif ($t['name'] == 'Enterprise')
+                                <a href="{{ url('/contact') }}" class="hy-btn hy-btn-ghost w-100">Talk to us</a>
+                            @else
+                                <a href="{{ url('/login') }}" class="hy-btn hy-btn-ghost w-100">Start with {{ $t['name'] }}</a>
+                            @endif
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="hy-price featured">
-                        <span class="hy-pill mb-2" style="align-self:flex-start;"><span class="dot"></span> Most popular</span>
-                        <h3 style="font-size:22px;font-weight:700;">Growth</h3>
-                        <p class="hy-lead">For multi-branch restaurants.</p>
-                        <div class="amount">$39<span style="font-size:16px;font-weight:600;color:var(--hy-muted);">/mo</span></div>
-                        <ul>
-                            <li><i class="fa-solid fa-check"></i> Up to 5 branches</li>
-                            <li><i class="fa-solid fa-check"></i> Online ordering</li>
-                            <li><i class="fa-solid fa-check"></i> Unlimited staff</li>
-                            <li><i class="fa-solid fa-check"></i> Inventory & suppliers</li>
-                            <li><i class="fa-solid fa-check"></i> Priority support</li>
-                        </ul>
-                        <a href="{{ url('/login') }}" class="hy-btn hy-btn-primary w-100">Choose Growth</a>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="hy-price">
-                        <h3 style="font-size:22px;font-weight:700;">Enterprise</h3>
-                        <p class="hy-lead">For groups & franchises.</p>
-                        <div class="amount">Custom</div>
-                        <ul>
-                            <li><i class="fa-solid fa-check"></i> Unlimited branches</li>
-                            <li><i class="fa-solid fa-check"></i> Custom integrations</li>
-                            <li><i class="fa-solid fa-check"></i> Dedicated manager</li>
-                            <li><i class="fa-solid fa-check"></i> SLA & onboarding</li>
-                            <li><i class="fa-solid fa-check"></i> 24/7 support</li>
-                        </ul>
-                        <a href="{{ url('/contact') }}" class="hy-btn hy-btn-ghost w-100">Talk to us</a>
-                    </div>
-                </div>
+                @endforeach
             </div>
+            <p class="text-center mt-4" style="color:var(--hy-muted);font-size:14px;">
+                Prices shown in <strong>{{ $currencyCode }}</strong> for <strong>{{ $countryName ?? '' }}</strong>.
+                Change your country in the menu above to see local pricing.
+            </p>
         </div>
     </section>
 

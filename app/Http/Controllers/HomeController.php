@@ -16,6 +16,7 @@ use Froiden\Envato\Traits\AppBoot;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use App\Models\Module;
+use App\Http\Middleware\CountrySelector;
 use Nwidart\Modules\Facades\Module as  ModuleFacade;
 
 class HomeController extends Controller
@@ -56,6 +57,82 @@ class HomeController extends Controller
         app()->setLocale($locale);
         $this->language = $locale;
         return redirect()->back()->with('success', 'Language changed successfully');
+    }
+
+    /**
+     * Shared data for the marketing site: resolved country + currency + selector list.
+     */
+    protected function landingShared(): array
+    {
+        $code = (string) session('selected_country_code', 'RW');
+        $country = CountrySelector::resolve($code) ?? CountrySelector::$map['RW'];
+
+        return [
+            'countryCode' => $code,
+            'countryName' => $country['name'],
+            'currencyCode' => $country['currency_code'],
+            'currencySymbol' => $country['currency_symbol'],
+            'countries' => CountrySelector::$map,
+        ];
+    }
+
+    /**
+     * Build the three marketing tiers with localized prices + feature bullets.
+     */
+    protected function pricingTiers(string $currencyCode): array
+    {
+        $extraLabels = [
+            'Reservation' => 'Table reservations',
+            'Delivery Executive' => 'Delivery & online ordering',
+            'Waiter Request' => 'Waiter request system',
+            'Expense' => 'Expense tracking',
+            'Payment' => 'Payment integrations',
+            'Customer' => 'Customer database',
+            'Report' => 'Advanced reports',
+        ];
+
+        $limitLabel = fn($n, $singular) => $n == -1 ? "Unlimited $singular" : "Up to " . $n . " $singular";
+
+        $tiers = [];
+
+        foreach (['Starter', 'Growth', 'Enterprise'] as $name) {
+            $pkg = Package::where('package_name', $name)->first();
+
+            if (!$pkg) {
+                continue;
+            }
+
+            $price = $pkg->localizedPrice($currencyCode);
+            $monthly = $price && $price->monthly_price !== null ? $price->monthly_price : $pkg->monthly_price;
+            $annual = $price && $price->annual_price !== null ? $price->annual_price : $pkg->annual_price;
+
+            $features = [
+                $limitLabel($pkg->branch_limit, 'branches'),
+                $limitLabel($pkg->staff_limit, 'staff accounts'),
+                $limitLabel($pkg->menu_items_limit, 'menu items'),
+                'POS & kitchen display',
+                'Reports & analytics',
+            ];
+
+            foreach ($pkg->modules()->pluck('name')->toArray() as $module) {
+                if (isset($extraLabels[$module])) {
+                    $features[] = $extraLabels[$module];
+                }
+            }
+
+            $features = array_values(array_unique($features));
+
+            $tiers[] = [
+                'name' => $pkg->package_name,
+                'description' => $pkg->description,
+                'monthly' => (float) $monthly,
+                'annual' => (float) $annual,
+                'featured' => (bool) $pkg->is_recommended,
+                'features' => $features,
+            ];
+        }
+
+        return $tiers;
     }
 
     public function landing()
@@ -104,19 +181,28 @@ class HomeController extends Controller
         $frontFaqs = FrontFaq::where('language_setting_id', $languageId)->get();
         $frontContact = Contact::where('language_setting_id', $languageId)->first();
 
+        $shared = $this->landingShared();
+        $tiers = $this->pricingTiers($shared['currencyCode']);
+
         if ($global->landing_type == 'static') {
-            return view('landing.index', compact('packages', 'AllModulesWithFeature', 'trialPackage', 'monthlyPackages', 'annualPackages', 'lifetimePackages'));
+            return view('landing.index', array_merge(
+                compact('packages', 'AllModulesWithFeature', 'trialPackage', 'monthlyPackages', 'annualPackages', 'lifetimePackages'),
+                $shared
+            ));
         }
 
         if ($global->landing_type == 'dynamic') {
-            return view('landing.dynamic-index', compact('packages', 'AllModulesWithFeature', 'trialPackage', 'monthlyPackages', 'annualPackages', 'lifetimePackages', 'customMenu', 'frontDetails', 'frontFeatures', 'frontReviews', 'frontFaqs', 'frontContact'));
+            return view('landing.dynamic-index', array_merge(
+                compact('packages', 'AllModulesWithFeature', 'trialPackage', 'monthlyPackages', 'annualPackages', 'lifetimePackages', 'customMenu', 'frontDetails', 'frontFeatures', 'frontReviews', 'frontFaqs', 'frontContact'),
+                $shared
+            ));
         }
 
         if ($global->landing_type == 'custom_home') {
-            return view('landing.custom-home');
+            return view('landing.custom-home', array_merge($shared, ['tiers' => $tiers]));
         }
 
-        return view('landing.custom-home');
+        return view('landing.custom-home', array_merge($shared, ['tiers' => $tiers]));
     }
 
     public function features()
@@ -129,7 +215,7 @@ class HomeController extends Controller
             return redirect(route('login'));
         }
 
-        return view('landing.features');
+        return view('landing.features', $this->landingShared());
     }
 
     public function pricing()
@@ -142,7 +228,10 @@ class HomeController extends Controller
             return redirect(route('login'));
         }
 
-        return view('landing.pricing');
+        $shared = $this->landingShared();
+        $tiers = $this->pricingTiers($shared['currencyCode']);
+
+        return view('landing.pricing', array_merge($shared, ['tiers' => $tiers]));
     }
 
     public function about()
@@ -155,7 +244,7 @@ class HomeController extends Controller
             return redirect(route('login'));
         }
 
-        return view('landing.about');
+        return view('landing.about', $this->landingShared());
     }
 
     public function contact()
@@ -168,7 +257,7 @@ class HomeController extends Controller
             return redirect(route('login'));
         }
 
-        return view('landing.contact');
+        return view('landing.contact', $this->landingShared());
     }
 
     public function signup()

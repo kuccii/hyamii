@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Module;
 use App\Models\Package;
+use App\Models\PackagePrice;
 use App\Models\GlobalCurrency;
 use Illuminate\Database\Seeder;
 use App\Enums\PackageType;
@@ -11,129 +12,149 @@ use App\Scopes\ModuleScope;
 
 class PackageSeeder extends Seeder
 {
-
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
+        $currencyID = GlobalCurrency::where('currency_code', 'RWF')->first()->id
+            ?? GlobalCurrency::first()->id;
 
-        // Fetch the currency ID
-        $currencyID = GlobalCurrency::first()->id;
-        $modules = Module::withoutGlobalScope(ModuleScope::class)
-        ->where('is_superadmin', 0)->get();
+        $allAdmin = Module::withoutGlobalScope(ModuleScope::class)
+            ->where('is_superadmin', 0)
+            ->get();
+        $byName = $allAdmin->keyBy('name');
 
-        // Create the Default package
-        $package = new Package();
-        $package->package_name = 'Default';
-        $package->description = 'Its a default package and cannot be deleted';
-        $package->currency_id = $currencyID;
-        $package->monthly_status = 0;
-        $package->annual_status = 0;
-        $package->annual_price = null;
-        $package->monthly_price = null;
-        $package->price = 0;
-        $package->is_free = 1;
-        $package->billing_cycle = 12;
-        $package->sort_order = 1;
-        $package->is_private = 0;
-        $package->is_recommended = 0;
-        $package->package_type = PackageType::DEFAULT;
-        $package->save();
+        $idsFor = fn($names) => collect($names)
+            ->map(fn($n) => optional($byName[$n])->id)
+            ->filter()
+            ->values()
+            ->toArray();
 
-        // Assign all modules to the default package
-        $package->modules()->sync($modules->pluck('id')->toArray());
+        $core = ['Menu', 'Menu Item', 'Item Category', 'Area', 'Table', 'KOT', 'Order', 'Customer', 'Staff', 'Report', 'Payment', 'Settings'];
+        $growth = array_merge($core, ['Reservation', 'Delivery Executive', 'Waiter Request', 'Expense']);
+        $enterprise = $allAdmin->pluck('name')->toArray();
 
-        // Create a Subscription package
-        $subscriptionPackage = new Package();
-        $subscriptionPackage->package_name = 'Subscription Package';
-        $subscriptionPackage->description = 'This is a subscription package';
-        $subscriptionPackage->currency_id = $currencyID;
-        $subscriptionPackage->monthly_status = 1;
-        $subscriptionPackage->annual_status = 1;
-        $subscriptionPackage->annual_price = 130000;
-        $subscriptionPackage->monthly_price = 13000;
-        $subscriptionPackage->price = 0;
-        $subscriptionPackage->is_free = 0;
-        $subscriptionPackage->billing_cycle = 10;
-        $subscriptionPackage->sort_order = 2;
-        $subscriptionPackage->is_private = 0;
-        $subscriptionPackage->is_recommended = 1;
-        $subscriptionPackage->package_type = PackageType::STANDARD;
-        $subscriptionPackage->save();
+        // --- Default (system) package ---
+        $default = Package::updateOrCreate(
+            ['package_name' => 'Default'],
+            [
+                'description' => 'Its a default package and cannot be deleted',
+                'currency_id' => $currencyID,
+                'monthly_status' => 0,
+                'annual_status' => 0,
+                'annual_price' => null,
+                'monthly_price' => null,
+                'price' => 0,
+                'is_free' => 1,
+                'billing_cycle' => 12,
+                'sort_order' => 1,
+                'is_private' => 0,
+                'is_recommended' => 0,
+                'package_type' => PackageType::DEFAULT,
+            ]
+        );
+        $default->modules()->sync($allAdmin->pluck('id')->toArray());
 
-        // Assign all modules to the subscription package
-        $subscriptionPackage->modules()->sync($modules->pluck('id')->toArray());
+        // --- Trial package ---
+        $trial = Package::updateOrCreate(
+            ['package_name' => 'Trial Package'],
+            [
+                'description' => 'This is a trial package',
+                'currency_id' => $currencyID,
+                'monthly_status' => 0,
+                'annual_status' => 0,
+                'annual_price' => null,
+                'monthly_price' => null,
+                'price' => 0,
+                'is_free' => 1,
+                'billing_cycle' => 0,
+                'sort_order' => null,
+                'is_private' => 0,
+                'is_recommended' => 0,
+                'additional_features' => json_encode(Package::ADDITIONAL_FEATURES),
+                'package_type' => PackageType::TRIAL,
+                'trial_days' => 30,
+                'trial_status' => 1,
+                'trial_notification_before_days' => 5,
+                'trial_message' => '30 Days Free Trial',
+            ]
+        );
+        $trial->modules()->sync($allAdmin->pluck('id')->toArray());
 
-        // Create a Lifetime package
-        $lifetimePackage = new Package();
-        $lifetimePackage->package_name = 'Life Time';
-        $lifetimePackage->description = 'This is a lifetime access package';
-        $lifetimePackage->currency_id = $currencyID;
-        $lifetimePackage->monthly_status = 0;
-        $lifetimePackage->annual_status = 0;
-        $lifetimePackage->annual_price = null;
-        $lifetimePackage->monthly_price = null;
-        $lifetimePackage->price = 259000;
-        $lifetimePackage->is_free = 0;
-        $lifetimePackage->billing_cycle = 0;
-        $lifetimePackage->sort_order = 3;
-        $lifetimePackage->is_private = 0;
-        $lifetimePackage->is_recommended = 1;
-        $lifetimePackage->additional_features = json_encode(Package::ADDITIONAL_FEATURES);
-        $lifetimePackage->package_type = PackageType::LIFETIME;
-        $lifetimePackage->save();
+        // --- Market tiers (Rwanda-first, multi-currency) ---
+        $tiers = [
+            'Starter' => [
+                'description' => 'For a single location getting going.',
+                'monthly' => 12000, 'annual' => 120000,
+                'branch_limit' => 1, 'staff_limit' => 3, 'menu_items_limit' => 50,
+                'order_limit' => -1, 'multipos_limit' => 0, 'ai_monthly_request_limit' => 1000,
+                'is_recommended' => 0, 'modules' => $core, 'sort_order' => 2,
+                'prices' => [
+                    'RWF' => [12000, 120000], 'TZS' => [30000, 300000], 'UGX' => [35000, 350000],
+                    'KES' => [1100, 11000], 'BIF' => [30000, 300000], 'USD' => [9.99, 99],
+                ],
+            ],
+            'Growth' => [
+                'description' => 'For multi-branch restaurants ready to scale.',
+                'monthly' => 39000, 'annual' => 390000,
+                'branch_limit' => 5, 'staff_limit' => 15, 'menu_items_limit' => 500,
+                'order_limit' => -1, 'multipos_limit' => 1, 'ai_monthly_request_limit' => 5000,
+                'is_recommended' => 1, 'modules' => $growth, 'sort_order' => 3,
+                'prices' => [
+                    'RWF' => [39000, 390000], 'TZS' => [95000, 950000], 'UGX' => [110000, 1100000],
+                    'KES' => [3500, 35000], 'BIF' => [95000, 950000], 'USD' => [32.99, 329],
+                ],
+            ],
+            'Enterprise' => [
+                'description' => 'For groups, franchises and chains.',
+                'monthly' => 99000, 'annual' => 990000,
+                'branch_limit' => -1, 'staff_limit' => -1, 'menu_items_limit' => -1,
+                'order_limit' => -1, 'multipos_limit' => 1, 'ai_monthly_request_limit' => -1,
+                'is_recommended' => 0, 'modules' => $enterprise, 'sort_order' => 4,
+                'prices' => [
+                    'RWF' => [99000, 990000], 'TZS' => [240000, 2400000], 'UGX' => [280000, 2800000],
+                    'KES' => [9000, 90000], 'BIF' => [240000, 2400000], 'USD' => [79.99, 799],
+                ],
+            ],
+        ];
 
-        // Assign all modules to the lifetime package
-        $lifetimePackage->modules()->sync($modules->pluck('id')->toArray());
+        foreach ($tiers as $name => $cfg) {
+            $package = Package::updateOrCreate(
+                ['package_name' => $name],
+                [
+                    'description' => $cfg['description'],
+                    'currency_id' => $currencyID,
+                    'monthly_status' => 1,
+                    'annual_status' => 1,
+                    'monthly_price' => $cfg['monthly'],
+                    'annual_price' => $cfg['annual'],
+                    'price' => 0,
+                    'is_free' => 0,
+                    'billing_cycle' => 12,
+                    'sort_order' => $cfg['sort_order'],
+                    'is_private' => 0,
+                    'is_recommended' => $cfg['is_recommended'],
+                    'additional_features' => json_encode(Package::ADDITIONAL_FEATURES),
+                    'package_type' => PackageType::STANDARD,
+                    'branch_limit' => $cfg['branch_limit'],
+                    'staff_limit' => $cfg['staff_limit'],
+                    'menu_items_limit' => $cfg['menu_items_limit'],
+                    'order_limit' => $cfg['order_limit'],
+                    'multipos_limit' => $cfg['multipos_limit'],
+                    'ai_monthly_token_limit' => $cfg['ai_monthly_request_limit'],
+                ]
+            );
 
-        // Create a Private package
-        $privatePackage = new Package();
-        $privatePackage->package_name = 'Private Package';
-        $privatePackage->description = 'This is a private package';
-        $privatePackage->price = 0;
-        $privatePackage->currency_id = $currencyID;
-        $privatePackage->monthly_status = 1;
-        $privatePackage->annual_status = 1;
-        $privatePackage->annual_price = 65000;
-        $privatePackage->monthly_price = 6500;
-        $privatePackage->is_free = 0;
-        $privatePackage->billing_cycle = 12;
-        $privatePackage->sort_order = 4;
-        $privatePackage->is_private = 1;
-        $privatePackage->is_recommended = 0;
-        $privatePackage->package_type = PackageType::STANDARD;
-        $privatePackage->save();
+            $package->modules()->sync($idsFor($cfg['modules']));
 
-        // Assign all modules to the private package
-        $privatePackage->modules()->sync($modules->pluck('id')->toArray());
-
-
-        // Create a Trial package
-        $trialPackage = new Package();
-        $trialPackage->package_name = 'Trial Package';
-        $trialPackage->description = 'This is a trial package';
-        $trialPackage->currency_id = $currencyID;
-        $trialPackage->monthly_status = 0;
-        $trialPackage->annual_status = 0;
-        $trialPackage->annual_price = null;
-        $trialPackage->monthly_price = null;
-        $trialPackage->price = 0;
-        $trialPackage->is_free = 1;
-        $trialPackage->billing_cycle = 0;
-        $trialPackage->sort_order = null;
-        $trialPackage->is_private = 0;
-        $trialPackage->is_recommended = 0;
-        $trialPackage->package_type = PackageType::TRIAL;
-        $trialPackage->additional_features = json_encode(Package::ADDITIONAL_FEATURES);
-        $trialPackage->trial_days = 30;
-        $trialPackage->trial_status = 1;
-        $trialPackage->trial_notification_before_days = 5;
-        $trialPackage->trial_message = '30 Days Free Trial';
-        $trialPackage->save();
-
-        // Assign all modules to the trial package
-        $trialPackage->modules()->sync($modules->pluck('id')->toArray());
+            // (Re)create localized prices
+            $package->prices()->delete();
+            foreach ($cfg['prices'] as $code => [$m, $a]) {
+                PackagePrice::create([
+                    'package_id' => $package->id,
+                    'currency_code' => $code,
+                    'monthly_price' => $m,
+                    'annual_price' => $a,
+                ]);
+            }
+        }
     }
-
 }

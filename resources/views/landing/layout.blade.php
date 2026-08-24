@@ -160,6 +160,21 @@
         }
         .hy-mobile-menu a:hover { color: var(--hy-amaranth); }
 
+        /* country / currency selector */
+        .hy-country-select {
+            height: 42px;
+            border: 1px solid var(--hy-line);
+            border-radius: 100px;
+            padding: 0 14px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--hy-ink);
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .hy-country-select:focus { outline: none; border-color: var(--hy-teal); }
+
         /* media */
         .hy-media {
             border-radius: 24px;
@@ -352,6 +367,17 @@
                     <a href="{{ url('/contact') }}" class="{{ request()->is('contact') ? 'active' : '' }}">Contact</a>
                 </nav>
                 <div class="d-flex align-items-center gap-2">
+                    <div class="d-none d-lg-block">
+                        <select id="hyCountry" class="hy-country-select" onchange="hySetCountry(this.value)"
+                            aria-label="Select your country">
+                            @foreach (($countries ?? []) as $cc => $c)
+                                <option value="{{ $cc }}"
+                                    {{ $cc === ($countryCode ?? 'RW') ? 'selected' : '' }}>
+                                    {{ $c['name'] }} · {{ $c['currency_code'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                     <a href="{{ url('/login') }}" class="hy-btn hy-btn-primary">Get Started <i
                             class="fa-solid fa-arrow-right"></i></a>
                     <button class="hy-burger d-lg-none" type="button" data-bs-toggle="collapse"
@@ -366,6 +392,16 @@
                 <a href="{{ url('/pricing') }}">Pricing</a>
                 <a href="{{ url('/about') }}">About</a>
                 <a href="{{ url('/contact') }}">Contact</a>
+                <div class="pt-2">
+                    <select class="hy-country-select w-100" onchange="hySetCountry(this.value)" aria-label="Select your country">
+                        @foreach (($countries ?? []) as $cc => $c)
+                            <option value="{{ $cc }}"
+                                {{ $cc === ($countryCode ?? 'RW') ? 'selected' : '' }}>
+                                {{ $c['name'] }} · {{ $c['currency_code'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
         </div>
     </header>
@@ -437,6 +473,13 @@
     <script src="{{ asset('vendor/custom-home/js/main.js') }}"></script>
     <script src="{{ asset('vendor/custom-home/js/slider-init.js') }}"></script>
     <script src="{{ asset('vendor/custom-home/js/tp-cursor.js') }}"></script>
+    <script>
+        function hySetCountry(code) {
+            var url = new URL(window.location.href);
+            url.searchParams.set('country', code);
+            window.location.href = url.toString();
+        }
+    </script>
 </body>
 
 </html>
