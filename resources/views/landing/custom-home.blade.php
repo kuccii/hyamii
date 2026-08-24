@@ -2,6 +2,8 @@
 
 @section('content')
     @php
+        $lh = landing_home_setting();
+        $img = fn($path, $fallback) => landing_home_image($path, $fallback);
         $serviceIcons = ['fa-utensils', 'fa-kitchen-set', 'fa-cart-shopping', 'fa-chair', 'fa-chart-line', 'fa-heart'];
     @endphp
 

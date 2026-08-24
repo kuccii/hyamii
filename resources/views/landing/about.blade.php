@@ -2,6 +2,11 @@
 @section('title', 'About — Hyamii')
 
 @section('content')
+    @php
+        $lh = landing_home_setting();
+        $img = fn($path, $fallback) => landing_home_image($path, $fallback);
+    @endphp
+
     <!-- page hero -->
     <section class="hy-page-hero hy-section">
         <div class="container text-center">
