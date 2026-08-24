@@ -417,6 +417,48 @@ if (!function_exists('global_setting')) {
     }
 }
 
+if (!function_exists('landing_home_setting')) {
+
+    // @codingStandardsIgnoreLine
+    function landing_home_setting()
+    {
+        if (cache()->has('landing_home_setting')) {
+            return cache('landing_home_setting');
+        }
+
+        $setting = \App\Models\LandingHomeSetting::first();
+
+        if (!$setting) {
+            $setting = \App\Models\LandingHomeSetting::create([
+                'data' => \App\Models\LandingHomeSetting::defaults(),
+            ]);
+        }
+
+        $data = array_replace_recursive(
+            \App\Models\LandingHomeSetting::defaults(),
+            $setting->data ?? []
+        );
+
+        cache(['landing_home_setting' => $data]);
+
+        return $data;
+    }
+}
+
+if (!function_exists('landing_home_image')) {
+
+    // Resolves an editable uploaded image (stored under landing_home) or falls
+    // back to the bundled template asset when nothing has been uploaded yet.
+    function landing_home_image($path, $default)
+    {
+        if (!empty($path)) {
+            return asset_url_local_s3('landing_home/' . $path);
+        }
+
+        return asset('vendor/custom-home/images/' . $default);
+    }
+}
+
 if (!function_exists('restaurantOrGlobalSetting')) {
 
     function restaurantOrGlobalSetting()

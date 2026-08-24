@@ -135,7 +135,26 @@
             <span>@lang('modules.settings.priceSetting')</span>
             </div>
         </button>
-       {{-- End --}}
+        {{-- End --}}
+    @endif
+
+    @if ($landingType == 'custom_home')
+        <!-- Custom Home Page Tab -->
+        <button @click="activeTab = 'customHome'; $wire.set('activeSetting', 'customHome')"
+            :class="activeTab === 'customHome'
+            ?
+            'border-b-2 border-skin-base text-skin-base dark:text-skin-base dark:border-skin-base font-semibold' :
+            'text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
+            class="py-4 px-6 focus:outline-none transition-colors duration-200 text-sm">
+            <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                </svg>
+                <span>@lang('modules.settings.customHomeLandingPage')</span>
+            </div>
+        </button>
+        {{-- End --}}
     @endif
 
     </div>
@@ -162,6 +181,14 @@
                                 {{ $landingType === 'dynamic' ? 'checked' : '' }}
                                 class="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600">
                             <span class="ms-2 text-gray-900 dark:text-gray-300"> @lang('modules.settings.dynamicLandingPage')</span>
+                        </label>
+
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="landingType" value="custom_home"
+                                wire:model.defer="landingType"
+                                {{ $landingType === 'custom_home' ? 'checked' : '' }}
+                                class="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600">
+                            <span class="ms-2 text-gray-900 dark:text-gray-300"> @lang('modules.settings.customHomeLandingPage')</span>
                         </label>
                     </div>
                 </div>
@@ -469,7 +496,14 @@ peer-checked:border-skin-base peer-checked:bg-skin-base/5 dark:peer-checked:bg-g
     <div x-show="activeTab === 'priceSetting'">
         @livewire('LandingSite.priceSetting')
     </div>
- @endif
+    @endif
+
+    {{-- custom home setting  --}}
+    @if ($landingType == 'custom_home')
+    <div x-show="activeTab === 'customHome'">
+        @livewire('LandingSite.CustomHomeSetting')
+    </div>
+    @endif
 
  <x-right-modal wire:model.live="addDyanamicMenuModal">
         <x-slot name="title">

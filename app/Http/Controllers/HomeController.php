@@ -108,7 +108,15 @@ class HomeController extends Controller
             return view('landing.index', compact('packages', 'AllModulesWithFeature', 'trialPackage', 'monthlyPackages', 'annualPackages', 'lifetimePackages'));
         }
 
-        return view('landing.dynamic-index', compact('packages', 'AllModulesWithFeature', 'trialPackage', 'monthlyPackages', 'annualPackages', 'lifetimePackages', 'customMenu', 'frontDetails', 'frontFeatures', 'frontReviews', 'frontFaqs', 'frontContact'));
+        if ($global->landing_type == 'dynamic') {
+            return view('landing.dynamic-index', compact('packages', 'AllModulesWithFeature', 'trialPackage', 'monthlyPackages', 'annualPackages', 'lifetimePackages', 'customMenu', 'frontDetails', 'frontFeatures', 'frontReviews', 'frontFaqs', 'frontContact'));
+        }
+
+        if ($global->landing_type == 'custom_home') {
+            return view('landing.custom-home');
+        }
+
+        return view('landing.custom-home');
     }
 
     public function signup()
