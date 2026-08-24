@@ -512,13 +512,12 @@
                 @php
                     $features = [
                         ['icon' => 'fa-network-wired', 'title' => 'Multi-branch', 'text' => 'Run several branches from one dashboard with shared menu and stock.'],
-                        ['icon' => 'fa-language', 'title' => 'Kinyarwanda ready', 'text' => 'Serve staff and customers in English, French and Kinyarwanda.'],
                         ['icon' => 'fa-wifi', 'title' => 'Offline mode', 'text' => 'Keep selling when the internet drops — sync automatically when back.'],
                         ['icon' => 'fa-mobile-screen-button', 'title' => 'Any device', 'text' => 'Works on tablets, phones and desktop with a clean, fast interface.'],
                     ];
                 @endphp
                 @foreach ($features as $f)
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="hy-card">
                             <div class="hy-icon"><i class="fa-solid {{ $f['icon'] }}"></i></div>
                             <h3>{{ $f['title'] }}</h3>
@@ -657,7 +656,7 @@
                 </div>
                 <div class="col-lg-3 col-12">
                     <h5>Newsletter</h5>
-                    <p style="color:rgba(255,255,255,.6);">Get product updates in Kinyarwanda & English.</p>
+                    <p style="color:rgba(255,255,255,.6);">Get product updates in your language.</p>
                     <div class="position-relative mt-2">
                         <input type="email" class="hy-news" placeholder="Your email">
                         <button class="hy-news-btn"><i class="fa-solid fa-arrow-right"></i></button>
