@@ -97,33 +97,54 @@
             color: var(--tp-theme-secondary);
         }
 
+        /* Display font only on big headings; smaller headings stay in the clean body font */
+        .tp-hero-title {
+            font-family: var(--tp-ff-clash-bold);
+        }
+
+        /* Calmer, cleaner card hovers — keep the motion, drop the harsh full-colour inversion */
+        .tp-service-item {
+            transition: all .35s ease;
+        }
+
         .tp-service-item-bg {
-            background: var(--tp-theme-primary);
+            display: none;
         }
 
-        .tp-service-item:hover .tp-service-item-title,
-        .tp-service-item:hover .tp-service-para {
-            color: #fff !important;
+        .tp-service-item:hover {
+            border-color: var(--tp-theme-primary);
+            transform: translateY(-8px);
+            box-shadow: 0 24px 50px rgba(0, 37, 34, .08);
         }
 
-        .tp-service-item-bg~* {
-            position: relative;
-            z-index: 2;
+        .tp-service-item:hover .tp-service-shape {
+            color: var(--tp-theme-primary) !important;
         }
 
         .tp-feature-md-item {
-            background: var(--tp-grey-5);
-            transition: all .4s ease;
+            background: #fff;
+            border: 1px solid var(--tp-border-1);
+            transition: all .35s ease;
         }
 
         .tp-feature-md-item:hover {
-            background: var(--tp-theme-primary);
+            background: #f3f8f7;
+            border-color: var(--tp-theme-primary);
+            transform: translateY(-6px);
+            box-shadow: 0 24px 50px rgba(0, 37, 34, .08);
         }
 
-        .tp-feature-md-item:hover .tp-feature-md-icon,
-        .tp-feature-md-item:hover h4,
-        .tp-feature-md-item:hover p {
-            color: #fff !important;
+        .tp-feature-md-item:hover .tp-feature-md-icon {
+            color: var(--tp-theme-primary) !important;
+        }
+
+        .hy-section-soft {
+            background: #fafaf8;
+        }
+
+        .hy-hero-img {
+            border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0, 37, 34, .15);
         }
 
         .hy-shape {
@@ -223,8 +244,8 @@
                 </div>
                 <div class="col-lg-6 position-relative">
                     <div class="tp-hero-thumb">
-                        <img class="w-100" src="{{ $img($lh['hero']['image'] ?? null, 'thumb-main.png') }}"
-                            alt="Hyamii dashboard" style="border-radius:24px;">
+                        <img class="w-100 hy-hero-img" src="{{ $img($lh['hero']['image'] ?? null, 'thumb-main.png') }}"
+                            alt="Hyamii dashboard">
                         <img class="hy-shape" style="top:30px;right:10px;width:90px"
                             src="{{ asset('vendor/custom-home/images/hero-shape-5.png') }}" alt="">
                     </div>
@@ -334,7 +355,7 @@
     </section>
 
     <!-- features band -->
-    <section class="pb-100">
+    <section class="pb-100 hy-section-soft">
         <div class="container">
             <div class="row justify-content-center text-center mb-5">
                 <div class="col-lg-8">
