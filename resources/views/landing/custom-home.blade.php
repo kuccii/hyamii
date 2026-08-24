@@ -323,6 +323,25 @@
         .swiper { overflow: hidden; }
         .brand-slide img { height: 38px; opacity: .6; filter: grayscale(1); }
 
+        /* loader (Hyamii themed) */
+        .loader-wrap {
+            background: var(--hy-teal);
+        }
+
+        .loader-wrap .loader-wrap-heading {
+            position: relative;
+            z-index: 20;
+            text-align: center;
+        }
+
+        .loader-wrap .load-text {
+            color: #fff !important;
+            font-family: 'Hanken Grotesk', sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            font-size: clamp(34px, 6vw, 62px);
+        }
+
         /* hide custom cursor on touch / small screens */
         @media (max-width: 991.98px) {
             #magic-cursor { display: none !important; }
@@ -332,6 +351,14 @@
 </head>
 
 <body class="tp-magic-cursor">
+    <div class="loader-wrap">
+        <div class="loader-wrap-heading">
+            <span class="load-text">Hyamii</span>
+        </div>
+        <svg id="svg" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+            <path fill="#002522" d="M0 502S175 272 500 272s500 230 500 230V0H0Z"></path>
+        </svg>
+    </div>
     <div id="magic-cursor">
         <div id="ball"></div>
     </div>

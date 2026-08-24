@@ -1,176 +1,39 @@
-# Hyamii - Project Memory
+## Objective
+- Deliver a polished, CMS-driven landing page ("custom home") for Hyamii that blends template richness (Aleric animations/fonts/structure) with clean, controlled design and full responsiveness. Final direction (latest user feedback): **clean, fully-responsive Bootstrap layout with own `hy-` classes + template animations (Swiper, PureCounter, cursor) + Hyamii palette + clean Manrope/Hanken fonts** — NOT the raw Aleric template DOM (which broke image positioning & responsiveness).
 
-## Overview
-**Hyamii** (formerly TableTrack) is a commercial SaaS restaurant management system built on Laravel 12. It's a multi-tenant platform for managing restaurants, POS, orders, kitchen displays, and more.
+## Important Details
+- Hyamii colors in recolored `main.css`: Deep Teal `#002522`, Soft Amaranth `#a33b38`.
+- Fonts (user-preferred): **Manrope** (body) + **Hanken Grotesk** (display headings). :root in `main.css` set to these.
+- VPS: `72.60.188.94`, SSH key `C:\Users\impat\.ssh\id_ed25519_opencode`, web root `/var/www/hyamii`. Deploy = `git pull` + `php artisan optimize:clear` (+ `view:clear`).
+- **VPS port gotcha:** port `8080` is an UNRELATED python3 process — do NOT curl `localhost:8080` to verify. The real Laravel app serves on `:80`/`:443` at domain `hyamii.com`. Verify with `curl -sk https://hyamii.com/`.
+- Custom home live at `/` when `global_settings.landing_type='custom_home'` AND `disable_landing_site=0` (both set on VPS; confirmed 200 on https).
+- `landing_home_setting()` = nested `defaults()` merged with stored `data` via native `array_replace_recursive`. Stored row EXISTS; hero resolves to "Restaurant management, made effortless." (CMS value overrides default). Structure: `hero.*`, `services.items[].title/text` (6 items), `about.*`, `faq.items[].question/answer`, `cta.*`, `contact.*`, `footer.*`, `brand.*`.
+- `landing_home_image($path, $default)` returns `asset_url_local_s3('landing_home/'.$path)` or `asset('vendor/custom-home/images/'.$default)`.
+- Template JS kept (animations): `swiper-bundle`, `purecounter`, `tp-cursor` (+ `plugin.js` provides gsap), `slider-init` (auto-inits `.tp-brand-slide-active`, `.tp-testimonial-ai-slide-active`), `main.js` (PureCounter, SplitType), `bootstrap-bundle`, `jquery`.
+- Available images in `public/vendor/custom-home/images/`: brand-1/3/4/5/6.png, hero-shape-*, testimonial-item-1/2/3.png, thumb-main.png, thumb-2.jpg, cta-shape-2/3.png, favicon.png.
 
-## Tech Stack
-- **Backend:** Laravel 12, PHP 8.2+
-- **Frontend:** Livewire 3, Vue 3, Tailwind CSS, Vite
-- **Database:** MySQL/PostgreSQL
-- **Real-time:** Pusher (websockets + push notifications)
-- **Architecture:** Laravel Modules (nwidart/laravel-modules) for feature plugins
+## Work State
+### Completed
+- Custom home fully rebuilt & shipped: clean responsive Bootstrap layout (`hy-section`, `hy-card`, `hy-media`, `hy-cta`, `hy-footer`, `hy-btn`, `hy-pill`, `hy-stat`, `hy-quote` classes in Blade `<style>`), Bootstrap grid `row`/`col` for all sections, controlled image sizing via `aspect-ratio` + `object-fit:cover`. Retains Swiper brand slider, Swiper testimonials, PureCounter stats, custom cursor (`#magic-cursor`/`#ball`, `tp-magic-cursor` body class), Bootstrap accordion FAQ. Manrope/Hanken fonts. Deployed & verified live (https 200, hero/sections/assets all 200).
+- Fixed `landing_home_setting()` helper (native array_replace_recursive). Migration for `landing_home_settings` table ran earlier; row exists.
+- Cleaned git: removed accidentally-tracked `storage/framework/cache|views` generated files; amended commit `bfa81b5`. Force-pushed to origin/master.
+### Active
+- (none — current task complete)
+### Blocked
+- (none)
 
-## Key Features
-- Multi-restaurant management (SaaS)
-- POS system (Vue-based and Livewire-based interfaces)
-- Kitchen Display System (KDS/KOT)
-- Table & reservation management
-- Menu & item management with categories/modifiers
-- Order management (dine-in, delivery, takeaway)
-- Customer management & loyalty
-- Delivery executive portal with OTP auth
-- Staff management with roles/permissions (spatie/laravel-permission)
-- Comprehensive reporting (sales, tax, refund, delivery, etc.)
-- Multi-language support (Google Translate integration)
-- Subscription/billing system (Stripe, Paddle, PayPal)
-- Multiple payment gateways: Stripe, PayPal, Mollie, Paystack, Flutterwave, Razorpay, Xendit, Payfast, Tap
+## Next Move
+- Optional polish if user requests: add subtle scroll-reveal animations (AOS/IntersectionObserver) to cards; tune hero/about image sources via CMS upload; add a pricing section. Otherwise done.
 
-## Module System
-Optional modules via `Modules/` directory:
-- Backup, Cash Register, Inventory, Kiosk, Kitchen, Language Pack, MultiPOS, SMS, Subdomain
+## Relevant Files
+- `resources/views/landing/custom-home.blade.php`: live page (clean responsive layout).
+- `public/vendor/custom-home/css/main.css`: recolored template CSS; `:root` fonts = Manrope/Hanken.
+- `public/vendor/custom-home/js/`: animation libs kept (swiper-bundle, purecounter, tp-cursor, slider-init, main, plugin, bootstrap-bundle, jquery).
+- `public/vendor/custom-home/images/`: template images.
+- `app/Helper/start.php`: `landing_home_setting()`, `landing_home_image()`.
+- `app/Models/LandingHomeSetting.php`: `defaults()` nested structure.
+- VPS `/var/www/hyamii`: deploy target (SSH `id_ed25519_opencode`); site at `hyamii.com` (80/443).
 
-## Project Structure Highlights
-- `app/Http/Controllers/` - Traditional controllers + SuperAdmin sub-namespace
-- `app/Livewire/` - Livewire components
-- `app/Models/` - Eloquent models with extensive observers
-- `app/Observers/` - Model observers for caching/event handling
-- `app/Services/` - Business logic services
-- `routes/web.php` - Main routes (474 lines, extensive)
-- `routes/api.php` - Desktop print job API + partner endpoints
-
-## Payment Integration Pattern
-Each gateway follows: initiate POST → success/cancel GET → webhook POST. Webhooks are routed under `/webhook/` with `{hash}` for restaurant identification.
-
-## Auth
-- Laravel Jetstream for restaurant staff auth
-- OTP-based login for customers and delivery executives
-- SuperAdmin middleware for platform admin routes
-
-## Build Process
-- `npm run dev` - Vite dev server
-- `npm run build` - Vite build + upload to S3 via custom script
-
-## Notable Dependencies
-- `laravel-cashier` / `laravel-cashier-paddle` - Subscription billing
-- `maatwebsite/excel` - Import/export
-- `barryvdh/laravel-dompdf` - PDF generation
-- `intervention/image` - Image processing
-- `jantinnerezo/livewire-alert` - SweetAlert2 + Livewire
-- `opcodesio/log-viewer` - Log viewing
-- `ladumor/laravel-pwa` - PWA support
-- `froiden/laravel-installer` - Installation wizard
-
-## Color Migration Progress (Tailwind purple/indigo → skin system)
-### Goal
-Replace all purple/indigo/violet/fuchsia/magenta Tailwind color classes in `.blade.php` files with Deep Teal (`text-skin-base`/`bg-skin-base`) or Soft Amaranth (`text-skin-secondary`/`bg-skin-secondary`) per DESIGN.md color rules.
-
-### Status: ✅ COMPLETE
-- All files in `resources/views/` processed (auth, dashboard, livewire, plans, profile, billing, custom-modules, errors, vendor/froiden-envato)
-- Final verification grep returns zero matches for purple/indigo/violet/fuchsia/magenta color classes
-- Status badge colors preserved per DESIGN.md: Pending=Yellow, Completed=Green, Cancelled=Red, Confirmed=text-yellow-600 bg-yellow-100, Preparing=text-skin-secondary bg-skin-secondary/10
-
-## Rwanda Localization (✅ Complete)
-
-### Configuration
-- **`.env`** - `APP_ENV=local`, `APP_URL=http://localhost:8080`, DB: `hyamii` (root, no password)
-- **Access URL**: `http://localhost:8080/`
-- **Vite HMR**: `http://127.0.0.1:5173/`
-- **Server**: XAMPP Apache + MariaDB on Windows (`C:\xamp`)
-- Apache configured with VirtualHost `*:8080` → `C:/xamp/htdocs/Hyamii/public`
-
-### Default Credentials
-| Role | Email | Password |
-|------|-------|----------|
-| Super Admin | `superadmin@example.com` | `123456` |
-| Admin | `admin@example.com` | `123456` |
-| Waiter | `waiter@example.com` | `123456` |
-
-### Currency — RWF (Rwanda Franc)
-- **Default global currency**: RWF (FRw, 0 decimals)
-- **Restaurant currency**: RWF (id:1), also USD, EUR, GBP available
-- All INR references removed from seeders
-
-### Tax — VAT 18%
-- SGST (2.5%) + CGST (2.5%) replaced with **VAT 18%** per branch
-- Single VAT entry per branch
-
-### Timezone — Africa/Kigali
-- `GlobalSetting.timezone` set to `Africa/Kigali`
-
-### Package Prices (RWF, ~1,300 rate)
-| Package | Annual | Monthly | Lifetime |
-|---------|--------|---------|---------|
-| Subscription | 130,000 | 13,000 | — |
-| Lifetime | — | — | 259,000 |
-| Private | 65,000 | 6,500 | — |
-
-### Demo Data (3 restaurants, all seeded)
-| Entity | Per Restaurant | Total |
-|--------|---------------|-------|
-| Branches | 2 | 6 |
-| Kigali Districts (areas) | 8 | 24 |
-| Tables | 10 | 30 |
-| Menu Items (Rwandan dishes) | 17 | 51 |
-| Orders w/ items | 9 | 27 |
-| Delivery Executives (+250) | 11 | 33 |
-| Item Categories | 6 | 18 |
-| Users (admin + waiter) | 2 | 7 (incl. superadmin) |
-
-**Menu names**: "Amakuru y'Igihugu", "Indumburwa z'Abanyarwanda", "Ibinyobwa n'Indyo"
-**Sample items**: Ugali na Isombe (2,500 FRw), Ibihaza (3,000 FRw), Brochettes (5,000 FRw), Kawa y'u Rwanda (1,500 FRw), Akabanga hot sauce modifier
-**Delivery exec**: Rwandan names (Jean Claude, Alice, Patrick, etc.), phone code +250
-
-### Verified ✅
-- Login page renders at `http://localhost:8080/login`
-- All user passwords verify correctly (bcrypt)
-- Global currencies: RWF, USD, EUR, GBP (no INR)
-- Taxes: VAT 18% for all branches
-- Timezone: Africa/Kigali
-
-### Database Dump
-- `database/hyamii_dump.sql` — fresh dump after `migrate:fresh --seed`
-
-## RRA EBM Module (✅ Built + Deployed)
-
-### Overview
-**RRA EBM** (Rwanda Revenue Authority Electronic Billing Machine) is a toggle-able nwidart module (`Modules/RraEbm/`) integrating Hyamii with RRA EBM API v8.2 (VSDC model). Supports global on/off (`modules_statuses.json`) plus per-branch per-sale-type toggles.
-
-### Module Activation
-```bash
-php artisan module:enable RraEbm      # enable globally
-# OR set in storage/app/modules_statuses.json: {"RraEbm": true}
-php artisan migrate --force            # run 10 migrations
-# NOTE: do NOT add a migration using getDoctrineSchemaManager() — doctrine/dbal not installed on VPS
-```
-
-### Architecture
-- **10 migrations** — rra_ebm_settings, rra_ebm_receipt_signatures, rra_ebm_invoice_sequences, order columns (+rra_ebm_submitted/_at, attempts, error, queued), indexes/constraints, rra_ebm_eod_filings, cancellation columns on orders, rra_ebm_stock_items, rra_ebm_purchases, rra_ebm_refund_items
-- **7 Entities** — `RraEbmSetting`, `RraEbmReceiptSignature`, `RraEbmInvoiceSequence`, `RraEbmEodFiling`, `RraEbmStockItem`, `RraEbmPurchase`, `RraEbmRefundItem`
-- **11 Services** — `RraEbmService` (HTTP/URL builder + SSRF guard), `RraInitializationService` (TIN/branch init), `RraSaleSubmissionService` (sale payload → `/trnsSales/saveSales`), `RraProductSyncService` (menu sync → `/items/saveItems`), `RraCancellationService`, `RraRefundService` (credit notes), `RraPurchaseService`, `RraEodService` (daily sales + day close), `RraStockSyncService`, `RraVerificationService` (receipt verify + daily report), `RraBatchSubmissionService`
-- **9 Queue Jobs** — `SubmitSaleToRraJob`, `SyncProductToRraJob`, `RetryFailedRraSubmissionJob`, `BatchSubmitSalesToRraJob`, `CancelSaleToRraJob`, `EodFilingJob`, `SubmitCreditNoteToRraJob`, `SubmitPurchaseToRraJob`, `SyncStockToRraJob`
-- **Console command** — `RraEodFilingCommand` (scheduled EOD filing)
-- **Observers** — `OrderObserver.php` (status=paid → dispatch), `MenuItemObserver.php` (create/update → dispatch)
-- **Admin UI** — `AdminRraEbmController` (CRUD + initialize), 3 Blade views under superadmin sidebar
-- **Restaurant portal** — `Livewire/Restaurant/RraEbm.php` overview dashboard at `/rra-ebm` (auth+verified middleware), sidebar link via `sections/sidebar.blade.php`, settings tab via `sections/settings/restaurant/sidebar.blade.php`
-- **Tax report integration** — 4th "RRA EBM Submissions" tab in TaxReport Livewire + export
-
-### Configuration
-| Setting | Description |
-|---------|-------------|
-| `enabled` | Per-branch toggle |
-| `tin_number` | RRA TIN for the branch |
-| `branch_id_rra` | Branch ID registered with RRA |
-| `server_url` | RRA API base URL (e.g. `https://ebm.rra.gov.rw/ebm` or sandbox) |
-| `app_name` | Application name registered with RRA |
-| `device_serial_no` / `machine_reference_code` / `security_key` | Device identity |
-| `auto_sync_products` | Auto-sync menu items to RRA |
-| `submit_on_pos_complete` / `submit_on_online_order` / `submit_on_kiosk` | Per-sale-type toggle |
-
-### Tax Codes
-- **A**: 0% (VAT exempt)
-- **B**: 18% (standard VAT)
-
-### Deployment
-- **VPS**: `72.60.188.94`, module enabled, all 5 migrations ran, FK exists
-- **VPS PHP**: 8.3.6 (not 8.4+) — use `--ignore-platform-req=php` for composer
-- **Code**: committed `b4d6e8c` to `origin/master`
+## Recent Commits
+- `bfa81b5` fix: clean responsive layout for custom home (Bootstrap grid + hy- classes, Manrope/Hanken fonts)
+- `d53f853` Blend template richness with clean restraint on custom home
