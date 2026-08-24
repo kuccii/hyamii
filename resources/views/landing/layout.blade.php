@@ -320,14 +320,59 @@
         .hy-page-hero { background: var(--hy-soft); }
 
         /* loader (Hyamii themed) */
-        .loader-wrap { background: var(--hy-teal); }
-        .loader-wrap .loader-wrap-heading { position: relative; z-index: 20; text-align: center; }
-        .loader-wrap .load-text {
-            color: #fff !important;
+        .loader-wrap {
+            position: fixed; inset: 0; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--hy-teal);
+            overflow: hidden;
+        }
+        .loader-wrap::before {
+            content: ""; position: absolute;
+            width: 680px; height: 680px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(163, 59, 56, .22), transparent 68%);
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+        .loader-inner {
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 22px; text-align: center;
+        }
+        .loader-brand { display: flex; align-items: center; gap: 14px; }
+        .loader-mark {
+            width: 56px; height: 56px; border-radius: 15px; background: #fff;
+            padding: 10px; box-shadow: 0 12px 34px rgba(0, 0, 0, .28);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .loader-mark img { width: 100%; height: 100%; object-fit: contain; }
+        .loader-word {
             font-family: 'Hanken Grotesk', sans-serif;
             font-weight: 800; letter-spacing: -0.02em;
-            font-size: clamp(34px, 6vw, 62px);
+            font-size: clamp(34px, 6vw, 60px); color: #fff; line-height: 1;
         }
+        .loader-ring {
+            width: 46px; height: 46px; border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, .16);
+            border-top-color: var(--hy-amaranth);
+            animation: hy-spin .9s linear infinite;
+        }
+        @keyframes hy-spin { to { transform: rotate(360deg); } }
+        .loader-track {
+            width: min(260px, 62vw); height: 4px; border-radius: 99px;
+            background: rgba(255, 255, 255, .14); overflow: hidden;
+        }
+        .loader-fill {
+            display: block; height: 100%; width: 0%;
+            background: var(--hy-amaranth); border-radius: 99px;
+        }
+        .loader-status {
+            font-family: 'Hanken Grotesk', sans-serif; font-weight: 700;
+            color: rgba(255, 255, 255, .85); font-size: 15px; letter-spacing: .04em;
+        }
+        .loader-tag {
+            margin: 0; font-family: 'Manrope', sans-serif;
+            color: rgba(255, 255, 255, .55); font-size: 14px;
+        }
+        body.hy-loading { overflow: hidden; }
 
         /* hide custom cursor on touch / small screens */
         @media (max-width: 991.98px) {
@@ -337,13 +382,21 @@
 </head>
 
 <body class="tp-magic-cursor">
-    <div class="loader-wrap">
-        <div class="loader-wrap-heading">
-            <span class="load-text">Hyamii</span>
+    <div class="loader-wrap" id="hyLoader">
+        <div class="loader-inner">
+            <div class="loader-brand">
+                <span class="loader-mark">
+                    <img src="{{ asset('vendor/custom-home/images/favicon.png') }}" alt="Hyamii">
+                </span>
+                <span class="loader-word">Hyamii</span>
+            </div>
+            <div class="loader-ring" aria-hidden="true"></div>
+            <div class="loader-track" role="progressbar" aria-label="Loading">
+                <span class="loader-fill" id="hyLoaderFill"></span>
+            </div>
+            <div class="loader-status"><span id="hyLoaderPct">0</span>%</div>
+            <p class="loader-tag">Restaurant management, made effortless.</p>
         </div>
-        <svg id="svg" viewBox="0 0 1000 1000" preserveAspectRatio="none">
-            <path fill="#002522" d="M0 502S175 272 500 272s500 230 500 230V0H0Z"></path>
-        </svg>
     </div>
     <div id="magic-cursor">
         <div id="ball"></div>
@@ -471,6 +524,49 @@
     <script src="{{ asset('vendor/custom-home/js/purecounter.js') }}"></script>
     <script src="{{ asset('vendor/custom-home/js/plugin.js') }}"></script>
     <script src="{{ asset('vendor/custom-home/js/main.js') }}"></script>
+    <script>
+        (function () {
+            var loader = document.getElementById('hyLoader');
+            if (!loader) return;
+            document.body.classList.add('hy-loading');
+            var fill = document.getElementById('hyLoaderFill');
+            var pct = document.getElementById('hyLoaderPct');
+
+            function hide() {
+                loader.style.display = 'none';
+                document.body.classList.remove('hy-loading');
+            }
+
+            function run(gsap) {
+                var counter = { v: 0 };
+                gsap.timeline({ onComplete: function () {
+                    gsap.to(loader, {
+                        yPercent: -100, duration: .45, ease: 'power3.inOut',
+                        onComplete: hide
+                    });
+                } }).to(counter, {
+                    v: 100, duration: .8, ease: 'power1.inOut',
+                    onUpdate: function () {
+                        var val = Math.round(counter.v);
+                        if (fill) fill.style.width = val + '%';
+                        if (pct) pct.textContent = val;
+                    }
+                });
+            }
+
+            if (window.gsap) {
+                run(window.gsap);
+            } else {
+                window.addEventListener('load', function () {
+                    if (window.gsap) run(window.gsap);
+                    else setTimeout(hide, 1200);
+                });
+            }
+
+            // safety net: never leave the page blocked
+            setTimeout(hide, 3000);
+        })();
+    </script>
     <script src="{{ asset('vendor/custom-home/js/slider-init.js') }}"></script>
     <script src="{{ asset('vendor/custom-home/js/tp-cursor.js') }}"></script>
     <script>

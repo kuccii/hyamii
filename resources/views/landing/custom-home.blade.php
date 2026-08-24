@@ -41,7 +41,7 @@
                 <div class="swiper-wrapper align-items-center">
                     @foreach (['brand-1.png', 'brand-3.png', 'brand-4.png', 'brand-5.png', 'brand-6.png', 'brand-1.png', 'brand-3.png', 'brand-4.png'] as $b)
                         <div class="swiper-slide text-center brand-slide">
-                            <img src="{{ asset('vendor/custom-home/images/' . $b) }}" alt="">
+                            <img src="{{ asset('vendor/custom-home/images/' . $b) }}" alt="" loading="lazy">
                         </div>
                     @endforeach
                 </div>
@@ -82,7 +82,7 @@
             <div class="row align-items-center g-5">
                 <div class="col-lg-6">
                     <div class="hy-media" style="aspect-ratio: 1 / 1;">
-                        <img src="{{ $img($lh['about']['image'] ?? null, 'thumb-2.jpg') }}" alt="About Hyamii">
+                        <img src="{{ $img($lh['about']['image'] ?? null, 'thumb-2.jpg') }}" alt="About Hyamii" loading="lazy">
                     </div>
                 </div>
                 <div class="col-lg-6">

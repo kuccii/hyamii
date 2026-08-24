@@ -18,13 +18,23 @@
 - **Site nav + public pages added**: shared `resources/views/landing/layout.blade.php` (head, preloader, sticky header nav with links to `/`, `/features`, `/pricing`, `/about`, `/contact` + mobile burger menu, footer with Privacy/Terms/Refund links, scripts). Pages extend it: `custom-home` (home), `features`, `pricing` (Starter/Growth/Enterprise tiers), `about` (values + stats), `contact` (info + form). Routes added in `routes/web.php` (with `DisableFrontend` middleware), methods added to `HomeController`. All return 200 live; footer links to existing `/privacy-policy`, `/terms-conditions`, `/refund-policy`.
 - Fixed `landing_home_setting()` helper (native array_replace_recursive). Migration for `landing_home_settings` table ran earlier; row exists.
 - Cleaned git: `.gitignore` now ignores `storage/framework/*` generated files; no generated files tracked. Force-pushed to origin/master.
+- **Localized multi-currency pricing + country selector (shipped, commit `70ca320`)**:
+  - `package_prices` table + `PackagePrice` model (package_id, currency_code, monthly_price, annual_price). `Package` gains `prices()` + `localizedPrice($code)` (currency → USD fallback).
+  - `CountrySelector` middleware (`app/Http/Middleware/CountrySelector.php`): `?country=` override (session + 1-yr cookie) > `CF-IPCountry`/`X-Country` auto-detect > default **RW**. Applied to all landing routes in `routes/web.php`.
+  - `PackageSeeder` rewritten (idempotent `updateOrCreate`) → **Starter / Growth ⭐ / Enterprise** tiers (RWF base) + `package_prices` for RWF/TZS/UGX/KES/BIF/USD. Keeps system `Default` + `Trial`.
+  - Global country/currency `<select>` in `layout.blade.php` header (desktop + mobile). `pricing.blade.php` and `custom-home.blade.php` render prices in the visitor's selected currency (verified: `?country=RW`→RWF, `?country=TZ`→TZS, default→RWF). Home shows a "Pricing in your currency" preview band.
+- **Full tutorial VIDEO — assets captured + script written**: form = video, deliverable = script + captured real screens → assembled video.
+  - 27 real screenshots captured from the live TANIA demo (`admin@tania.rw` / `123456`, Rwanda deployment at `hyamii.com`) via headless-Chrome DevTools Protocol (Node script `scripts/capture-all.mjs` logs in by `fetch` POST to `/login`, then screenshots each admin URL). Saved in `tutorial-screens/*.png` (ch01-landing … ch15-upgrade).
+  - Full English narration script + per-shot table + assembly notes written to `tutorial-screens/TUTORIAL-SCRIPT.md` (15 chapters, ~30–40 min deep-dive).
+  - **Actual video built**: `tutorial-screens/tutorial.mp4` (H.264 + AAC, ~9:40, 10.4 MB). Voiceover generated via Windows TTS (`Microsoft David`) per `tutorial-screens/audio/NN.wav` (27 clips), images stitched with ffmpeg (`scripts/build-video.mjs`). ffmpeg obtained at `C:\Users\impat\AppData\Local\Temp\opencode\ffmpeg\...\bin\ffmpeg.exe`.
+  - Admin URL map discovered: dashboard `/dashboard`, menus `/menus` `/menu-items` `/item-categories` `/modifier-groups`, orders `/orders` `/kots` `/pos`, `/reservations`, `/customers`, `/staff`, `/reports/*`, `/payments`(+/expenses,/due), `/inventory/*` (VPS-only module, present on live), `/delivery-executives` `/waiter-requests`, `/rra-ebm` (Rwanda EBM tax), customer site `/restaurant/{branchHash}`, `/billing/upgrade-plan` (localized plans), `/settings`.
 ### Active
-- (none — current task complete)
+- (none) — tutorial fully delivered: 27 real screenshots + English script + assembled `tutorial.mp4` video. Optional polish: replace robotic TTS voiceover with a recorded/human or ElevenLabs track and rebuild.
 ### Blocked
 - (none)
 
 ## Next Move
-- Optional polish if user requests: add subtle scroll-reveal animations (AOS/IntersectionObserver) to cards; tune hero/about image sources via CMS upload; add a pricing section. Otherwise done.
+- (none pending) — tutorial video assets (27 screenshots) + full English script + assembled `tutorial.mp4` are complete in `tutorial-screens/`. Optional: replace robotic TTS voiceover with a recorded/human track and rebuild. Marketing site + localized Rwandan packages are complete.
 
 ## Relevant Files
 - `resources/views/landing/layout.blade.php`: shared shell (head, preloader, header nav, footer, scripts, all `hy-` styles). Child pages @extend it and @yield('content').
@@ -37,7 +47,13 @@
 - `public/vendor/custom-home/images/`: template images.
 - `app/Helper/start.php`: `landing_home_setting()`, `landing_home_image()`.
 - `app/Models/LandingHomeSetting.php`: `defaults()` nested structure.
+- `app/Http/Middleware/CountrySelector.php`: `?country=` override + `CF-IPCountry` auto-detect; `$map` of supported countries (RW/TZ/UG/KE/BI/US) → currency.
+- `app/Models/Package.php` / `PackagePrice.php`: multi-currency prices; `localizedPrice($code)`.
+- `database/migrations/2026_08_24_100000_create_package_prices_table.php`: per-currency package prices.
+- `database/seeders/PackageSeeder.php`: Starter/Growth/Enterprise tiers (RWF) + `package_prices` for RWF/TZS/UGX/KES/BIF/USD; keeps Default + Trial.
 - VPS `/var/www/hyamii`: deploy target (SSH `id_ed25519_opencode`); site at `hyamii.com` (80/443).
+- `tutorial-screens/*.png` + `tutorial-screens/TUTORIAL-SCRIPT.md`: 27 captured demo screenshots + full 15-chapter English narration script/shot list for the tutorial video.
+- `scripts/capture-all.mjs`: headless-Chrome DevTools-Protocol capture script (fetch-login as `admin@tania.rw`, screenshot each admin URL). Requires Chrome launched with `--headless=new --remote-debugging-port=9222`.
 
 ## Gotchas
 - **Blade scope:** variables defined in a layout's `@php` block are NOT in scope inside child `@section('content')` blocks (sections render in the child view's scope). Define `$lh`/`$img` per child page where used (done in custom-home & about; `$lh` happens to also be reachable but define explicitly to be safe).
