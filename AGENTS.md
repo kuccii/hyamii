@@ -14,9 +14,10 @@
 
 ## Work State
 ### Completed
-- Custom home fully rebuilt & shipped: clean responsive Bootstrap layout (`hy-section`, `hy-card`, `hy-media`, `hy-cta`, `hy-footer`, `hy-btn`, `hy-pill`, `hy-stat`, `hy-quote` classes in Blade `<style>`), Bootstrap grid `row`/`col` for all sections, controlled image sizing via `aspect-ratio` + `object-fit:cover`. Retains Swiper brand slider, Swiper testimonials, PureCounter stats, custom cursor (`#magic-cursor`/`#ball`, `tp-magic-cursor` body class), Bootstrap accordion FAQ. Manrope/Hanken fonts. Deployed & verified live (https 200, hero/sections/assets all 200).
+- Custom home fully rebuilt & shipped: clean responsive Bootstrap layout (`hy-section`, `hy-card`, `hy-media`, `hy-cta`, `hy-footer`, `hy-btn`, `hy-pill`, `hy-stat`, `hy-quote`, `hy-price`, `hy-input` classes in shared `layout.blade.php` `<style>`), Bootstrap grid `row`/`col` for all sections, controlled image sizing via `aspect-ratio` + `object-fit:cover`. Retains Swiper brand slider, Swiper testimonials, PureCounter stats, custom cursor (`#magic-cursor`/`#ball`, `tp-magic-cursor` body class), Bootstrap accordion FAQ, Hyamii-themed preloader (`.loader-wrap` + GSAP timeline in `main.js`). Manrope/Hanken fonts.
+- **Site nav + public pages added**: shared `resources/views/landing/layout.blade.php` (head, preloader, sticky header nav with links to `/`, `/features`, `/pricing`, `/about`, `/contact` + mobile burger menu, footer with Privacy/Terms/Refund links, scripts). Pages extend it: `custom-home` (home), `features`, `pricing` (Starter/Growth/Enterprise tiers), `about` (values + stats), `contact` (info + form). Routes added in `routes/web.php` (with `DisableFrontend` middleware), methods added to `HomeController`. All return 200 live; footer links to existing `/privacy-policy`, `/terms-conditions`, `/refund-policy`.
 - Fixed `landing_home_setting()` helper (native array_replace_recursive). Migration for `landing_home_settings` table ran earlier; row exists.
-- Cleaned git: removed accidentally-tracked `storage/framework/cache|views` generated files; amended commit `bfa81b5`. Force-pushed to origin/master.
+- Cleaned git: `.gitignore` now ignores `storage/framework/*` generated files; no generated files tracked. Force-pushed to origin/master.
 ### Active
 - (none — current task complete)
 ### Blocked
@@ -26,13 +27,21 @@
 - Optional polish if user requests: add subtle scroll-reveal animations (AOS/IntersectionObserver) to cards; tune hero/about image sources via CMS upload; add a pricing section. Otherwise done.
 
 ## Relevant Files
-- `resources/views/landing/custom-home.blade.php`: live page (clean responsive layout).
+- `resources/views/landing/layout.blade.php`: shared shell (head, preloader, header nav, footer, scripts, all `hy-` styles). Child pages @extend it and @yield('content').
+- `resources/views/landing/custom-home.blade.php`: home page (extends layout).
+- `resources/views/landing/features.blade.php`, `pricing.blade.php`, `about.blade.php`, `contact.blade.php`: public pages (extend layout).
+- `routes/web.php`: `/` + `/features` + `/pricing` + `/about` + `/contact` (all `DisableFrontend` middleware) → `HomeController` methods `landing/features/pricing/about/contact`.
+- `app/Http/Controllers/HomeController.php`: added `features/pricing/about/contact` methods (mirror `landing()` guard).
 - `public/vendor/custom-home/css/main.css`: recolored template CSS; `:root` fonts = Manrope/Hanken.
 - `public/vendor/custom-home/js/`: animation libs kept (swiper-bundle, purecounter, tp-cursor, slider-init, main, plugin, bootstrap-bundle, jquery).
 - `public/vendor/custom-home/images/`: template images.
 - `app/Helper/start.php`: `landing_home_setting()`, `landing_home_image()`.
 - `app/Models/LandingHomeSetting.php`: `defaults()` nested structure.
 - VPS `/var/www/hyamii`: deploy target (SSH `id_ed25519_opencode`); site at `hyamii.com` (80/443).
+
+## Gotchas
+- **Blade scope:** variables defined in a layout's `@php` block are NOT in scope inside child `@section('content')` blocks (sections render in the child view's scope). Define `$lh`/`$img` per child page where used (done in custom-home & about; `$lh` happens to also be reachable but define explicitly to be safe).
+- **Git hygiene:** `storage/framework/*` must stay untracked — `.gitignore` now covers it; never `git add -A` without checking.
 
 ## Recent Commits
 - `bfa81b5` fix: clean responsive layout for custom home (Bootstrap grid + hy- classes, Manrope/Hanken fonts)
