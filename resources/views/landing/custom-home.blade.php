@@ -4,505 +4,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $lh['hero']['title'] ?? 'Hyamii' }}</title>
-    <meta name="description" content="{{ $lh['hero']['paragraph'] ?? '' }}">
+    <meta name="description"
+        content="Hyamii — the all-in-one restaurant management platform for Rwanda. POS, kitchen display, online ordering, inventory and RRA EBM ready.">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Hyamii — Restaurant Management Software for Rwanda</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ asset('vendor/custom-home/images/favicon.png') }}">
     <link rel="stylesheet" href="{{ asset('vendor/custom-home/css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/custom-home/css/font-awesome-pro.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/custom-home/css/main.css') }}">
 
     <style>
-        :root {
-            --skin-base: #002522;
-            --skin-secondary: #a33b38;
-        }
-
         body {
-            font-family: 'Manrope', sans-serif;
-            color: #4a5c59;
-            background: #fff;
+            background-color: #fff;
             overflow-x: hidden;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Hanken Grotesk', sans-serif;
-            color: var(--skin-base);
-            font-weight: 700;
-            line-height: 1.12;
-            letter-spacing: -0.02em;
-        }
-
-        .hy-section {
-            padding: 90px 0;
-        }
-
-        .hy-eyebrow {
-            display: inline-block;
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--skin-secondary);
-            background: rgba(163, 59, 56, 0.08);
-            padding: 6px 16px;
-            border-radius: 999px;
-            margin-bottom: 18px;
-        }
-
-        .hy-title {
-            font-size: clamp(30px, 4vw, 48px);
-            margin-bottom: 18px;
-        }
-
-        .hy-lead {
-            font-size: 17px;
-            line-height: 1.7;
-            color: #4a5c59;
-            max-width: 620px;
         }
 
         .hy-btn {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            font-family: 'Hanken Grotesk', sans-serif;
+            justify-content: center;
+            gap: 10px;
+            border-radius: 100px;
+            font-family: var(--tp-ff-heading);
             font-weight: 700;
             font-size: 15px;
-            padding: 14px 28px;
-            border-radius: 10px;
-            text-decoration: none;
-            transition: all .25s ease;
+            text-transform: uppercase;
+            letter-spacing: 0;
+            line-height: 1;
+            transition: all .3s ease;
+        }
+
+        .hy-btn i {
+            font-size: 14px;
         }
 
         .hy-btn-primary {
-            background: var(--skin-base);
+            background: var(--tp-theme-primary);
             color: #fff;
+            padding: 19px 36px;
         }
 
         .hy-btn-primary:hover {
-            background: var(--skin-secondary);
+            background: var(--tp-theme-secondary);
             color: #fff;
-            transform: translateY(-2px);
         }
 
-        .hy-btn-outline {
+        .hy-btn-secondary {
             background: transparent;
-            color: var(--skin-base);
-            border: 1.5px solid rgba(0, 37, 34, 0.18);
+            color: var(--tp-common-black);
+            border: 1px solid var(--tp-border-1);
+            padding: 18px 34px;
         }
 
-        .hy-btn-outline:hover {
-            border-color: var(--skin-base);
-            color: var(--skin-base);
-            transform: translateY(-2px);
+        .hy-btn-secondary:hover {
+            background: var(--tp-theme-primary);
+            color: #fff;
+            border-color: var(--tp-theme-primary);
+        }
+
+        .hy-logo {
+            font-family: var(--tp-ff-clash-bold);
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--tp-common-black);
+            letter-spacing: -0.02em;
         }
 
         .hy-header {
             position: sticky;
             top: 0;
-            z-index: 50;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #eee;
+            z-index: 90;
+            background: rgba(255, 255, 255, .88);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--tp-border-1);
         }
 
-        .hy-logo {
-            font-family: 'Hanken Grotesk', sans-serif;
-            font-weight: 800;
-            font-size: 24px;
-            color: var(--skin-base);
-            text-decoration: none;
-            letter-spacing: -0.03em;
+        .hy-nav-link {
+            font-family: var(--tp-ff-heading);
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--tp-common-black);
+            text-transform: uppercase;
         }
 
-        .hy-logo span {
-            color: var(--skin-secondary);
+        .hy-nav-link:hover {
+            color: var(--tp-theme-secondary);
         }
 
-        .hy-hero {
-            background:
-                radial-gradient(1200px 500px at 85% -10%, rgba(163, 59, 56, 0.08), transparent 60%),
-                radial-gradient(900px 500px at 0% 10%, rgba(0, 37, 34, 0.06), transparent 55%);
-            padding: 70px 0 90px;
+        .tp-hero-title em {
+            font-style: normal;
+            color: var(--tp-theme-secondary);
         }
 
-        .hy-hero-img {
-            border-radius: 24px;
-            box-shadow: 0 40px 80px -30px rgba(0, 37, 34, 0.35);
+        .tp-service-item-bg {
+            background: var(--tp-theme-primary);
         }
 
-        .hy-stat {
-            background: #fff;
-            border: 1px solid #eee;
-            border-radius: 16px;
-            padding: 18px 22px;
-            box-shadow: 0 20px 40px -28px rgba(0, 37, 34, 0.3);
+        .tp-service-item:hover .tp-service-item-title,
+        .tp-service-item:hover .tp-service-para {
+            color: #fff !important;
         }
 
-        .hy-stat .val {
-            font-family: 'Hanken Grotesk', sans-serif;
-            font-weight: 800;
-            font-size: 28px;
-            color: var(--skin-base);
+        .tp-service-item-bg~* {
+            position: relative;
+            z-index: 2;
         }
 
-        .hy-stat .lab {
-            font-size: 13px;
-            color: #4a5c59;
+        .tp-feature-md-item {
+            background: var(--tp-grey-5);
+            transition: all .4s ease;
         }
 
-        .hy-brand {
-            border-top: 1px solid #f0f0f0;
-            border-bottom: 1px solid #f0f0f0;
-            background: #fafafa;
+        .tp-feature-md-item:hover {
+            background: var(--tp-theme-primary);
         }
 
-        .hy-brand img {
-            height: 34px;
-            width: auto;
-            opacity: 0.65;
-            filter: grayscale(1);
-            transition: all .25s ease;
+        .tp-feature-md-item:hover .tp-feature-md-icon,
+        .tp-feature-md-item:hover h4,
+        .tp-feature-md-item:hover p {
+            color: #fff !important;
         }
 
-        .hy-brand img:hover {
-            opacity: 1;
-            filter: grayscale(0);
+        .hy-shape {
+            position: absolute;
+            z-index: 0;
+            pointer-events: none;
         }
 
-        .hy-about-img {
-            border-radius: 24px;
-            box-shadow: 0 40px 80px -30px rgba(0, 37, 34, 0.3);
-        }
-
-        .hy-fact {
-            font-family: 'Hanken Grotesk', sans-serif;
-            font-weight: 800;
-            font-size: 56px;
-            color: var(--skin-secondary);
+        .hy-stat .num {
+            font-family: var(--tp-ff-clash-bold);
+            font-size: 64px;
             line-height: 1;
-        }
-
-        .hy-feature {
-            display: flex;
-            gap: 14px;
-            align-items: flex-start;
-            margin-bottom: 18px;
-        }
-
-        .hy-feature .ic {
-            flex: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            background: rgba(0, 37, 34, 0.08);
-            color: var(--skin-base);
-            display: grid;
-            place-items: center;
-            font-size: 18px;
-        }
-
-        .hy-feature h5 {
-            font-size: 17px;
-            margin-bottom: 4px;
-        }
-
-        .hy-feature p {
-            margin: 0;
-            font-size: 15px;
-        }
-
-        .hy-service-card {
-            background: #fff;
-            border: 1px solid #eee;
-            border-radius: 20px;
-            padding: 32px 28px;
-            height: 100%;
-            transition: all .25s ease;
-        }
-
-        .hy-service-card:hover {
-            border-color: rgba(0, 37, 34, 0.2);
-            transform: translateY(-6px);
-            box-shadow: 0 30px 60px -34px rgba(0, 37, 34, 0.3);
-        }
-
-        .hy-service-ic {
-            width: 60px;
-            height: 60px;
-            border-radius: 14px;
-            background: var(--skin-base);
-            color: #fff;
-            display: grid;
-            place-items: center;
-            font-size: 26px;
-            margin-bottom: 20px;
-        }
-
-        .hy-service-ic img {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-        }
-
-        .hy-faq-img {
-            border-radius: 24px;
-            box-shadow: 0 40px 80px -30px rgba(0, 37, 34, 0.3);
-        }
-
-        .accordion-item {
-            border: 1px solid #eee;
-            border-radius: 14px !important;
-            margin-bottom: 14px;
-            overflow: hidden;
-        }
-
-        .accordion-button {
-            font-family: 'Hanken Grotesk', sans-serif;
+            color: var(--tp-theme-primary);
             font-weight: 700;
-            font-size: 17px;
-            color: var(--skin-base);
-            background: #fff;
-            box-shadow: none !important;
         }
 
-        .accordion-button:not(.collapsed) {
-            background: #fff;
-            color: var(--skin-secondary);
+        .hy-stat .lbl {
+            font-family: var(--tp-ff-heading);
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--tp-grey-1);
+            margin-top: 10px;
         }
 
-        .accordion-button:focus {
-            box-shadow: none;
-        }
-
-        .hy-cta {
-            background: var(--skin-base);
-            border-radius: 28px;
+        .tp-cta-ai-bg {
+            background: var(--tp-theme-primary);
             color: #fff;
-            padding: 70px 40px;
             text-align: center;
         }
 
-        .hy-cta h2, .hy-cta .hy-eyebrow {
+        .tp-cta-ai-bg .tp-section-title-clash-600 {
             color: #fff;
         }
 
-        .hy-cta .hy-eyebrow {
-            background: rgba(255, 255, 255, 0.12);
-            color: #fff;
+        .tp-footer-top-title {
+            font-family: var(--tp-ff-clash-bold);
+            color: var(--tp-common-black);
         }
 
-        .hy-cta .hy-lead {
-            color: rgba(255, 255, 255, 0.8);
-            margin: 0 auto;
-        }
-
-        .hy-cta .hy-btn-primary {
-            background: #fff;
-            color: var(--skin-base);
-        }
-
-        .hy-cta .hy-btn-primary:hover {
-            background: var(--skin-secondary);
-            color: #fff;
-        }
-
-        .hy-contact-card {
-            border: 1px solid #eee;
-            border-radius: 18px;
-            padding: 28px;
-            height: 100%;
-            text-align: center;
-        }
-
-        .hy-contact-card .ic {
-            width: 54px;
-            height: 54px;
-            border-radius: 14px;
-            background: rgba(163, 59, 56, 0.1);
-            color: var(--skin-secondary);
-            display: grid;
-            place-items: center;
-            font-size: 22px;
-            margin: 0 auto 16px;
-        }
-
-        .hy-footer {
-            background: #041c1a;
-            color: rgba(255, 255, 255, 0.7);
-            padding: 60px 0 30px;
-        }
-
-        .hy-footer h4, .hy-footer .hy-logo {
-            color: #fff;
-        }
-
-        .hy-footer a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-        }
-
-        .hy-footer a:hover {
-            color: #fff;
-        }
-
-        .hy-footer .finfo i {
-            color: var(--skin-secondary);
-            width: 22px;
-        }
-
-        @media (max-width: 767.98px) {
-            .hy-section { padding: 60px 0; }
-            .hy-hero { padding: 40px 0 60px; }
+        @media (max-width: 991.98px) {
+            .tp-hero-title {
+                font-size: 56px !important;
+            }
         }
     </style>
 </head>
 
-<body>
-@php
-    $lh = landing_home_setting();
-    $brandImgs = ['brand-1.png', 'brand-3.png', 'brand-4.png', 'brand-5.png', 'brand-6.png', 'brand-1.png'];
-    $serviceIcons = ['fa-cash-register', 'fa-kitchen-set', 'fa-utensils', 'fa-chair', 'fa-chart-line', 'fa-heart'];
-@endphp
+<body class="tp-magic-cursor">
+    <div id="magic-cursor">
+        <div id="ball"></div>
+    </div>
 
-    <!-- Header -->
+    @php
+        $lh = landing_home_setting();
+        $img = fn($path, $fallback) => landing_home_image($path, $fallback);
+        $serviceIcons = ['fa-utensils', 'fa-kitchen-set', 'fa-cart-shopping', 'fa-chair', 'fa-chart-line', 'fa-heart'];
+    @endphp
+
+    <!-- header -->
     <header class="hy-header">
         <div class="container">
-            <nav class="d-flex align-items-center justify-content-between py-3">
-                <a href="{{ route('home') }}" class="hy-logo">Hya<span>mii</span></a>
-                <a href="{{ route('restaurant_signup') }}" class="hy-btn hy-btn-primary">Get Started</a>
-            </nav>
+            <div class="d-flex align-items-center justify-content-between py-3">
+                <a href="#" class="hy-logo">Hyamii</a>
+                <nav class="d-none d-lg-flex align-items-center gap-4">
+                    <a href="#features" class="hy-nav-link">Features</a>
+                    <a href="#about" class="hy-nav-link">About</a>
+                    <a href="#faq" class="hy-nav-link">FAQ</a>
+                    <a href="#contact" class="hy-nav-link">Contact</a>
+                </nav>
+                <a href="{{ url('/login') }}" class="hy-btn hy-btn-primary">Get Started <i
+                        class="fa-solid fa-arrow-right"></i></a>
+            </div>
         </div>
     </header>
 
-    <!-- Hero -->
-    <section class="hy-hero" id="home">
+    <!-- hero -->
+    <section class="tp-hero-spacing position-relative">
+        <img class="hy-shape" style="top:-40px;left:-60px;width:220px;opacity:.5"
+            src="{{ asset('vendor/custom-home/images/hero-shape-1.png') }}" alt="">
+        <img class="hy-shape" style="bottom:0;right:-30px;width:260px;opacity:.4"
+            src="{{ asset('vendor/custom-home/images/hero-shape-3.png') }}" alt="">
         <div class="container">
-            <div class="row align-items-center g-5">
+            <div class="row align-items-center">
                 <div class="col-lg-6">
-                    @if(!empty($lh['hero']['subtitle']))
-                        <span class="hy-eyebrow">{{ $lh['hero']['subtitle'] }}</span>
-                    @endif
-                    <h1 class="hy-title">{{ $lh['hero']['title'] }}</h1>
-                    <p class="hy-lead mb-4">{{ $lh['hero']['paragraph'] }}</p>
-                    <div class="d-flex flex-wrap gap-3 mb-5">
-                        @if(!empty($lh['hero']['primary_btn']))
-                            <a href="{{ route('restaurant_signup') }}" class="hy-btn hy-btn-primary">{{ $lh['hero']['primary_btn'] }} <i class="fa-light fa-arrow-right"></i></a>
-                        @endif
-                        @if(!empty($lh['hero']['secondary_btn']))
-                            <a href="#services" class="hy-btn hy-btn-outline">{{ $lh['hero']['secondary_btn'] }}</a>
-                        @endif
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-6 col-sm-5">
-                            <div class="hy-stat">
-                                <div class="val">{{ $lh['hero']['card1_value'] ?? '' }}</div>
-                                <div class="lab">{{ $lh['hero']['card1_label'] ?? '' }}</div>
-                            </div>
-                        </div>
-                        <div class="col-6 col-sm-5">
-                            <div class="hy-stat">
-                                <div class="val">{{ $lh['hero']['card2_value'] ?? '' }}</div>
-                                <div class="lab">{{ $lh['hero']['card2_label'] ?? '' }}</div>
-                            </div>
-                        </div>
+                    <span class="tp-section-subtitle mb-3"><span class="borders"></span>
+                        {{ $lh['hero']['subtitle'] ?? 'Restaurant software built for Rwanda' }}</span>
+                    <h1 class="tp-hero-title">{{ $lh['hero']['title'] ?? 'Run your restaurant on autopilot' }}</h1>
+                    <p class="mt-4" style="font-size:18px;line-height:30px;color:var(--tp-grey-1);max-width:520px;">
+                        {{ $lh['hero']['paragraph'] ?? 'Hyamii brings POS, kitchen display, online ordering, inventory and RRA EBM compliance into one fast, beautiful platform.' }}
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mt-4 pt-2">
+                        <a href="{{ url('/login') }}" class="hy-btn hy-btn-primary">Start free <i
+                                class="fa-solid fa-arrow-right"></i></a>
+                        <a href="#features" class="hy-btn hy-btn-secondary"><i
+                                class="fa-solid fa-play"></i> Watch demo</a>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <img src="{{ landing_home_image($lh['hero']['image'] ?? null, 'thumb-main.png') }}" alt="Hyamii" class="img-fluid hy-hero-img w-100">
+                <div class="col-lg-6 position-relative">
+                    <div class="tp-hero-thumb">
+                        <img class="w-100" src="{{ $img($lh['hero']['image'] ?? null, 'thumb-main.png') }}"
+                            alt="Hyamii dashboard" style="border-radius:24px;">
+                        <img class="hy-shape" style="top:30px;right:10px;width:90px"
+                            src="{{ asset('vendor/custom-home/images/hero-shape-5.png') }}" alt="">
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Brand -->
-    <section class="hy-brand py-5">
+    <!-- brand slider -->
+    <section class="pb-100 pt-60">
         <div class="container">
-            @if(!empty($lh['brand']['title']))
-                <p class="text-center mb-4" style="color:#4a5c59;font-weight:600;font-size:14px;letter-spacing:.04em;">{{ $lh['brand']['title'] }}</p>
-            @endif
-            <div class="row align-items-center justify-content-center g-4">
-                @foreach($lh['brand']['logos'] as $i => $logo)
-                    <div class="col-4 col-sm-2 text-center">
-                        <img src="{{ landing_home_image($logo, $brandImgs[$i % count($brandImgs)]) }}" alt="Partner">
+            <p class="text-center mb-4"
+                style="font-family:var(--tp-ff-heading);text-transform:uppercase;font-weight:600;color:var(--tp-grey-2);letter-spacing:.05em;">
+                {{ $lh['brand']['title'] ?? 'Trusted by restaurants across Rwanda' }}</p>
+            <div class="swiper tp-brand-slide-active">
+                <div class="swiper-wrapper align-items-center">
+                    @foreach (['brand-1.png', 'brand-3.png', 'brand-4.png', 'brand-5.png', 'brand-6.png', 'brand-1.png', 'brand-3.png', 'brand-4.png'] as $b)
+                        <div class="swiper-slide text-center">
+                            <img src="{{ asset('vendor/custom-home/images/' . $b) }}" alt=""
+                                style="height:42px;opacity:.65;filter:grayscale(1);">
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- services -->
+    <section id="features" class="pb-100 position-relative">
+        <div class="container">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <span class="tp-section-subtitle mb-3"><span class="borders"></span>
+                        {{ $lh['services']['subtitle'] ?? 'All-in-one platform' }}</span>
+                    <h2 class="tp-section-title-clash-600 fs-60">
+                        {{ $lh['services']['title'] ?? 'Everything your restaurant needs' }}</h2>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                @foreach (($lh['services']['items'] ?? []) as $i => $s)
+                    <div class="col-lg-4 col-md-6">
+                        <div class="tp-service-item position-relative overflow-hidden h-100">
+                            <div class="tp-service-item-bg"></div>
+                            <div class="tp-service-shape" style="color:var(--tp-theme-secondary)">
+                                <i class="fa-solid {{ $serviceIcons[$i % count($serviceIcons)] }}"
+                                    style="font-size:34px;"></i>
+                            </div>
+                            <h3 class="tp-service-item-title">{{ $s['title'] ?? '' }}</h3>
+                            <p class="tp-service-para" style="color:var(--tp-grey-1);">{{ $s['text'] ?? '' }}</p>
+                        </div>
                     </div>
                 @endforeach
             </div>
         </div>
     </section>
 
-    <!-- About -->
-    <section class="hy-section" id="about">
+    <!-- about + stats -->
+    <section id="about" class="pb-100">
         <div class="container">
             <div class="row align-items-center g-5">
-                <div class="col-lg-6">
-                    <img src="{{ landing_home_image($lh['about']['image'] ?? null, 'thumb-1.png') }}" alt="About Hyamii" class="img-fluid hy-about-img w-100">
+                <div class="col-lg-6 position-relative">
+                    <img class="w-100" src="{{ $img($lh['about']['image'] ?? null, 'thumb-2.jpg') }}" alt=""
+                        style="border-radius:24px;">
+                    <img class="hy-shape" style="bottom:-30px;left:-30px;width:120px"
+                        src="{{ asset('vendor/custom-home/images/hero-shape-2.png') }}" alt="">
                 </div>
                 <div class="col-lg-6">
-                    @if(!empty($lh['about']['subtitle']))
-                        <span class="hy-eyebrow">{{ $lh['about']['subtitle'] }}</span>
-                    @endif
-                    <h2 class="hy-title">{{ $lh['about']['title'] }}</h2>
-                    @if(!empty($lh['about']['paragraph1']))
-                        <p class="hy-lead">{{ $lh['about']['paragraph1'] }}</p>
-                    @endif
-                    @if(!empty($lh['about']['paragraph2']))
-                        <p class="hy-lead">{{ $lh['about']['paragraph2'] }}</p>
-                    @endif
-
-                    <div class="d-flex align-items-center gap-3 my-4">
-                        <div class="hy-fact">{{ $lh['about']['fact_value'] ?? '' }}</div>
-                        <div style="font-weight:600;color:var(--skin-base);">{{ $lh['about']['fact_label'] ?? '' }}</div>
+                    <span class="tp-section-subtitle mb-3"><span class="borders"></span>
+                        {{ $lh['about']['subtitle'] ?? 'Why Hyamii' }}</span>
+                    <h2 style="font-family:var(--tp-ff-clash-bold);font-size:48px;line-height:1.05;text-transform:uppercase;">
+                        {{ $lh['about']['title'] ?? 'Made for Rwandan restaurants' }}</h2>
+                    <p class="mt-3" style="font-size:18px;line-height:30px;color:var(--tp-grey-1);">
+                        {{ $lh['about']['paragraph1'] ?? '' }}</p>
+                    <p style="font-size:18px;line-height:30px;color:var(--tp-grey-1);">
+                        {{ $lh['about']['paragraph2'] ?? '' }}</p>
+                    <div class="row g-4 mt-2">
+                        <div class="col-6">
+                            <div class="hy-stat"><div class="num"><span class="purecounter" data-purecounter-start="0"
+                                        data-purecounter-end="500" data-purecounter-suffix="+">0</span></div>
+                                <div class="lbl">Restaurants</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="hy-stat"><div class="num"><span class="purecounter" data-purecounter-start="0"
+                                        data-purecounter-end="50" data-purecounter-suffix="k+">0</span></div>
+                                <div class="lbl">Orders / day</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="hy-stat"><div class="num"><span class="purecounter" data-purecounter-start="0"
+                                        data-purecounter-end="30" data-purecounter-suffix="+">0</span></div>
+                                <div class="lbl">Cities</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="hy-stat"><div class="num"><span class="purecounter" data-purecounter-start="0"
+                                        data-purecounter-end="99.9" data-purecounter-decimals="1"
+                                        data-purecounter-suffix="%">0</span></div>
+                                <div class="lbl">Uptime</div>
+                            </div>
+                        </div>
                     </div>
-
-                    @if(!empty($lh['about']['feature1_title']))
-                        <div class="hy-feature">
-                            <div class="ic"><i class="fa-light fa-circle-check"></i></div>
-                            <div>
-                                <h5>{{ $lh['about']['feature1_title'] }}</h5>
-                                <p>{{ $lh['about']['feature1_text'] }}</p>
-                            </div>
-                        </div>
-                    @endif
-                    @if(!empty($lh['about']['feature2_title']))
-                        <div class="hy-feature">
-                            <div class="ic"><i class="fa-light fa-circle-check"></i></div>
-                            <div>
-                                <h5>{{ $lh['about']['feature2_title'] }}</h5>
-                                <p>{{ $lh['about']['feature2_text'] }}</p>
-                            </div>
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Services -->
-    <section class="hy-section" id="services" style="background:#fafafa;">
+    <!-- features band -->
+    <section class="pb-100">
         <div class="container">
-            <div class="text-center mb-5">
-                @if(!empty($lh['services']['subtitle']))
-                    <span class="hy-eyebrow">{{ $lh['services']['subtitle'] }}</span>
-                @endif
-                <h2 class="hy-title">{{ $lh['services']['title'] }}</h2>
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <span class="tp-section-subtitle mb-3"><span class="borders"></span> Built different</span>
+                    <h2 class="tp-section-title-clash-600 fs-60">Designed for the way you work</h2>
+                </div>
             </div>
             <div class="row g-4">
-                @foreach($lh['services']['items'] as $i => $s)
-                    <div class="col-md-6 col-lg-4">
-                        <div class="hy-service-card">
-                            <div class="hy-service-ic">
-                                @if(!empty($s['icon']))
-                                    <img src="{{ landing_home_image($s['icon'], 'thumb-2.png') }}" alt="">
-                                @else
-                                    <i class="fa-light {{ $serviceIcons[$i % count($serviceIcons)] }}"></i>
-                                @endif
+                @php
+                    $features = [
+                        ['icon' => 'fa-network-wired', 'title' => 'Multi-branch', 'text' => 'Run several branches from one dashboard with shared menu and stock.'],
+                        ['icon' => 'fa-language', 'title' => 'Kinyarwanda ready', 'text' => 'Serve staff and customers in English, French and Kinyarwanda.'],
+                        ['icon' => 'fa-wifi', 'title' => 'Offline mode', 'text' => 'Keep selling when the internet drops — sync automatically when back.'],
+                        ['icon' => 'fa-mobile-screen-button', 'title' => 'Any device', 'text' => 'Works on tablets, phones and desktop with a clean, fast interface.'],
+                    ];
+                @endphp
+                @foreach ($features as $f)
+                    <div class="col-lg-3 col-md-6">
+                        <div class="tp-feature-md-item d-flex flex-column h-100">
+                            <div class="tp-feature-md-icon" style="color:var(--tp-theme-secondary)">
+                                <i class="fa-solid {{ $f['icon'] }}" style="font-size:40px;"></i>
                             </div>
-                            <h4 style="font-size:20px;margin-bottom:10px;">{{ $s['title'] }}</h4>
-                            <p style="margin:0;font-size:15px;">{{ $s['text'] }}</p>
+                            <h4 style="font-family:var(--tp-ff-heading);font-size:22px;text-transform:uppercase;">
+                                {{ $f['title'] }}</h4>
+                            <p style="color:var(--tp-grey-1);">{{ $f['text'] }}</p>
                         </div>
                     </div>
                 @endforeach
@@ -510,28 +367,74 @@
         </div>
     </section>
 
-    <!-- FAQ -->
-    <section class="hy-section" id="faq">
+    <!-- testimonials -->
+    <section class="pb-100">
         <div class="container">
-            <div class="row align-items-center g-5">
-                <div class="col-lg-5">
-                    <img src="{{ landing_home_image($lh['faq']['image'] ?? null, 'portfolio-thumb.png') }}" alt="FAQ" class="img-fluid hy-faq-img w-100">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <span class="tp-section-subtitle mb-3"><span class="borders"></span> Loved by owners</span>
+                    <h2 class="tp-section-title-clash-600 fs-60">What restaurateurs say</h2>
                 </div>
-                <div class="col-lg-7">
-                    @if(!empty($lh['faq']['subtitle']))
-                        <span class="hy-eyebrow">{{ $lh['faq']['subtitle'] }}</span>
-                    @endif
-                    <h2 class="hy-title mb-4">{{ $lh['faq']['title'] }}</h2>
-                    <div class="accordion" id="hyFaq">
-                        @foreach($lh['faq']['items'] as $i => $f)
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="hyFaqH{{ $i }}">
-                                    <button class="accordion-button {{ $i > 0 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#hyFaqC{{ $i }}" aria-expanded="{{ $i === 0 ? 'true' : 'false' }}" aria-controls="hyFaqC{{ $i }}">
-                                        {{ $f['question'] }}
+            </div>
+            <div class="swiper tp-testimonial-ai-slide-active">
+                <div class="swiper-wrapper">
+                    @php
+                        $testimonials = [
+                            ['name' => 'Jean Claude', 'role' => 'Owner, Kigali Bites', 'text' => 'Since we switched to Hyamii, our kitchen runs 30% faster and the RRA receipts are effortless.', 'img' => 'testimonial-item-1.png'],
+                            ['name' => 'Alice Uwase', 'role' => 'Manager, Nyamirambo', 'text' => 'Inventory alerts alone paid for the software. I finally know my real food cost.', 'img' => 'testimonial-item-2.png'],
+                            ['name' => 'Patrick N.', 'role' => 'Group Ops, Rivermark', 'text' => 'Managing three branches from one screen used to be a dream. Now it is just Tuesday.', 'img' => 'testimonial-item-3.png'],
+                        ];
+                    @endphp
+                    @foreach ($testimonials as $t)
+                        <div class="swiper-slide">
+                            <div class="tp-feature-md-item"
+                                style="background:#fff;border:1px solid var(--tp-border-1);">
+                                <p style="font-size:20px;line-height:32px;color:var(--tp-common-black);">“{{ $t['text'] }}”</p>
+                                <div class="d-flex align-items-center gap-3 mt-4">
+                                    <img src="{{ asset('vendor/custom-home/images/' . $t['img']) }}" width="56"
+                                        height="56" style="border-radius:50%;object-fit:cover;" alt="">
+                                    <div>
+                                        <h5 style="margin:0;font-family:var(--tp-ff-heading);">{{ $t['name'] }}</h5>
+                                        <span style="color:var(--tp-grey-2);font-size:14px;">{{ $t['role'] }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- faq -->
+    <section id="faq" class="pb-100">
+        <div class="container">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <span class="tp-section-subtitle mb-3"><span class="borders"></span>
+                        {{ $lh['faq']['subtitle'] ?? 'FAQ' }}</span>
+                    <h2 class="tp-section-title-clash-600 fs-60">
+                        {{ $lh['faq']['title'] ?? 'Questions, answered' }}</h2>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="tp-faq-wrap accordion" id="hyFaq">
+                        @foreach (($lh['faq']['items'] ?? []) as $i => $f)
+                            <div class="accordion-item"
+                                style="border:1px solid var(--tp-border-1);margin-bottom:12px;border-radius:10px;overflow:hidden;">
+                                <h2 class="accordion-header">
+                                    <button class="tp-faq-btn accordion-button {{ $i > 0 ? 'collapsed' : '' }}"
+                                        type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#faq{{ $i }}">
+                                        {{ $f['question'] ?? '' }}
                                     </button>
                                 </h2>
-                                <div id="hyFaqC{{ $i }}" class="accordion-collapse collapse {{ $i === 0 ? 'show' : '' }}" aria-labelledby="hyFaqH{{ $i }}" data-bs-parent="#hyFaq">
-                                    <div class="accordion-body" style="color:#4a5c59;">{{ $f['answer'] }}</div>
+                                <div id="faq{{ $i }}"
+                                    class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}"
+                                    data-bs-parent="#hyFaq">
+                                    <div class="accordion-body" style="color:var(--tp-grey-1);">
+                                        {{ $f['answer'] ?? '' }}</div>
                                 </div>
                             </div>
                         @endforeach
@@ -541,92 +444,108 @@
         </div>
     </section>
 
-    <!-- CTA -->
-    <section class="hy-section">
+    <!-- cta -->
+    <section class="pb-100">
         <div class="container">
-            <div class="hy-cta">
-                @if(!empty($lh['cta']['subtitle']))
-                    <span class="hy-eyebrow">{{ $lh['cta']['subtitle'] }}</span>
-                @endif
-                <h2 class="hy-title">{{ $lh['cta']['title'] }}</h2>
-                @if(!empty($lh['cta']['text']))
-                    <p class="hy-lead mb-4">{{ $lh['cta']['text'] }}</p>
-                @endif
-                @if(!empty($lh['cta']['button']))
-                    <a href="{{ route('restaurant_signup') }}" class="hy-btn hy-btn-primary">{{ $lh['cta']['button'] }} <i class="fa-light fa-arrow-right"></i></a>
-                @endif
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact -->
-    <section class="hy-section" id="contact" style="background:#fafafa;">
-        <div class="container">
-            <div class="text-center mb-5">
-                @if(!empty($lh['contact']['subtitle']))
-                    <span class="hy-eyebrow">{{ $lh['contact']['subtitle'] }}</span>
-                @endif
-                <h2 class="hy-title">{{ $lh['contact']['title'] }}</h2>
-            </div>
-            <div class="row g-4 justify-content-center">
-                <div class="col-sm-6 col-lg-4">
-                    <div class="hy-contact-card">
-                        <div class="ic"><i class="fa-light fa-envelope"></i></div>
-                        <h5 style="font-size:16px;">Email</h5>
-                        <a href="mailto:{{ $lh['contact']['email'] ?? '' }}" style="color:#4a5c59;">{{ $lh['contact']['email'] ?? '' }}</a>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-4">
-                    <div class="hy-contact-card">
-                        <div class="ic"><i class="fa-light fa-phone"></i></div>
-                        <h5 style="font-size:16px;">Phone</h5>
-                        <a href="tel:{{ $lh['contact']['phone'] ?? '' }}" style="color:#4a5c59;">{{ $lh['contact']['phone'] ?? '' }}</a>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-4">
-                    <div class="hy-contact-card">
-                        <div class="ic"><i class="fa-light fa-location-dot"></i></div>
-                        <h5 style="font-size:16px;">Location</h5>
-                        <span style="color:#4a5c59;">{{ $lh['contact']['address'] ?? '' }}</span>
-                    </div>
+            <div class="tp-cta-ai-bg position-relative overflow-hidden">
+                <img class="hy-shape" style="top:0;left:0;width:30%;opacity:.15"
+                    src="{{ asset('vendor/custom-home/images/cta-shape-2.png') }}" alt="">
+                <img class="hy-shape" style="bottom:0;right:0;width:30%;opacity:.15"
+                    src="{{ asset('vendor/custom-home/images/cta-shape-3.png') }}" alt="">
+                <div class="position-relative" style="z-index:2;padding:90px 30px;">
+                    <h2 class="tp-section-title-clash-600 fs-60">
+                        {{ $lh['cta']['title'] ?? 'Ready to modernize your restaurant?' }}</h2>
+                    <p class="mt-3 mb-4"
+                        style="font-size:18px;color:rgba(255,255,255,.8);max-width:560px;margin-inline:auto;">
+                        {{ $lh['cta']['text'] ?? 'Join hundreds of Rwandan restaurants already running smoother with Hyamii.' }}
+                    </p>
+                    <a href="{{ url('/login') }}" class="hy-btn hy-btn-secondary"
+                        style="border-color:#fff;color:#fff;background:transparent;">Get started free <i
+                            class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="hy-footer">
+    <!-- footer -->
+    <footer id="contact" class="pt-80 pb-30" style="background:#0d2b27;color:#fff;">
         <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-5">
-                    @if(!empty($lh['footer']['logo']))
-                        <img src="{{ landing_home_image($lh['footer']['logo'], 'logo.png') }}" alt="Hyamii" style="height:36px;margin-bottom:16px;">
-                    @else
-                        <a href="{{ route('home') }}" class="hy-logo" style="display:inline-block;margin-bottom:16px;">Hya<span>mii</span></a>
-                    @endif
-                    <p style="max-width:420px;color:rgba(255,255,255,0.7);">{{ $lh['footer']['text'] ?? '' }}</p>
-                </div>
-                <div class="col-sm-6 col-lg-4">
-                    <h4 class="mb-3" style="font-size:18px;">Contact</h4>
-                    <div class="finfo">
-                        <p class="mb-2"><i class="fa-light fa-location-dot"></i> {{ $lh['footer']['location'] ?? '' }}</p>
-                        <p class="mb-2"><i class="fa-light fa-envelope"></i> <a href="mailto:{{ $lh['footer']['email'] ?? '' }}">{{ $lh['footer']['email'] ?? '' }}</a></p>
-                        <p class="mb-0"><i class="fa-light fa-phone"></i> <a href="tel:{{ $lh['footer']['phone'] ?? '' }}">{{ $lh['footer']['phone'] ?? '' }}</a></p>
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <a href="#" class="hy-logo" style="color:#fff;">Hyamii</a>
+                    <p class="mt-3" style="color:rgba(255,255,255,.6);max-width:320px;">
+                        {{ $lh['footer']['text'] ?? 'The all-in-one restaurant management platform built for Rwanda — POS, kitchen, online ordering, inventory and RRA EBM.' }}
+                    </p>
+                    <div class="tp-footer-social mt-4">
+                        <ul class="list-unstyled d-flex flex-wrap gap-2 p-0 m-0">
+                            <li><a href="#" style="background:rgba(255,255,255,.08);color:#fff;"><i
+                                        class="fa-brands fa-facebook-f"></i> Facebook</a></li>
+                            <li><a href="#" style="background:rgba(255,255,255,.08);color:#fff;"><i
+                                        class="fa-brands fa-instagram"></i> Instagram</a></li>
+                            <li><a href="#" style="background:rgba(255,255,255,.08);color:#fff;"><i
+                                        class="fa-brands fa-linkedin-in"></i> LinkedIn</a></li>
+                            <li><a href="#" style="background:rgba(255,255,255,.08);color:#fff;"><i
+                                        class="fa-brands fa-x-twitter"></i> X</a></li>
+                        </ul>
                     </div>
                 </div>
-                <div class="col-sm-6 col-lg-3">
-                    <h4 class="mb-3" style="font-size:18px;">Get Started</h4>
-                    <p class="mb-2"><a href="{{ route('restaurant_signup') }}">Start free trial</a></p>
-                    <p class="mb-2"><a href="{{ route('login') }}">Sign in</a></p>
-                    <p class="mb-0"><a href="#services">Features</a></p>
+                <div class="col-lg-2 col-6">
+                    <h5 style="font-family:var(--tp-ff-heading);text-transform:uppercase;">Product</h5>
+                    <ul class="list-unstyled mt-3" style="line-height:2.2;color:rgba(255,255,255,.7);">
+                        <li><a href="#features" style="color:inherit;">Features</a></li>
+                        <li><a href="#about" style="color:inherit;">About</a></li>
+                        <li><a href="#faq" style="color:inherit;">FAQ</a></li>
+                        <li><a href="{{ url('/login') }}" style="color:inherit;">Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <h5 style="font-family:var(--tp-ff-heading);text-transform:uppercase;">Contact</h5>
+                    <ul class="list-unstyled mt-3" style="line-height:2.2;color:rgba(255,255,255,.7);">
+                        <li><i class="fa-solid fa-envelope me-2"></i>
+                            {{ $lh['contact']['email'] ?? 'hello@hyamii.rw' }}</li>
+                        <li><i class="fa-solid fa-phone me-2"></i>
+                            {{ $lh['contact']['phone'] ?? '+250 788 000 000' }}</li>
+                        <li><i class="fa-solid fa-location-dot me-2"></i>
+                            {{ $lh['contact']['address'] ?? 'Kigali, Rwanda' }}</li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-12">
+                    <h5 style="font-family:var(--tp-ff-heading);text-transform:uppercase;">Newsletter</h5>
+                    <p style="color:rgba(255,255,255,.6);">Get product updates in Kinyarwanda & English.</p>
+                    <div class="tp-footer-widget-form position-relative mt-2">
+                        <input type="email" class="tp-input" placeholder="Your email"
+                            style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;height:54px;width:100%;color:#fff;padding:5px 70px 5px 20px;">
+                        <button class="tp-button btn border-0"
+                            style="background:var(--tp-theme-secondary);color:#fff;width:46px;height:46px;border-radius:8px;right:6px;top:50%;transform:translateY(-50%);position:absolute;"><i
+                                class="fa-solid fa-arrow-right"></i></button>
+                    </div>
                 </div>
             </div>
-            <hr style="border-color:rgba(255,255,255,0.12);margin:36px 0 20px;">
-            <p class="text-center mb-0" style="font-size:14px;color:rgba(255,255,255,0.55);">© {{ date('Y') }} Hyamii. All rights reserved.</p>
+            <div class="tp-footer-bottom mt-5"
+                style="border-top:1px solid rgba(255,255,255,.1);padding-top:22px;color:rgba(255,255,255,.6);">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <p class="mb-0">© {{ date('Y') }} Hyamii. All rights reserved.</p>
+                    <div class="tp-footer-menu">
+                        <ul class="list-unstyled d-flex gap-4 mb-0"
+                            style="color:rgba(255,255,255,.7);text-transform:uppercase;font-size:14px;font-family:var(--tp-ff-heading);">
+                            <li><a href="#" style="color:inherit;">Privacy</a></li>
+                            <li><a href="#" style="color:inherit;">Terms</a></li>
+                            <li><a href="#" style="color:inherit;">Cookies</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
 
+    <script src="{{ asset('vendor/custom-home/js/jquery.js') }}"></script>
     <script src="{{ asset('vendor/custom-home/js/bootstrap-bundle.js') }}"></script>
+    <script src="{{ asset('vendor/custom-home/js/swiper-bundle.js') }}"></script>
+    <script src="{{ asset('vendor/custom-home/js/purecounter.js') }}"></script>
+    <script src="{{ asset('vendor/custom-home/js/plugin.js') }}"></script>
+    <script src="{{ asset('vendor/custom-home/js/main.js') }}"></script>
+    <script src="{{ asset('vendor/custom-home/js/slider-init.js') }}"></script>
+    <script src="{{ asset('vendor/custom-home/js/tp-cursor.js') }}"></script>
 </body>
 
 </html>
