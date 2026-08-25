@@ -185,6 +185,10 @@
 
         .hy-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+        /* screenshot variant: shows full product shot without cropping */
+        .hy-media.hy-shot { background: #0d2b27; padding: 14px; }
+        .hy-media.hy-shot img { object-fit: contain; border-radius: 10px; }
+
         /* cards */
         .hy-card {
             background: #fff;

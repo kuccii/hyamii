@@ -23,8 +23,8 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="hy-media" style="aspect-ratio: 4 / 3;">
-                        <img src="{{ $img($lh['hero']['image'] ?? null, 'thumb-main.png') }}" alt="Hyamii dashboard">
+                    <div class="hy-media hy-shot" style="aspect-ratio: 16 / 11;">
+                        <img src="{{ asset('vendor/custom-home/images/ch05-pos.png') }}" alt="Hyamii point-of-sale screen">
                     </div>
                 </div>
             </div>
@@ -81,8 +81,8 @@
         <div class="container">
             <div class="row align-items-center g-5">
                 <div class="col-lg-6">
-                    <div class="hy-media" style="aspect-ratio: 1 / 1;">
-                        <img src="{{ $img($lh['about']['image'] ?? null, 'thumb-2.jpg') }}" alt="About Hyamii" loading="lazy">
+                    <div class="hy-media hy-shot" style="aspect-ratio: 16 / 11;">
+                        <img src="{{ asset('vendor/custom-home/images/ch09-reports.png') }}" alt="Hyamii reports and insights" loading="lazy">
                     </div>
                 </div>
                 <div class="col-lg-6">
