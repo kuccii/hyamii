@@ -73,6 +73,7 @@ class HomeController extends Controller
             'currencyCode' => $country['currency_code'],
             'currencySymbol' => $country['currency_symbol'],
             'countries' => CountrySelector::$map,
+            'lh' => landing_home_setting(),
         ];
     }
 
