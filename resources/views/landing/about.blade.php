@@ -36,26 +36,25 @@
                     <div class="row g-4 mt-3">
                         <div class="col-6 col-sm-3">
                             <div class="hy-stat"><div class="num"><span class="purecounter" data-purecounter-start="0"
-                                        data-purecounter-end="500" data-purecounter-suffix="+">0</span></div>
+                                        data-purecounter-end="40" data-purecounter-suffix="+">40+</span></div>
                                 <div class="lbl">Restaurants</div>
                             </div>
                         </div>
                         <div class="col-6 col-sm-3">
                             <div class="hy-stat"><div class="num"><span class="purecounter" data-purecounter-start="0"
-                                        data-purecounter-end="50" data-cursor="" data-purecounter-suffix="k+">0</span></div>
+                                        data-purecounter-end="3" data-cursor="" data-purecounter-suffix="k+">3k+</span></div>
                                 <div class="lbl">Orders / day</div>
                             </div>
                         </div>
                         <div class="col-6 col-sm-3">
                             <div class="hy-stat"><div class="num"><span class="purecounter" data-purecounter-start="0"
-                                        data-purecounter-end="30" data-purecounter-suffix="+">0</span></div>
+                                        data-purecounter-end="6" data-purecounter-suffix="+">6+</span></div>
                                 <div class="lbl">Cities</div>
                             </div>
                         </div>
                         <div class="col-6 col-sm-3">
                             <div class="hy-stat"><div class="num"><span class="purecounter" data-purecounter-start="0"
-                                        data-purecounter-end="99.9" data-purecounter-decimals="1"
-                                        data-purecounter-suffix="%">0</span></div>
+                                        data-purecounter-end="99" data-purecounter-suffix="%">99%</span></div>
                                 <div class="lbl">Uptime</div>
                             </div>
                         </div>

@@ -18,6 +18,7 @@
         <div class="container">
             <div class="row g-5">
                 <div class="col-lg-5">
+                    <span class="hy-pill mb-3"><span class="dot"></span> Say hello</span>
                     <h2 class="hy-h2 mb-4">Get in touch</h2>
                     <ul class="list-unstyled" style="line-height:2.4;">
                         <li class="d-flex align-items-center gap-3">

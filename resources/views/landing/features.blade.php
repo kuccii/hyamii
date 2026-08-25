@@ -20,6 +20,13 @@
     <!-- services -->
     <section class="hy-section">
         <div class="container">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <span class="hy-pill mb-3"><span class="dot"></span>
+                        {{ $lh['services']['subtitle'] ?? 'All-in-one platform' }}</span>
+                    <h2 class="hy-h2">{{ $lh['services']['title'] ?? 'Everything your restaurant needs' }}</h2>
+                </div>
+            </div>
             <div class="row g-4">
                 @foreach (($lh['services']['items'] ?? []) as $i => $s)
                     <div class="col-lg-4 col-md-6">
