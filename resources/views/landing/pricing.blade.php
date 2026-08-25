@@ -52,6 +52,30 @@
         </div>
     </section>
 
+    <!-- contactless table ordering -->
+    <section class="hy-section" style="background:var(--hy-soft);">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6 order-lg-2">
+                    <div class="hy-media hy-shot" style="aspect-ratio: 16 / 11;">
+                        <img src="{{ asset('vendor/custom-home/images/ch03-qr.png') }}" alt="Guests scan a QR code to order from the table" loading="lazy">
+                    </div>
+                </div>
+                <div class="col-lg-6 order-lg-1">
+                    <span class="hy-pill mb-3"><span class="dot"></span> Contactless ordering</span>
+                    <h2 class="hy-h2 mb-3">Contactless Table Ordering System</h2>
+                    <p class="hy-lead mb-4">Turn every table into a self-order station. Guests scan a QR code, browse the live menu, and send orders and payments straight from their phone — no app, no waiting, no shared menus.</p>
+                    <ul class="list-unstyled mb-4" style="line-height:2.2;">
+                        <li><i class="fa-solid fa-check" style="color:var(--hy-amaranth);"></i> One QR code per table opens the digital menu</li>
+                        <li><i class="fa-solid fa-check" style="color:var(--hy-amaranth);"></i> Orders hit the kitchen and POS in real time</li>
+                        <li><i class="fa-solid fa-check" style="color:var(--hy-amaranth);"></i> Guests pay at the table from their phone</li>
+                    </ul>
+                    <a href="{{ url('/login') }}" class="hy-btn hy-btn-primary">Get started free <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- faq -->
     <section id="faq" class="hy-section" style="background:var(--hy-soft);">
         <div class="container">
