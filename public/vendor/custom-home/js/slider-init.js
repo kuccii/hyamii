@@ -485,18 +485,23 @@
 	////////////////////////////////////////////////////
 	// 19. tp-testimonial-ai-slide-active
 	let tp_testimonial_ai_slide_active = new Swiper(".tp-testimonial-ai-slide-active", {
-        spaceBetween: 80,
+        spaceBetween: 24,
         slidesPerView: 1,
         loop: true,
-		spaceBetween: 24,
-        allowTouchMove: true,
-		centeredSlides: true,
-		speed: 600,
-		effect: "fade",
-		navigation: {
-			nextEl: '.tp-testimonial-ai-next',
-			prevEl: '.tp-testimonial-ai-prev',
-		},
+        grabCursor: true,
+        speed: 700,
+        autoplay: {
+            delay: 4000,
+            disableOnInteraction: false,
+        },
+        breakpoints: {
+            768: { slidesPerView: 2 },
+            992: { slidesPerView: 3 },
+        },
+        pagination: {
+            el: '.tp-testimonial-ai-pagination',
+            clickable: true,
+        },
 	});
 
     ////////////////////////////////////////////////////

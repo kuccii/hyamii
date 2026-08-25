@@ -267,6 +267,15 @@
 
         .hy-quote p { font-size: 18px; line-height: 1.6; color: var(--hy-ink); }
 
+        /* testimonial pagination */
+        .tp-testimonial-ai-pagination { text-align: center; }
+        .tp-testimonial-ai-pagination .swiper-pagination-bullet {
+            width: 9px; height: 9px; background: var(--hy-muted); opacity: .35; transition: .25s;
+        }
+        .tp-testimonial-ai-pagination .swiper-pagination-bullet-active {
+            background: var(--hy-teal); opacity: 1; width: 22px; border-radius: 6px;
+        }
+
         /* cta */
         .hy-cta {
             background: var(--hy-teal);
