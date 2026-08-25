@@ -94,26 +94,26 @@
                     <div class="row g-4 mt-3">
                         <div class="col-6 col-sm-3">
                             <div class="hy-stat"><div class="num"><span class="purecounter" data-purecounter-start="0"
-                                        data-purecounter-end="500" data-purecounter-suffix="+">0</span></div>
+                                        data-purecounter-end="500" data-purecounter-suffix="+">500+</span></div>
                                 <div class="lbl">Restaurants</div>
                             </div>
                         </div>
                         <div class="col-6 col-sm-3">
                             <div class="hy-stat"><div class="num"><span class="purecounter" data-purecounter-start="0"
-                                        data-purecounter-end="50" data-cursor="" data-purecounter-suffix="k+">0</span></div>
+                                        data-purecounter-end="50" data-cursor="" data-purecounter-suffix="k+">50k+</span></div>
                                 <div class="lbl">Orders / day</div>
                             </div>
                         </div>
                         <div class="col-6 col-sm-3">
                             <div class="hy-stat"><div class="num"><span class="purecounter" data-purecounter-start="0"
-                                        data-purecounter-end="30" data-purecounter-suffix="+">0</span></div>
+                                        data-purecounter-end="30" data-purecounter-suffix="+">30+</span></div>
                                 <div class="lbl">Cities</div>
                             </div>
                         </div>
                         <div class="col-6 col-sm-3">
                             <div class="hy-stat"><div class="num"><span class="purecounter" data-purecounter-start="0"
                                         data-purecounter-end="99.9" data-purecounter-decimals="1"
-                                        data-purecounter-suffix="%">0</span></div>
+                                        data-purecounter-suffix="%">99.9%</span></div>
                                 <div class="lbl">Uptime</div>
                             </div>
                         </div>
@@ -149,6 +149,55 @@
                         </div>
                     </div>
                 @endforeach
+            </div>
+        </div>
+    </section>
+
+    <!-- contactless table ordering -->
+    <section class="hy-section" style="background:var(--hy-soft);">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <div class="hy-media hy-shot" style="aspect-ratio: 16 / 11;">
+                        <img src="{{ asset('vendor/custom-home/images/ch03-qr.png') }}" alt="Guests scan a QR code to order from the table" loading="lazy">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <span class="hy-pill mb-3"><span class="dot"></span> Contactless ordering</span>
+                    <h2 class="hy-h2 mb-3">Contactless Table Ordering System</h2>
+                    <p class="hy-lead mb-4">Turn every table into a self-order station. Guests scan a QR code, browse the live menu, and send orders and payments straight from their phone — no app, no waiting, no shared menus.</p>
+                    <div class="row g-3 mb-4">
+                        <div class="col-sm-6">
+                            <div class="hy-card h-100">
+                                <div class="hy-icon"><i class="fa-solid fa-qrcode"></i></div>
+                                <h3 style="font-size:18px;">Scan to order</h3>
+                                <p style="font-size:15px;">One QR code per table opens the digital menu instantly.</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="hy-card h-100">
+                                <div class="hy-icon"><i class="fa-solid fa-bolt"></i></div>
+                                <h3 style="font-size:18px;">Orders to kitchen</h3>
+                                <p style="font-size:15px;">Items land on the KOT and POS in real time, zero re-keying.</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="hy-card h-100">
+                                <div class="hy-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                                <h3 style="font-size:18px;">Pay at the table</h3>
+                                <p style="font-size:15px;">Guests settle the bill from their phone and leave when ready.</p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="hy-card h-100">
+                                <div class="hy-icon"><i class="fa-solid fa-language"></i></div>
+                                <h3 style="font-size:18px;">Menu in their language</h3>
+                                <p style="font-size:15px;">Clear, up-to-date items with modifiers and options built in.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ url('/features') }}" class="hy-btn hy-btn-primary">Explore the system <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
             </div>
         </div>
     </section>
