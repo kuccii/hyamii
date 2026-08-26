@@ -257,14 +257,79 @@
 
         /* testimonial */
         .hy-quote {
+            position: relative;
             background: #fff;
             border: 1px solid var(--hy-line);
-            border-radius: 18px;
-            padding: 32px;
+            border-radius: 22px;
+            padding: 38px 34px 30px;
             height: 100%;
+            overflow: hidden;
+            transition: all .3s ease;
         }
 
-        .hy-quote p { font-size: 18px; line-height: 1.6; color: var(--hy-ink); }
+        .hy-quote:hover {
+            border-color: var(--hy-teal);
+            box-shadow: 0 26px 54px rgba(0, 37, 34, .10);
+            transform: translateY(-5px);
+        }
+
+        .hy-quote .qmark {
+            position: absolute;
+            top: 16px;
+            right: 22px;
+            font-size: 70px;
+            line-height: 1;
+            color: var(--hy-teal);
+            opacity: .09;
+            pointer-events: none;
+        }
+
+        .hy-quote .t-stars {
+            color: #f3a712;
+            font-size: 15px;
+            letter-spacing: 3px;
+            margin-bottom: 14px;
+        }
+
+        .hy-quote p {
+            font-size: 18.5px;
+            line-height: 1.65;
+            color: var(--hy-ink);
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hy-quote .t-foot {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--hy-line);
+        }
+
+        .hy-quote .t-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
+            box-shadow: 0 6px 16px rgba(0, 37, 34, .18);
+        }
+
+        .hy-quote .t-name {
+            font-family: 'Hanken Grotesk', sans-serif;
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--hy-ink);
+            margin: 0;
+        }
+
+        .hy-quote .t-role {
+            color: var(--hy-muted);
+            font-size: 13.5px;
+        }
 
         /* testimonial pagination */
         .tp-testimonial-ai-pagination { text-align: center; }

@@ -246,21 +246,27 @@
                 <div class="swiper-wrapper">
                     @php
                         $testimonials = [
-                            ['name' => 'Jean Claude', 'role' => 'Owner, Kigali Bites', 'text' => 'Since we switched to Hyamii, our kitchen runs 30% faster and the receipts are effortless.', 'img' => 'testimonial-item-1.png'],
-                            ['name' => 'Alice Uwase', 'role' => 'Manager, Nyamirambo', 'text' => 'Inventory alerts alone paid for the software. I finally know my real food cost.', 'img' => 'testimonial-item-2.png'],
-                            ['name' => 'Patrick N.', 'role' => 'Group Ops, Rivermark', 'text' => 'Managing three branches from one screen used to be a dream. Now it is just Tuesday.', 'img' => 'testimonial-item-3.png'],
+                            ['name' => 'Jean Claude', 'role' => 'Owner, Kigali Bites', 'text' => 'Since we switched to Hyamii, our kitchen runs 30% faster and the receipts are effortless.', 'img' => 'testimonial-item-1.png', 'stars' => 5],
+                            ['name' => 'Alice Uwase', 'role' => 'Manager, Nyamirambo', 'text' => 'Inventory alerts alone paid for the software. I finally know my real food cost.', 'img' => 'testimonial-item-2.png', 'stars' => 5],
+                            ['name' => 'Patrick N.', 'role' => 'Group Ops, Rivermark', 'text' => 'Managing three branches from one screen used to be a dream. Now it is just Tuesday.', 'img' => 'testimonial-item-3.png', 'stars' => 5],
                         ];
                     @endphp
                     @foreach ($testimonials as $t)
                         <div class="swiper-slide h-auto">
                             <div class="hy-quote d-flex flex-column">
+                                <i class="fa-solid fa-quote-left qmark"></i>
+                                <div class="t-stars">
+                                    @for ($s = 0; $s < ($t['stars'] ?? 5); $s++)
+                                        <i class="fa-solid fa-star"></i>
+                                    @endfor
+                                </div>
                                 <p class="flex-grow-1">“{{ $t['text'] }}”</p>
-                                <div class="d-flex align-items-center gap-3 mt-3">
-                                    <img src="{{ asset('vendor/custom-home/images/' . $t['img']) }}" width="52"
-                                        height="52" style="border-radius:50%;object-fit:cover;" alt="">
+                                <div class="t-foot">
+                                    <img class="t-avatar" src="{{ asset('vendor/custom-home/images/' . $t['img']) }}"
+                                        alt="{{ $t['name'] }}">
                                     <div>
-                                        <h5 style="margin:0;">{{ $t['name'] }}</h5>
-                                        <span style="color:var(--hy-muted);font-size:14px;">{{ $t['role'] }}</span>
+                                        <p class="t-name">{{ $t['name'] }}</p>
+                                        <span class="t-role">{{ $t['role'] }}</span>
                                     </div>
                                 </div>
                             </div>
