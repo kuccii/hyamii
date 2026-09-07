@@ -30,6 +30,7 @@
                     <tr>
                         <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">Branch</th>
                         <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">Status</th>
+                        <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">Mode</th>
                         <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">TIN</th>
                         <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">Initialized</th>
                         <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">Submissions</th>
@@ -51,6 +52,15 @@
                                     <span class="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400 rounded-full text-xs">Enabled</span>
                                 @else
                                     <span class="px-2 py-1 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 rounded-full text-xs">Disabled</span>
+                                @endif
+                            </td>
+                            <td class="py-3 px-4">
+                                @if($setting?->mode === 'osdc')
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-400 rounded-full text-xs">OSDC</span>
+                                @elseif($setting?->mode === 'physical_ebm')
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-400 rounded-full text-xs">Physical</span>
+                                @else
+                                    <span class="text-gray-400">—</span>
                                 @endif
                             </td>
                             <td class="py-3 px-4 text-sm font-mono text-gray-600 dark:text-gray-400">
@@ -90,7 +100,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="py-8 text-center text-gray-500 dark:text-gray-400">No branches configured</td></tr>
+                        <tr><td colspan="7" class="py-8 text-center text-gray-500 dark:text-gray-400">No branches configured</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -126,6 +136,34 @@
                     </div>
 
                     @if($enabled)
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Compliance Mode</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="relative flex items-center p-3 border-2 rounded-lg cursor-pointer transition-all duration-150 hover:shadow-sm"
+                                @class([
+                                    'border-skin-base bg-skin-base/10' => $mode === 'osdc',
+                                    'border-gray-200 dark:border-gray-600' => $mode !== 'osdc',
+                                ])>
+                                <input type="radio" wire:model="mode" value="osdc" class="sr-only peer">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-semibold text-gray-900 dark:text-white">OSDC (Cloud)</span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400 mt-1">Online signing, no hardware. Recommended for cloud POS.</span>
+                                </div>
+                            </label>
+                            <label class="relative flex items-center p-3 border-2 rounded-lg cursor-pointer transition-all duration-150 hover:shadow-sm"
+                                @class([
+                                    'border-skin-base bg-skin-base/10' => $mode === 'physical_ebm',
+                                    'border-gray-200 dark:border-gray-600' => $mode !== 'physical_ebm',
+                                ])>
+                                <input type="radio" wire:model="mode" value="physical_ebm" class="sr-only peer">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-semibold text-gray-900 dark:text-white">Physical EBM</span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400 mt-1">Hardware device with serial number and security key.</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <x-label value="TIN Number"/>
@@ -137,7 +175,7 @@
                         </div>
                         <div class="sm:col-span-2">
                             <x-label value="Server URL"/>
-                            <x-input wire:model="server_url" class="w-full" placeholder="https://ebm.rra.gov.rw/ebm"/>
+                            <x-input wire:model="server_url" class="w-full" placeholder="https://api-ebm.rra.gov.rw"/>
                         </div>
                         <div>
                             <x-label value="App Name"/>
@@ -148,8 +186,20 @@
                 </div>
 
                 @if($enabled && ($editingSetting || $tin_number))
+                @if($mode === 'osdc')
                 <div class="bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 p-4">
-                    <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Device Identity</h4>
+                    <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">OSDC Identity</h4>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Cloud-signed receipts. Enter the Communication Key (cmcKey) provided by RRA after CIS certification.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <x-label value="CMC Key"/>
+                            <input type="password" wire:model="cmc_key" autocomplete="new-password" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md shadow-sm focus:border-skin-base focus:ring-skin-base" placeholder="From RRA CIS certificate"/>
+                        </div>
+                    </div>
+                </div>
+                @else
+                <div class="bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 p-4">
+                    <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Physical Device Identity</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
                             <x-label value="Device Serial No"/>
@@ -165,6 +215,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <div class="bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 p-4">
                     <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Submission Settings</h4>

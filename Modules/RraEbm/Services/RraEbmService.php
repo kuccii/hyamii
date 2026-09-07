@@ -11,6 +11,8 @@ class RraEbmService
 {
     private const ALLOWED_HOSTS = [
         'ebm.rra.gov.rw',
+        'api-ebm.rra.gov.rw',
+        'sdcsandbox.rra.gov.rw',
     ];
 
     public function buildUrl(string $serverUrl, string $appName, string $endpoint): string
@@ -104,5 +106,19 @@ class RraEbmService
         }
 
         return $response->json()['resultMsg'] ?? 'Unknown RRA EBM error';
+    }
+
+    /**
+     * Resolve the correct endpoint for a given mode.
+     */
+    public function resolveEndpoint(string $mode, string $key): string
+    {
+        $modeEndpoints = config("rraebm.endpoints.{$mode}");
+
+        if (is_array($modeEndpoints) && isset($modeEndpoints[$key])) {
+            return $modeEndpoints[$key];
+        }
+
+        return config("rraebm.endpoints.{$key}", '');
     }
 }

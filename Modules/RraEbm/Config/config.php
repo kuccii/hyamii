@@ -10,19 +10,43 @@ return [
     |--------------------------------------------------------------------------
     | RRA EBM API Endpoints
     |--------------------------------------------------------------------------
+    | 'physical_ebm' = traditional hardware EBM device
+    | 'osdc' = Online Sales Data Controller (cloud — recommended)
     */
     'endpoints' => [
+        // Physical EBM endpoints
+        'physical_ebm' => [
+            'initialization' => env('RRA_EBM_INIT_ENDPOINT', '/initializer/selectInitInfo'),
+            'save_item' => env('RRA_EBM_SAVE_ITEM_ENDPOINT', '/items/saveItems'),
+            'sale_transaction' => env('RRA_EBM_SALE_ENDPOINT', '/trnsSales/saveSales'),
+            'get_sales' => env('RRA_EBM_GET_SALES_ENDPOINT', '/trnsSales/getSales'),
+            'cancel_sale' => env('RRA_EBM_CANCEL_ENDPOINT', '/trnsSales/cancelSales'),
+            'daily_sales_report' => env('RRA_EBM_DAILY_SALES_ENDPOINT', '/report/dailySales'),
+            'close_report' => env('RRA_EBM_CLOSE_ENDPOINT', '/report/close'),
+            'save_stock_items' => env('RRA_EBM_STOCK_ENDPOINT', '/stock/saveStockItems'),
+            'get_stock_items' => env('RRA_EBM_GET_STOCK_ENDPOINT', '/stock/getStockItems'),
+            'save_stock_master' => env('RRA_EBM_STOCK_MASTER_ENDPOINT', '/stockMaster/saveStockMaster'),
+            'save_purchases' => env('RRA_EBM_PURCHASE_ENDPOINT', '/trnsPurchase/savePurchases'),
+        ],
+
+        // OSDC (cloud) endpoints
+        'osdc' => [
+            'initialization' => env('RRA_EBM_OSDC_INIT_ENDPOINT', '/selectInitOsdcInfo'),
+            'save_item' => env('RRA_EBM_OSDC_SAVE_ITEM_ENDPOINT', '/items/saveItems'),
+            'sale_transaction' => env('RRA_EBM_OSDC_SALE_ENDPOINT', '/saveTrnsSalesOsdc'),
+            'get_sales' => env('RRA_EBM_OSDC_GET_SALES_ENDPOINT', '/trnsSales/getSales'),
+            'cancel_sale' => env('RRA_EBM_OSDC_CANCEL_ENDPOINT', '/trnsSales/cancelSales'),
+            'daily_sales_report' => env('RRA_EBM_OSDC_DAILY_SALES_ENDPOINT', '/report/dailySales'),
+            'close_report' => env('RRA_EBM_OSDC_CLOSE_ENDPOINT', '/report/close'),
+            'save_stock_items' => env('RRA_EBM_OSDC_STOCK_ENDPOINT', '/stock/saveStockItems'),
+            'get_stock_items' => env('RRA_EBM_OSDC_GET_STOCK_ENDPOINT', '/stock/getStockItems'),
+            'save_stock_master' => env('RRA_EBM_OSDC_STOCK_MASTER_ENDPOINT', '/stockMaster/saveStockMaster'),
+            'save_purchases' => env('RRA_EBM_OSDC_PURCHASE_ENDPOINT', '/trnsPurchase/savePurchases'),
+        ],
+
+        // Legacy flat keys (kept for backward compatibility — resolved per mode)
         'initialization' => env('RRA_EBM_INIT_ENDPOINT', '/initializer/selectInitInfo'),
-        'save_item' => env('RRA_EBM_SAVE_ITEM_ENDPOINT', '/items/saveItems'),
         'sale_transaction' => env('RRA_EBM_SALE_ENDPOINT', '/trnsSales/saveSales'),
-        'get_sales' => env('RRA_EBM_GET_SALES_ENDPOINT', '/trnsSales/getSales'),
-        'cancel_sale' => env('RRA_EBM_CANCEL_ENDPOINT', '/trnsSales/cancelSales'),
-        'daily_sales_report' => env('RRA_EBM_DAILY_SALES_ENDPOINT', '/report/dailySales'),
-        'close_report' => env('RRA_EBM_CLOSE_ENDPOINT', '/report/close'),
-        'save_stock_items' => env('RRA_EBM_STOCK_ENDPOINT', '/stock/saveStockItems'),
-        'get_stock_items' => env('RRA_EBM_GET_STOCK_ENDPOINT', '/stock/getStockItems'),
-        'save_stock_master' => env('RRA_EBM_STOCK_MASTER_ENDPOINT', '/stockMaster/saveStockMaster'),
-        'save_purchases' => env('RRA_EBM_PURCHASE_ENDPOINT', '/trnsPurchase/savePurchases'),
     ],
 
     /*
@@ -93,4 +117,15 @@ return [
     */
     'regr_id' => env('RRA_EBM_REGR_ID', 'Hyamii'),
     'regr_nm' => env('RRA_EBM_REGR_NM', 'Hyamii'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Endpoint Resolver
+    |--------------------------------------------------------------------------
+    | Returns the correct endpoint for a given mode and endpoint key.
+    */
+    'resolve_endpoint' => function (string $mode, string $key): string {
+        $endpoints = config("rraebm.endpoints.{$mode}");
+        return $endpoints[$key] ?? config("rraebm.endpoints.{$key}", '');
+    },
 ];

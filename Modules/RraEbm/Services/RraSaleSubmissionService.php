@@ -180,7 +180,7 @@ class RraSaleSubmissionService
         $payload['taxAmtC'] = round($payload['taxAmtC'], 2);
         $payload['taxAmtD'] = round($payload['taxAmtD'], 2);
 
-        $endpoint = config('rraebm.endpoints.sale_transaction', '/trnsSales/saveSales');
+        $endpoint = $this->ebmService->resolveEndpoint($setting->mode, 'sale_transaction');
         $response = $this->ebmService->post($setting, $endpoint, $payload);
 
         if (!$this->ebmService->isSuccessful($response)) {

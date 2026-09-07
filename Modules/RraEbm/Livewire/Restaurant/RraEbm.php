@@ -29,6 +29,7 @@ class RraEbm extends Component
 
     public $branch_id;
     public $enabled = false;
+    public $mode = RraEbmSetting::MODE_OSDC;
     public $tin_number;
     public $branch_id_rra;
     public $server_url;
@@ -37,6 +38,8 @@ class RraEbm extends Component
     public $machine_reference_code;
     #[\Livewire\Attributes\Visible(false)]
     public $security_key;
+    #[\Livewire\Attributes\Visible(false)]
+    public $cmc_key;
     public $auto_sync_products = true;
     public $submit_on_pos_complete = true;
     public $submit_on_online_order = false;
@@ -47,6 +50,7 @@ class RraEbm extends Component
         return [
             'branch_id' => 'required|exists:branches,id',
             'enabled' => 'boolean',
+            'mode' => 'required|in:physical_ebm,osdc',
             'tin_number' => 'nullable|string|max:20',
             'branch_id_rra' => 'nullable|string|max:20',
             'server_url' => ['nullable', 'string', 'max:255', function ($attribute, $value, $fail) {
@@ -58,6 +62,7 @@ class RraEbm extends Component
             'device_serial_no' => 'nullable|string|max:255',
             'machine_reference_code' => 'nullable|string|max:255',
             'security_key' => 'nullable|string|max:255',
+            'cmc_key' => 'nullable|string|max:255',
             'auto_sync_products' => 'boolean',
             'submit_on_pos_complete' => 'boolean',
             'submit_on_online_order' => 'boolean',
@@ -69,6 +74,8 @@ class RraEbm extends Component
         'server_url.*' => 'Please enter a valid RRA EBM server URL.',
         'tin_number.max' => 'TIN number must not exceed 20 characters.',
         'branch_id_rra.max' => 'Branch ID must not exceed 20 characters.',
+        'mode.required' => 'Please select a compliance mode.',
+        'mode.in' => 'Invalid compliance mode.',
     ];
 
     public function mount()
@@ -101,6 +108,7 @@ class RraEbm extends Component
             $this->editingSetting = $existing;
             $this->branch_id = $existing->branch_id;
             $this->enabled = $existing->enabled;
+            $this->mode = $existing->mode ?? RraEbmSetting::MODE_OSDC;
             $this->tin_number = $existing->tin_number;
             $this->branch_id_rra = $existing->branch_id_rra;
             $this->server_url = $existing->server_url;
@@ -108,6 +116,7 @@ class RraEbm extends Component
             $this->device_serial_no = $existing->device_serial_no;
             $this->machine_reference_code = $existing->machine_reference_code;
             $this->security_key = null;
+            $this->cmc_key = null;
             $this->auto_sync_products = $existing->auto_sync_products;
             $this->submit_on_pos_complete = $existing->submit_on_pos_complete;
             $this->submit_on_online_order = $existing->submit_on_online_order;
@@ -124,6 +133,7 @@ class RraEbm extends Component
     private function resetConfigFields(): void
     {
         $this->enabled = false;
+        $this->mode = RraEbmSetting::MODE_OSDC;
         $this->tin_number = null;
         $this->branch_id_rra = null;
         $this->server_url = null;
@@ -131,6 +141,7 @@ class RraEbm extends Component
         $this->device_serial_no = null;
         $this->machine_reference_code = null;
         $this->security_key = null;
+        $this->cmc_key = null;
         $this->auto_sync_products = true;
         $this->submit_on_pos_complete = true;
         $this->submit_on_online_order = false;
@@ -144,6 +155,7 @@ class RraEbm extends Component
         $data = [
             'branch_id' => $this->branch_id,
             'enabled' => $this->enabled,
+            'mode' => $this->mode,
             'tin_number' => $this->tin_number,
             'branch_id_rra' => $this->branch_id_rra,
             'server_url' => $this->server_url,
@@ -158,6 +170,10 @@ class RraEbm extends Component
 
         if ($this->security_key !== null) {
             $data['security_key'] = $this->security_key;
+        }
+
+        if ($this->cmc_key !== null) {
+            $data['cmc_key'] = $this->cmc_key;
         }
 
         if ($this->editingSetting) {

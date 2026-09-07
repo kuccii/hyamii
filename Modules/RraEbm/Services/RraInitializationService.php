@@ -20,10 +20,18 @@ class RraInitializationService
         $payload = [
             'tin' => $setting->tin_number,
             'bhfId' => $setting->branch_id_rra,
-            'dvcSrlNo' => $setting->device_serial_no ?? '',
         ];
 
-        $endpoint = config('rraebm.endpoints.initialization', '/initializer/selectInitInfo');
+        if ($setting->isOsdc()) {
+            // OSDC: cloud-signed, uses cmcKey (communication key from RRA)
+            $payload['cmcKey'] = $setting->cmc_key ?? '';
+            $endpoint = $this->ebmService->resolveEndpoint(RraEbmSetting::MODE_OSDC, 'initialization');
+        } else {
+            // Physical EBM: hardware device, uses dvcSrlNo (device serial number)
+            $payload['dvcSrlNo'] = $setting->device_serial_no ?? '';
+            $endpoint = $this->ebmService->resolveEndpoint(RraEbmSetting::MODE_PHYSICAL_EBM, 'initialization');
+        }
+
         $response = $this->ebmService->post($setting, $endpoint, $payload);
 
         if ($this->ebmService->isSuccessful($response)) {
@@ -31,6 +39,7 @@ class RraInitializationService
             Log::info('RRA EBM initialization successful', [
                 'branch_id' => $setting->branch_id,
                 'tin' => $setting->tin_number,
+                'mode' => $setting->mode,
             ]);
             return true;
         }
@@ -38,6 +47,7 @@ class RraInitializationService
         $error = $this->ebmService->getErrorMessage($response);
         Log::error('RRA EBM initialization failed', [
             'branch_id' => $setting->branch_id,
+            'mode' => $setting->mode,
             'error' => $error,
         ]);
 

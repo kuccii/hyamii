@@ -18,6 +18,18 @@ class RraEbmSetting extends Model
         'submit_on_kiosk' => 'boolean',
         'last_initialized_at' => 'datetime',
         'security_key' => 'encrypted',
+        'cmc_key' => 'encrypted',
+    ];
+
+    /**
+     * Mode constants: 'physical_ebm', 'osdc'
+     */
+    public const MODE_PHYSICAL_EBM = 'physical_ebm';
+    public const MODE_OSDC = 'osdc';
+
+    public static array $modes = [
+        self::MODE_PHYSICAL_EBM => 'Physical EBM (Hardware Device)',
+        self::MODE_OSDC => 'OSDC (Cloud — Recommended)',
     ];
 
     public function branch(): BelongsTo
@@ -50,6 +62,28 @@ class RraEbmSetting extends Model
             && $this->tin_number
             && $this->branch_id_rra
             && $this->server_url;
+    }
+
+    public function isOsdc(): bool
+    {
+        return $this->mode === self::MODE_OSDC;
+    }
+
+    public function isPhysical(): bool
+    {
+        return $this->mode === self::MODE_PHYSICAL_EBM;
+    }
+
+    public function getAuthKeyField(): string
+    {
+        return $this->isOsdc() ? 'cmcKey' : 'dvcSrlNo';
+    }
+
+    public function getAuthKeyValue(): string
+    {
+        return $this->isOsdc()
+            ? ($this->cmc_key ?? '')
+            : ($this->device_serial_no ?? '');
     }
 
     public function getDecryptedSecurityKeyAttribute(): ?string
