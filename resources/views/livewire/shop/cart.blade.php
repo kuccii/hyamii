@@ -389,13 +389,12 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
             @scroll.window.throttle.200ms="scrollHandler()">
 
             @forelse ($this->menuItems as $key => $itemCat)
-                <div class="mb-8">
-                    <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                        <span>{{ $key }}</span>
-                        <span class="h-px flex-1 bg-gray-200 dark:bg-gray-700"></span>
-                    </h3>
-                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    @foreach ($itemCat as $item)
+                <div class="mb-8">                            <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                <span>{{ $key }}</span>
+                                <span class="h-px flex-1 bg-gray-200 dark:bg-gray-700"></span>
+                            </h3>
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                                @foreach ($itemCat as $item)
                         <div @class([
                             'menu-item-card card p-4',
                             'opacity-60' => !$item->in_stock,
@@ -613,7 +612,6 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                 </button>
             @endif
         </div>
-    @endif
 
     @if ($showCart)
         {{-- Cart Overlay --}}
