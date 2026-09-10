@@ -395,141 +395,139 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                             </h3>
                             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                                 @foreach ($itemCat as $item)
-                        <div @class([
-                            'menu-item-card card p-4',
-                            'opacity-60' => !$item->in_stock,
-                            'cursor-pointer' => $item->in_stock,
-                        ]) wire:key='menu-item-{{ $item->id . microtime() }}'>
-                            <div class="flex gap-3">
-                                @if ($restaurant && !$restaurant->hide_menu_item_image_on_customer_site)
-                                    <div class="relative flex-shrink-0">
-                                        <img class="object-cover w-24 h-24 rounded-lg cursor-pointer aspect-square"
-                                            wire:click="showItemDetail({{ $item->id }})"
-                                            src="{{ $item->item_photo_url }}" alt="{{ $item->item_name }}"
-                                            loading="lazy">
-                                        @if(!$item->in_stock)
-                                            <div class="absolute inset-0 bg-white/60 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                                                <span class="text-xs font-medium text-gray-500">@lang('app.outOfStock')</span>
-                                            </div>
-                                        @endif
-                                    </div>
-                                @endif
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-start justify-between gap-2">
-                                        <div class="min-w-0">
-                                            <div class="flex items-center gap-1.5">
-                                                <img src="{{ asset('img/' . $item->type . '.svg') }}" class="h-4 mr-1 flex-shrink-0"
-                                                    title="@lang('modules.menu.' . $item->type)" alt="" />
-                                                <span class="font-semibold text-gray-900 dark:text-white text-sm sm:text-base truncate">
-                                                    {{ $item->getTranslatedValue('item_name', session('locale')) }}
-                                                </span>
-                                            </div>
-                                            @if ($item->description)
-                                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2 cursor-pointer"
-                                                    wire:click="showItemDetail({{ $item->id }})">
-                                                    {{ str($item->getTranslatedValue('description', session('locale')))->limit(60) }}
-                                                </p>
-                                            @endif
-                                        </div>
-                                        @if ($item->variations_count == 0)
-                                            <span class="font-bold text-gray-900 dark:text-white whitespace-nowrap text-sm sm:text-base">
-                                                {{ currency_format($item->price, $restaurant->currency_id) }}
-                                            </span>
-                                        @endif
-                                    </div>
-
-                                    @if ($item->preparation_time)
-                                        <div class="inline-flex items-center gap-1 mt-1.5 text-xs text-gray-500 dark:text-gray-400">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/>
-                                                <circle cx="12" cy="12" r="10"/>
-                                            </svg>
-                                            {{ $item->preparation_time }} @lang('modules.menu.minutes')
-                                        </div>
-                                    @endif
-
-                                    @if ($canCreateOrder)
-                                        <div class="mt-3 flex items-center gap-2">
-                                            @if (!$item->in_stock)
-                                                <span class="text-xs text-red-500 font-medium">@lang('app.outOfStock')</span>
-                                            @elseif ($restaurant->allow_customer_orders)
-                                                @if (isset($cartItemQty[$item->id]) && $cartItemQty[$item->id] > 0)
-                                                    <div class="relative flex items-center">
-                                                        <button type="button"
-                                                            wire:click="
-                                                                @if ($item->variations_count > 0)
-                                                                    subCartItems({{ $item->id }})
-                                                                @elseif($item->modifier_groups_count > 0)
-                                                                    subModifiers({{ $item->id }})
-                                                                @else
-                                                                    subQty('{{ $item->id }}')
-                                                                @endif
-                                                            "
-                                                            class="w-8 h-8 flex items-center justify-center rounded-md border border-gray-300 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                                                            <svg class="w-2 h-2 text-gray-900 dark:text-white" viewBox="0 0 18 2">
-                                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
-                                                            </svg>
-                                                        </button>
-                                                        <input type="text"
-                                                            wire:model='cartItemQty.{{ $item->id }}'
-                                                            class="w-12 h-8 text-center text-sm border-x-0 border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                                        <button type="button"
-                                                            wire:click="
-                                                                @if ($item->variations_count > 0 || $item->modifier_groups_count > 0)
-                                                                    addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})
-                                                                @else
-                                                                    addQty('{{ $item->id }}')
-                                                                @endif
-                                                            "
-                                                            class="w-8 h-8 flex items-center justify-center rounded-md border border-gray-300 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                                                            <svg class="w-2 h-2 text-gray-900 dark:text-white" viewBox="0 0 18 18">
-                                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
-                                                            </svg>
-                                                        </button>
+                                    <div @class([
+                                        'menu-item-card card overflow-hidden',
+                                        'opacity-60' => !$item->in_stock,
+                                        'cursor-pointer' => $item->in_stock,
+                                    ]) wire:key='menu-item-{{ $item->id . microtime() }}'>
+                                        {{-- Image --}}
+                                        @if ($restaurant && !$restaurant->hide_menu_item_image_on_customer_site)
+                                            <div class="relative">
+                                                <img class="w-full h-40 sm:h-48 object-cover cursor-pointer"
+                                                    wire:click="showItemDetail({{ $item->id }})"
+                                                    src="{{ $item->item_photo_url }}" alt="{{ $item->item_name }}"
+                                                    loading="lazy">
+                                                @if(!$item->in_stock)
+                                                    <div class="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
+                                                        <span class="text-xs font-medium text-gray-500 bg-white/80 px-3 py-1 rounded-full">@lang('app.outOfStock')</span>
                                                     </div>
-                                                @else
-                                                    @php
-                                                        $orderStats = getRestaurantOrderStats($shopBranch->id);
-                                                    @endphp
-                                                    @if(($orderStats['unlimited'] || $orderStats['current_count'] < $orderStats['order_limit']))
-                                                        <x-cart-button
-                                                            wire:click='addCartItems({{ $item->id }}, {{ $item->variations_count }} , {{ $item->modifier_groups_count }})'
-                                                            wire:key='item-input-{{ $item->id . microtime() }}'
-                                                            wire:loading.attr="disabled"
-                                                            wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})"
-                                                            x-on:click="window.dispatchEvent(new CustomEvent('addToCart'))"
-                                                            class="flex-1 h-9 px-4 rounded-lg">
-                                                            <span wire:loading.remove wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
-                                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-                                                                </svg>
-                                                                @lang('app.add')
-                                                            </span>
-                                                            <span wire:loading wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
-                                                                <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-                                                                </svg>
-                                                            </span>
-                                                        </x-cart-button>
+                                                @endif
+                                            </div>
+                                        @endif
+                                        {{-- Content --}}
+                                        <div class="p-3">
+                                            <div class="flex items-start justify-between gap-2">
+                                                <div class="min-w-0">
+                                                    <div class="flex items-center gap-1.5">
+                                                        <img src="{{ asset('img/' . $item->type . '.svg') }}" class="h-3.5 w-3.5 flex-shrink-0"
+                                                            title="@lang('modules.menu.' . $item->type)" alt="" />
+                                                        <span class="font-semibold text-gray-900 dark:text-white text-sm leading-tight truncate">
+                                                            {{ $item->getTranslatedValue('item_name', session('locale')) }}
+                                                        </span>
+                                                    </div>
+                                                    @if ($item->description)
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2 cursor-pointer"
+                                                            wire:click="showItemDetail({{ $item->id }})">
+                                                            {{ str($item->getTranslatedValue('description', session('locale')))->limit(80) }}
+                                                        </p>
+                                                    @endif
+                                                </div>
+                                                @if ($item->variations_count == 0)
+                                                    <span class="text-sm font-bold text-skin-base whitespace-nowrap">
+                                                        {{ currency_format($item->price, $restaurant->currency_id) }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            @if ($item->preparation_time)
+                                                <div class="inline-flex items-center gap-1 mt-1.5 text-[11px] text-gray-400 dark:text-gray-500">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/>
+                                                        <circle cx="12" cy="12" r="10"/>
+                                                    </svg>
+                                                    {{ $item->preparation_time }} @lang('modules.menu.minutes')
+                                                </div>
+                                            @endif
+                                            @if ($canCreateOrder)
+                                                <div class="mt-2.5">
+                                                    @if (!$item->in_stock)
+                                                        <span class="text-xs text-red-500 font-medium">@lang('app.outOfStock')</span>
+                                                    @elseif ($restaurant->allow_customer_orders)
+                                                        @if (isset($cartItemQty[$item->id]) && $cartItemQty[$item->id] > 0)
+                                                            <div class="flex items-center">
+                                                                <button type="button"
+                                                                    wire:click="
+                                                                        @if ($item->variations_count > 0)
+                                                                            subCartItems({{ $item->id }})
+                                                                        @elseif($item->modifier_groups_count > 0)
+                                                                            subModifiers({{ $item->id }})
+                                                                        @else
+                                                                            subQty('{{ $item->id }}')
+                                                                        @endif
+                                                                    "
+                                                                    class="w-8 h-8 flex items-center justify-center rounded-l-lg border border-gray-300 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                                                    <svg class="w-2 h-2 text-gray-900 dark:text-white" viewBox="0 0 18 2">
+                                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
+                                                                    </svg>
+                                                                </button>
+                                                                <input type="text"
+                                                                    wire:model='cartItemQty.{{ $item->id }}'
+                                                                    class="w-10 h-8 text-center text-xs font-medium border-y border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                                                <button type="button"
+                                                                    wire:click="
+                                                                        @if ($item->variations_count > 0 || $item->modifier_groups_count > 0)
+                                                                            addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})
+                                                                        @else
+                                                                            addQty('{{ $item->id }}')
+                                                                        @endif
+                                                                    "
+                                                                    class="w-8 h-8 flex items-center justify-center rounded-r-lg border border-gray-300 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                                                    <svg class="w-2 h-2 text-gray-900 dark:text-white" viewBox="0 0 18 18">
+                                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        @else
+                                                            @php
+                                                                $orderStats = getRestaurantOrderStats($shopBranch->id);
+                                                            @endphp
+                                                            @if(($orderStats['unlimited'] || $orderStats['current_count'] < $orderStats['order_limit']))
+                                                                <button type="button"
+                                                                    wire:click='addCartItems({{ $item->id }}, {{ $item->variations_count }} , {{ $item->modifier_groups_count }})'
+                                                                    wire:key='item-input-{{ $item->id . microtime() }}'
+                                                                    wire:loading.attr="disabled"
+                                                                    wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})"
+                                                                    x-on:click="window.dispatchEvent(new CustomEvent('addToCart'))"
+                                                                    class="w-full h-8 flex items-center justify-center gap-1.5 rounded-lg border border-skin-base text-skin-base hover:bg-skin-base hover:text-white transition-all text-xs font-semibold">
+                                                                    <span wire:loading.remove wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
+                                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                                                                        </svg>
+                                                                        @lang('app.add')
+                                                                    </span>
+                                                                    <span wire:loading wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
+                                                                        <svg class="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
+                                                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                                                                        </svg>
+                                                                    </span>
+                                                                </button>
+                                                            @endif
+                                                        @endif
+                                                    @elseif ($item->variations_count > 0 && $restaurant->allow_customer_orders)
+                                                        <button type="button"
+                                                            wire:click='showItemVariations({{ $item->id }})'
+                                                            class="w-full h-8 flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all text-xs font-semibold">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                                                <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+                                                            </svg>
+                                                            @lang('modules.menu.showVariations') ({{ $item->variations_count }})
+                                                        </button>
                                                     @endif
                                                 @endif
-                                            @elseif ($item->variations_count > 0 && $restaurant->allow_customer_orders)
-                                                <x-secondary-button-table
-                                                    wire:click='showItemVariations({{ $item->id }})'
-                                                    class="flex-1 h-9 px-4 rounded-lg">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-4 h-4 mr-1" viewBox="0 0 16 16">
-                                                        <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
-                                                    </svg>
-                                                    @lang('modules.menu.showVariations') ({{ $item->variations_count }})
-                                                </x-secondary-button-table>
                                             @endif
-                                        @endif
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+                                @endforeach
                     </div>
                 </div>
             @empty
