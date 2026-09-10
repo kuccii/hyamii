@@ -524,7 +524,6 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                                         </button>
                                                     @endif
                                                 @endif
-                                            @endif
                                         </div>
                                     </div>
                                 @endforeach
