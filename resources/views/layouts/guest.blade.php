@@ -40,6 +40,11 @@
             --color-base: {{ $restaurant->theme_rgb }};
             --color-secondary: 163, 59, 56;
             --livewire-progress-bar-color: {{ $restaurant->theme_hex }};
+            --spacing-section: 32px;
+            --spacing-container: 24px;
+            --spacing-stack-sm: 8px;
+            --spacing-stack-md: 16px;
+            --spacing-stack-lg: 24px;
         }
 
         html {
@@ -48,6 +53,7 @@
 
         body {
             font-family: 'Manrope', sans-serif;
+            background: #f8f9fa;
         }
 
         .font-label, .font-hanken {
@@ -57,8 +63,8 @@
         /* Subtle reveal animation */
         .reveal {
             opacity: 0;
-            transform: translateY(24px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
         }
         .reveal.visible {
             opacity: 1;
@@ -67,11 +73,64 @@
 
         @keyframes badge-pop {
             0% { transform: scale(1); }
-            50% { transform: scale(1.3); }
+            50% { transform: scale(1.2); }
             100% { transform: scale(1); }
         }
         .badge-pop {
-            animation: badge-pop 0.4s ease-in-out;
+            animation: badge-pop 0.3s ease-in-out;
+        }
+
+        /* Section spacing utility */
+        .section {
+            padding-top: var(--spacing-section);
+            padding-bottom: var(--spacing-section);
+        }
+
+        .section-sm {
+            padding-top: calc(var(--spacing-section) * 0.75);
+            padding-bottom: calc(var(--spacing-section) * 0.75);
+        }
+
+        /* Container max-width */
+        .container {
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .container-lg {
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Card styles following DESIGN.md Level 1 */
+        .card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            box-shadow: none;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 20px rgba(13, 60, 56, 0.05);
+        }
+
+        /* Menu item card enhancement */
+        .menu-item-card {
+            transition: all 0.2s ease;
+        }
+
+        .menu-item-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Touch-friendly spacing for mobile */
+        @media (max-width: 1023px) {
+            .container {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
         }
     </style>
 
