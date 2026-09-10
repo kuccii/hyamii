@@ -1961,15 +1961,15 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                     } else if (paymentData.order?.customer_id) {
                         // Try to get from global customer if available
                         @if($customer)
-                        @if($customer->phone)
-                        paymentObject.phone = "{{ $customer->phone }}";
-                        @endif
-                        @if($customer->name)
-                        paymentObject.name = "{{ $customer->name }}";
-                        @endif
-                        @if($customer->email)
-                        paymentObject.email = "{{ $customer->email }}";
-                        @endif
+                            @if($customer->phone)
+                            paymentObject.phone = "{{ $customer->phone }}";
+                            @endif
+                            @if($customer->name)
+                            paymentObject.name = "{{ $customer->name }}";
+                            @endif
+                            @if($customer->email)
+                            paymentObject.email = "{{ $customer->email }}";
+                            @endif
                         @endif
                     }
 
