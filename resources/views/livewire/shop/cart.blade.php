@@ -526,7 +526,6 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                             @endif
                                         @endif
                                     </div>
-                                @endif
                                 </div>
                             </div>
                         </div>
@@ -613,6 +612,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
             @endif
         </div>
 
+    @endif
     @if ($showCart)
         {{-- Cart Overlay --}}
         <div @class([
