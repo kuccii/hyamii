@@ -31,6 +31,9 @@ class DatabaseSeeder extends Seeder
         $this->call(SuperadminPaymentGatewaySeeder::class);
         $this->call(PusherSettinSeeder::class);
 
+        // --- Delicato restaurant ---
+        $this->call(DelicatoSeeder::class);
+
 
         $restaurants = Restaurant::with('branches')->get();
 
