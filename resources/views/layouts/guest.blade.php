@@ -89,17 +89,41 @@
             padding-bottom: calc(var(--spacing-section) * 0.75);
         }
 
-        /* Container max-width */
+        /* Container widths — fluid and responsive */
         .container {
+            width: 100%;
             max-width: 640px;
             margin-left: auto;
             margin-right: auto;
+            padding-left: 16px;
+            padding-right: 16px;
         }
 
         .container-lg {
+            width: 100%;
             max-width: 720px;
             margin-left: auto;
             margin-right: auto;
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        /* Wider content on large screens — menu uses the space */
+        @media (min-width: 1024px) {
+            .container-lg {
+                max-width: 1100px;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .container-lg {
+                max-width: 1280px;
+            }
+        }
+
+        /* Prevent horizontal overflow from any stray wide element */
+        body {
+            overflow-x: hidden;
         }
 
         /* Card styles following DESIGN.md Level 1 */
@@ -123,13 +147,7 @@
             transform: translateY(-2px);
         }
 
-        /* Touch-friendly spacing for mobile */
-        @media (max-width: 1023px) {
-            .container {
-                padding-left: 16px;
-                padding-right: 16px;
-            }
-        }
+
     </style>
 
     @if (File::exists(public_path() . '/css/app-custom.css'))

@@ -23,6 +23,30 @@
         </a>
 
         <div class="flex items-center gap-0.5 flex-shrink-0">
+            {{-- Desktop inline links (drawer is mobile-only) --}}
+            <div class="hidden lg:flex items-center gap-1 mr-2">
+                @php
+                    $desktopNavItems = [
+                        ['route' => 'shop_restaurant', 'label' => 'menu.newOrder', 'condition' => $restaurant->allow_customer_orders],
+                        ['route' => 'book_a_table', 'label' => 'menu.bookTable', 'condition' => in_array('Table Reservation', $modules)],
+                        ['route' => 'my_orders', 'label' => 'menu.myOrders', 'condition' => !is_null(customer())],
+                        ['route' => 'my_bookings', 'label' => 'menu.myBookings', 'condition' => !is_null(customer()) && in_array('Table Reservation', $modules)],
+                    ];
+                @endphp
+                @foreach ($desktopNavItems as $item)
+                    @if ($item['condition'])
+                        <a href="{{ route($item['route'], [$restaurant->hash]) }}?branch={{ $shopBranch->id }}" wire:navigate
+                            @class([
+                                'px-3 py-1.5 rounded-lg text-sm font-medium transition-all',
+                                'text-gray-900 dark:text-white bg-[rgb(var(--color-base))]/10' => request()->routeIs([$item['route'], 'table_order']) || ($item['route'] === 'shop_restaurant' && request()->routeIs(['table_order', 'order_success'])),
+                                'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800' => !(request()->routeIs([$item['route'], 'table_order']) || ($item['route'] === 'shop_restaurant' && request()->routeIs(['table_order', 'order_success']))),
+                            ])>
+                            @lang($item['label'])
+                        </a>
+                    @endif
+                @endforeach
+            </div>
+
             @if (languages()->count() > 1)
                 @livewire('shop.languageSwitcher')
             @endif
@@ -40,7 +64,7 @@
             </button>
 
             <button @click="mobileOpen = !mobileOpen" type="button"
-                class="w-9 h-9 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all"
+                class="w-9 h-9 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all lg:hidden"
                 aria-controls="mobile-menu-2" :aria-expanded="mobileOpen">
                 <span class="sr-only">@lang('menu.openMainMenu')</span>
                 @if (!is_null(customer()))

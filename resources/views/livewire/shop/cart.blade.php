@@ -199,8 +199,8 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                     wire:click='filterMenuItems(null)'
                     @class([
                         'snap-start flex-shrink-0 px-6 py-3 rounded-xl border font-semibold text-sm transition-all duration-300 flex items-center gap-2.5',
-                        'bg-[rgb(163,59,56)] text-white border-transparent shadow-[0_8px_20px_-6px_rgba(163,59,56,0.35)]' => is_null($menuId),
-                        'bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-800 hover:border-[rgb(163,59,56)] dark:hover:border-[rgb(163,59,56)] hover:shadow-sm' => !is_null($menuId),
+                        'bg-skin-base text-white border-transparent shadow-[0_8px_20px_-6px_rgb(var(--color-base)/0.35)]' => is_null($menuId),
+                        'bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-800 hover:border-skin-base hover:shadow-sm' => !is_null($menuId),
                     ])
                     wire:key='menu-all-pill'>
                     <span class="material-symbols-outlined text-lg">restaurant_menu</span>
@@ -213,8 +213,8 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                         wire:click='filterMenuItems({{ $item->id }})'
                         @class([
                             'snap-start flex-shrink-0 px-6 py-3 rounded-xl border font-semibold text-sm transition-all duration-300 flex items-center gap-2.5',
-                            'bg-[rgb(163,59,56)] text-white border-transparent shadow-[0_8px_20px_-6px_rgba(163,59,56,0.35)]' => $menuId == $item->id,
-                            'bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-800 hover:border-[rgb(163,59,56)] dark:hover:border-[rgb(163,59,56)] hover:shadow-sm' => $menuId != $item->id,
+                            'bg-skin-base text-white border-transparent shadow-[0_8px_20px_-6px_rgb(var(--color-base)/0.35)]' => $menuId == $item->id,
+                            'bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-800 hover:border-skin-base hover:shadow-sm' => $menuId != $item->id,
                         ])
                         wire:key='menu-pill-{{ $item->id }}'>
                         <span class="material-symbols-outlined text-lg">dinner_dining</span>
@@ -238,12 +238,12 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
             <h4 class="font-label text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2 font-semibold">@lang('modules.menu.category')</h4>
             
             {{-- Mobile Category Rail: horizontally scrollable pills (fast browsing, no dropdown) --}}
-            <div class="lg:hidden mb-4 -mx-4 px-4">
-                <div class="flex gap-2 overflow-x-auto scrollbar-none snap-x snap-mandatory pb-1 -mx-4 px-4">
+            <div class="lg:hidden mb-4">
+                <div class="flex gap-2 overflow-x-auto scrollbar-none snap-x snap-mandatory pb-1">
                     <button type="button" wire:click="filterMenu(null)" wire:key="cat-m-all"
                         @class([
                             'snap-start flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 border',
-                            'bg-[rgb(163,59,56)] text-white border-transparent shadow-[0_6px_16px_-6px_rgba(163,59,56,0.4)]' => is_null($filterCategories),
+                            'bg-skin-base text-white border-transparent shadow-[0_6px_16px_-6px_rgb(var(--color-base)/0.4)]' => is_null($filterCategories),
                             'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800' => !is_null($filterCategories),
                         ])>
                         @lang('app.showAll')
@@ -253,7 +253,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                         <button type="button" wire:click="filterMenu({{ $item->id }})" wire:key="cat-m-{{ $item->id }}"
                             @class([
                                 'snap-start flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 border inline-flex items-center gap-1.5',
-                                'bg-[rgb(163,59,56)] text-white border-transparent shadow-[0_6px_16px_-6px_rgba(163,59,56,0.4)]' => $filterCategories == $item->id,
+                                'bg-skin-base text-white border-transparent shadow-[0_6px_16px_-6px_rgb(var(--color-base)/0.4)]' => $filterCategories == $item->id,
                                 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800' => $filterCategories != $item->id,
                             ])>
                             {{ $item->getTranslation('category_name', session('locale', app()->getLocale())) }}
@@ -272,7 +272,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                 <nav class="flex gap-1.5 overflow-x-auto scrollbar-none py-1" aria-label="Categories">
                     <button type="button" wire:click="filterMenu(null)" @class([
                         'px-5 py-2.5 text-sm font-semibold rounded-lg transition-all whitespace-nowrap flex items-center gap-1.5',
-                        'bg-white dark:bg-gray-900 text-[rgb(163,59,56)] shadow-sm border border-gray-200 dark:border-gray-800' => is_null($filterCategories),
+                        'bg-white dark:bg-gray-900 text-skin-base shadow-sm border border-gray-200 dark:border-gray-800' => is_null($filterCategories),
                         'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/50 dark:hover:bg-gray-900/50' => !is_null($filterCategories),
                     ])>
                         <span>@lang('app.showAll')</span>
@@ -283,14 +283,14 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                             wire:key="category-desktop-{{ $item->id }}"
                             @class([
                                 'px-5 py-2.5 text-sm font-semibold rounded-lg transition-all whitespace-nowrap inline-flex items-center gap-2',
-                                'bg-white dark:bg-gray-900 text-[rgb(163,59,56)] shadow-sm border border-gray-200 dark:border-gray-800' => $filterCategories == $item->id,
+                                'bg-white dark:bg-gray-900 text-skin-base shadow-sm border border-gray-200 dark:border-gray-800' => $filterCategories == $item->id,
                                 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/50 dark:hover:bg-gray-900/50' => $filterCategories != $item->id,
                             ])>
                             <span>{{ $item->getTranslation('category_name', session('locale', app()->getLocale())) }}</span>
                             <span @class([
                                 'px-2 py-0.5 text-xs rounded-full font-label font-bold',
-                                'bg-[rgb(163,59,56)]/10 text-[rgb(163,59,56)]' => $filterCategories == $item->id,
-                                'bg-gray-150 dark:bg-gray-800 text-gray-500' => $filterCategories != $item->id,
+                                'bg-skin-base/10 text-skin-base' => $filterCategories == $item->id,
+                                'bg-gray-100 dark:bg-gray-800 text-gray-500' => $filterCategories != $item->id,
                             ])>
                                 {{ $item->items_count }}
                             </span>
@@ -312,7 +312,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                         <span class="material-symbols-outlined text-lg">search</span>
                     </span>
                     <input id="menu_name" 
-                        class="block w-full font-label pl-10 pr-4 py-3 bg-white/70 dark:bg-gray-900/40 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[rgb({{ $restaurant->theme_rgb }})]/20 focus:border-[rgb({{ $restaurant->theme_rgb }})] transition-all duration-200" 
+                        class="block w-full font-label pl-10 pr-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-skin-base/20 focus:border-skin-base transition-all duration-200" 
                         type="text"
                         placeholder="{{ __('placeholders.searchMenuItems') }}" 
                         wire:model.live.debounce.500ms="search" />
@@ -388,7 +388,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                 <span class="h-px flex-1 bg-gray-200 dark:bg-gray-700"></span>
                             </h3>
                             {{-- Compact horizontal food cards: thumbnail left, content right --}}
-                            <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                            <div class="grid grid-cols-1 gap-2.5 md:grid-cols-2 xl:grid-cols-3">
                                 @foreach ($itemCat as $item)
                                     <div @class([
                                         'menu-item-card card p-2.5 flex gap-3',
