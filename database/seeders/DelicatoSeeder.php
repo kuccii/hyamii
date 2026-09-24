@@ -54,15 +54,12 @@ class DelicatoSeeder extends Seeder
         // Generate hash for the restaurant
         $restaurant->update(['hash' => substr(hash('sha256', 'delicato-' . time()), 0, 20)]);
 
-        // --- Create Branch ---
+// --- Create Branch ---
         $branch = Branch::create([
             'restaurant_id' => $restaurant->id,
             'name' => 'Delicato Main',
             'address' => 'Kigali, Rwanda',
-            'phone' => '+250780000000',
-            'email' => 'info@delicato.rw',
-            'is_active' => true,
-            'unique_hash' => substr(hash('sha256', 'delicato-main-' . time()), 0, 20),
+            'unique_hash' => \Illuminate\Support\Str::random(12),
         ]);
 
         // --- Create Menu ---
