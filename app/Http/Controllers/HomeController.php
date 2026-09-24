@@ -90,13 +90,12 @@ class HomeController extends Controller
             'Payment' => 'Payment integrations',
             'Customer' => 'Customer database',
             'Report' => 'Advanced reports',
+            'RraEbm' => 'RRA fiscal compliance (OSDC)',
         ];
-
-        $limitLabel = fn($n, $singular) => $n == -1 ? "Unlimited $singular" : "Up to " . $n . " $singular";
 
         $tiers = [];
 
-        foreach (['Starter', 'Growth', 'Enterprise'] as $name) {
+        foreach (['Starter', 'Growth', 'Enterprise', 'Starter + RraEbm', 'Growth + RraEbm'] as $name) {
             $pkg = Package::where('package_name', $name)->first();
 
             if (!$pkg) {
@@ -108,9 +107,6 @@ class HomeController extends Controller
             $annual = $price && $price->annual_price !== null ? $price->annual_price : $pkg->annual_price;
 
             $features = [
-                $limitLabel($pkg->branch_limit, 'branches'),
-                $limitLabel($pkg->staff_limit, 'staff accounts'),
-                $limitLabel($pkg->menu_items_limit, 'menu items'),
                 'POS & kitchen display',
                 'Reports & analytics',
             ];

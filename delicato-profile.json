@@ -1,0 +1,1453 @@
+{
+  "restaurant": "Delicato",
+  "currency": "RWF",
+  "timezone": "Africa/Kigali",
+  "country": "RW",
+  "profile": {
+    "name": "Delicato",
+    "type": "Fine Dining & Lounge",
+    "cuisine": [
+      "International",
+      "Continental",
+      "African",
+      "Asian Fusion"
+    ],
+    "priceRange": "$$$$-$$$$",
+    "capacity": {
+      "dine_in": 120,
+      "takeaway": true,
+      "delivery": true
+    },
+    "features": [
+      "Full Bar",
+      "Cocktails",
+      "Wine List",
+      "Live Music",
+      "Outdoor Seating"
+    ],
+    "paymentMethods": [
+      "Cash",
+      "Card",
+      "Mobile Money"
+    ]
+  },
+  "menu": {
+    "categories": [
+      {
+        "name": "Breakfast",
+        "items": [
+          {
+            "name": "Full American Breakfast",
+            "price": 7000
+          },
+          {
+            "name": "Fritata Italian",
+            "price": 7000
+          },
+          {
+            "name": "American Denver Omelete",
+            "price": 8000
+          },
+          {
+            "name": "Mushroom and Spinach Omelete",
+            "price": 4000
+          },
+          {
+            "name": "Scrambled Egg",
+            "price": 3000
+          },
+          {
+            "name": "Spanish Omelete",
+            "price": 3000
+          },
+          {
+            "name": "Special Omelete",
+            "price": 4000
+          },
+          {
+            "name": "Vegetable Omelete",
+            "price": 5000
+          },
+          {
+            "name": "Regular Omelete",
+            "price": 2000
+          },
+          {
+            "name": "Burrito",
+            "price": 10000
+          },
+          {
+            "name": "Delicato Omelete",
+            "price": 10000
+          }
+        ]
+      },
+      {
+        "name": "Tea",
+        "items": [
+          {
+            "name": "Hot Chocolate Tea",
+            "price": 15000
+          },
+          {
+            "name": "Ginger Lemon Tea",
+            "price": 12000
+          },
+          {
+            "name": "African Tea",
+            "price": 5000
+          },
+          {
+            "name": "Black Tea",
+            "price": 7000
+          },
+          {
+            "name": "Spice Tea",
+            "price": 12000
+          },
+          {
+            "name": "Green Tea",
+            "price": 15000
+          }
+        ]
+      },
+      {
+        "name": "Salads",
+        "items": [
+          {
+            "name": "Oriental Salad",
+            "price": 12000
+          },
+          {
+            "name": "Avocado Vinaigrette",
+            "price": 10000
+          },
+          {
+            "name": "Nicoise Salad",
+            "price": 10000
+          },
+          {
+            "name": "Mexican Salad",
+            "price": 10000
+          }
+        ]
+      },
+      {
+        "name": "Starters",
+        "items": [
+          {
+            "name": "Beef Samosa",
+            "quantity": "3 pieces",
+            "price": 3000
+          },
+          {
+            "name": "Chicken Samosa",
+            "quantity": "3 pieces",
+            "price": 3000
+          },
+          {
+            "name": "Vegetable Samosa",
+            "quantity": "3 pieces",
+            "price": 3000
+          }
+        ]
+      },
+      {
+        "name": "Soups",
+        "items": [
+          {
+            "name": "American Zuppa Tuscana",
+            "price": 12000
+          },
+          {
+            "name": "American Lentil Soup",
+            "price": 12000
+          },
+          {
+            "name": "Ginger Carrot Soup",
+            "price": 12000
+          },
+          {
+            "name": "Vegetable Soup",
+            "price": 15000
+          }
+        ]
+      },
+      {
+        "name": "Pasta",
+        "items": [
+          {
+            "name": "Mexican Spaghetti Verde",
+            "price": 10000
+          },
+          {
+            "name": "Beef Chow Mein",
+            "price": 12000
+          },
+          {
+            "name": "Chicken Chow Mein",
+            "price": 12000
+          },
+          {
+            "name": "Mexican Cheesy Spaghetti",
+            "price": 15000
+          },
+          {
+            "name": "Italian Bucatini Pasta",
+            "price": 18000
+          },
+          {
+            "name": "Spaghetti Alla Gricia",
+            "price": 18000
+          },
+          {
+            "name": "Spaghetti Al Pomodoro",
+            "price": 12000
+          },
+          {
+            "name": "Spaghetti Bolognaise",
+            "price": 12000
+          },
+          {
+            "name": "Spaghetti Carbonara",
+            "price": 15000
+          }
+        ]
+      },
+      {
+        "name": "Burgers",
+        "items": [
+          {
+            "name": "British Pub Burger",
+            "price": 18000
+          },
+          {
+            "name": "American Smash Burger",
+            "price": 15000
+          },
+          {
+            "name": "Chicken Cheese Taco Burger",
+            "price": 12000
+          },
+          {
+            "name": "Bacon Burger",
+            "price": 12000
+          },
+          {
+            "name": "Delicato Beef Burger",
+            "price": 15000
+          },
+          {
+            "name": "Delicato Chicken Burger",
+            "price": 18000
+          }
+        ]
+      },
+      {
+        "name": "Sandwiches",
+        "items": [
+          {
+            "name": "Bacon Sandwich",
+            "price": 10000
+          },
+          {
+            "name": "Vegetable Sandwich",
+            "price": 10000
+          },
+          {
+            "name": "Club Sandwich",
+            "price": 18000
+          },
+          {
+            "name": "Croque Monsieur",
+            "price": 12000
+          },
+          {
+            "name": "Croque Madam",
+            "price": 12000
+          },
+          {
+            "name": "Delicato Sandwich",
+            "price": 18000
+          }
+        ]
+      },
+      {
+        "name": "Main Courses",
+        "items": [
+          {
+            "name": "Beef Pilao",
+            "price": 18000
+          },
+          {
+            "name": "Mexican Beef Fajita",
+            "price": 18000
+          },
+          {
+            "name": "Beef Rouladine",
+            "price": 20000
+          },
+          {
+            "name": "Delicato Chicken",
+            "price": 50000
+          },
+          {
+            "name": "Chicken Roulade",
+            "price": 15000
+          },
+          {
+            "name": "Mexican Chicken Fajitas",
+            "price": 15000
+          },
+          {
+            "name": "Escalop De Poulet",
+            "price": 15000
+          },
+          {
+            "name": "Chicken Curry",
+            "price": 12000
+          },
+          {
+            "name": "Chicken Patiala",
+            "price": 12000
+          },
+          {
+            "name": "Chicken Punjabi",
+            "price": 12000
+          }
+        ]
+      },
+      {
+        "name": "Fish",
+        "items": [
+          {
+            "name": "Delicato Fish",
+            "price": 35000
+          },
+          {
+            "name": "Fish Fillet",
+            "price": 15000
+          },
+          {
+            "name": "Fish Stew",
+            "price": 20000
+          }
+        ]
+      },
+      {
+        "name": "Beef",
+        "items": [
+          {
+            "name": "Yummy Liver",
+            "price": 12000
+          },
+          {
+            "name": "Salisbury Beef Steak",
+            "price": 10000
+          },
+          {
+            "name": "Meat Ball with Gravy Sauce",
+            "price": 10000
+          },
+          {
+            "name": "Beef Bolognaise",
+            "price": 20000
+          },
+          {
+            "name": "Steak",
+            "price": 8000
+          }
+        ]
+      },
+      {
+        "name": "Brochettes",
+        "items": [
+          {
+            "name": "Beef Brochette",
+            "quantity": "2 pieces",
+            "price": 7000
+          },
+          {
+            "name": "Goat Brochette",
+            "quantity": "2 pieces",
+            "price": 9000
+          },
+          {
+            "name": "Chicken Brochette",
+            "quantity": "2 pieces",
+            "price": 10000
+          },
+          {
+            "name": "Fish Brochette",
+            "quantity": "2 pieces",
+            "price": 6000
+          },
+          {
+            "name": "Sausage Brochette",
+            "quantity": "2 pieces",
+            "price": 25000
+          }
+        ]
+      },
+      {
+        "name": "Pork",
+        "items": [
+          {
+            "name": "Schnitzel",
+            "price": 15000
+          },
+          {
+            "name": "Pork Chops",
+            "price": 18000
+          },
+          {
+            "name": "Pork Ribs",
+            "price": 15000
+          }
+        ]
+      },
+      {
+        "name": "Potatoes",
+        "items": [
+          {
+            "name": "American Fries Potatoes",
+            "price": 5000
+          },
+          {
+            "name": "Potatoes Carbonara",
+            "price": 5000
+          },
+          {
+            "name": "Ground Beef Spicy Potatoes",
+            "price": 5000
+          },
+          {
+            "name": "Home Fries Potatoes",
+            "price": 5000
+          },
+          {
+            "name": "Crown Irish Potatoes",
+            "price": 7000
+          },
+          {
+            "name": "Skillet Potatoes",
+            "price": 5000
+          },
+          {
+            "name": "Regular Chips",
+            "price": 4000
+          }
+        ]
+      },
+      {
+        "name": "Rice",
+        "items": [
+          {
+            "name": "Thai Rice",
+            "price": 15000
+          },
+          {
+            "name": "Creole Rice",
+            "price": 18000
+          },
+          {
+            "name": "Singapore Rice",
+            "price": 12000
+          },
+          {
+            "name": "Caribbean Coconut Rice",
+            "price": 18000
+          },
+          {
+            "name": "Mexican Rice",
+            "price": 12000
+          },
+          {
+            "name": "Kung Pao Rice",
+            "price": 18000
+          },
+          {
+            "name": "Chinese Rice",
+            "price": 12000
+          },
+          {
+            "name": "Vegetable Rice",
+            "price": 12000
+          }
+        ]
+      },
+      {
+        "name": "Local Food",
+        "items": [
+          {
+            "name": "Fufu",
+            "description": "Ubugari",
+            "price": 12000
+          }
+        ]
+      },
+      {
+        "name": "Sauces and Vegetables",
+        "items": [
+          {
+            "name": "Creamy Peppercorn Sauce",
+            "price": 3000
+          },
+          {
+            "name": "Creamy Garlic Sauce",
+            "price": 3000
+          },
+          {
+            "name": "Cream Cheese Steak Sauce",
+            "price": 3000
+          },
+          {
+            "name": "Creamy Mushroom Sauce",
+            "price": 3000
+          },
+          {
+            "name": "Whisky Cream Sauce",
+            "price": 3000
+          },
+          {
+            "name": "Spinach Vegetable",
+            "price": 3000
+          },
+          {
+            "name": "Plate of Vegetable",
+            "price": 3000
+          },
+          {
+            "name": "Greens Vegetable",
+            "price": 3000
+          }
+        ]
+      },
+      {
+        "name": "Wraps and Quesadillas",
+        "items": [
+          {
+            "name": "Chicken Quesadilla",
+            "price": 15000
+          },
+          {
+            "name": "Beef Quesadilla",
+            "price": 15000
+          },
+          {
+            "name": "Beef Shawarma",
+            "price": 12000
+          },
+          {
+            "name": "Beef Wrap",
+            "price": 10000
+          },
+          {
+            "name": "Chicken Wrap",
+            "price": 12000
+          },
+          {
+            "name": "Vegetable Wrap",
+            "price": 10000
+          }
+        ]
+      },
+      {
+        "name": "Pizza",
+        "items": [
+          {
+            "name": "Delicato Pizza",
+            "price": 15000
+          },
+          {
+            "name": "Four Seasons Pizza",
+            "price": 15000
+          },
+          {
+            "name": "Margarita Pizza",
+            "price": 10000
+          },
+          {
+            "name": "Vegetable Pizza",
+            "price": 10000
+          },
+          {
+            "name": "Chicken Pizza",
+            "price": 15000
+          }
+        ]
+      },
+      {
+        "name": "Smoothies",
+        "items": [
+          {
+            "name": "Mango Smoothie",
+            "price": 12000
+          },
+          {
+            "name": "Banana Smoothie",
+            "price": 15000
+          },
+          {
+            "name": "Customer Choice",
+            "price": 35000
+          },
+          {
+            "name": "Avocado Smoothie",
+            "price": 45000
+          },
+          {
+            "name": "Mixed Smoothie",
+            "price": 60000
+          }
+        ]
+      },
+      {
+        "name": "Milkshakes",
+        "items": [
+          {
+            "name": "Vanilla Milkshake",
+            "price": 65000
+          },
+          {
+            "name": "Strawberry Milkshake",
+            "price": 45000
+          },
+          {
+            "name": "Chocolate Milkshake",
+            "price": 40000
+          },
+          {
+            "name": "Mango Milkshake",
+            "price": 45000
+          },
+          {
+            "name": "Banana Milkshake",
+            "price": 65000
+          },
+          {
+            "name": "Delicato Milkshake",
+            "price": 35000
+          },
+          {
+            "name": "Tropical Milkshake",
+            "price": 70000
+          }
+        ]
+      },
+      {
+        "name": "Cocktails",
+        "items": [
+          {
+            "name": "Long Island",
+            "price": 80000
+          },
+          {
+            "name": "Mojito",
+            "price": 80000
+          },
+          {
+            "name": "Aperol Spritz",
+            "price": 80000
+          },
+          {
+            "name": "Mimosa",
+            "price": 80000
+          },
+          {
+            "name": "Margarita",
+            "price": 80000
+          },
+          {
+            "name": "Tequila Sunrise",
+            "price": 80000
+          },
+          {
+            "name": "Sex on the Beach",
+            "price": 90000
+          },
+          {
+            "name": "Gin Tonic",
+            "price": 100000
+          },
+          {
+            "name": "Mint Margarita",
+            "price": 100000
+          },
+          {
+            "name": "Adios Mother F",
+            "price": null
+          }
+        ]
+      },
+      {
+        "name": "Beers and Ciders",
+        "items": [
+          {
+            "name": "Bavaria",
+            "price": 3000
+          },
+          {
+            "name": "Heineken",
+            "price": 3000
+          },
+          {
+            "name": "Amstel",
+            "price": 4000
+          },
+          {
+            "name": "Mutzig",
+            "price": 4000
+          },
+          {
+            "name": "Primus",
+            "price": 4000
+          },
+          {
+            "name": "Desperados",
+            "price": 4000
+          },
+          {
+            "name": "Virunga Mist",
+            "price": 4000
+          },
+          {
+            "name": "Virunga Silver",
+            "price": 4000
+          },
+          {
+            "name": "Virunga Gold",
+            "price": 4000
+          },
+          {
+            "name": "Skol Malt",
+            "price": 4000
+          },
+          {
+            "name": "Tusker Malt",
+            "price": 2000
+          },
+          {
+            "name": "Tusker Lager",
+            "price": 2000
+          },
+          {
+            "name": "Stella",
+            "price": 2000
+          },
+          {
+            "name": "Guinness",
+            "price": 2000
+          },
+          {
+            "name": "Heineken 0",
+            "price": 2000
+          },
+          {
+            "name": "Corona",
+            "price": 2000
+          },
+          {
+            "name": "FLO",
+            "price": 5000
+          },
+          {
+            "name": "Budweiser",
+            "price": 5000
+          },
+          {
+            "name": "Savana",
+            "price": 4000
+          }
+        ]
+      },
+      {
+        "name": "Soft Drinks",
+        "items": [
+          {
+            "name": "Fanta",
+            "price": 5000
+          },
+          {
+            "name": "Water",
+            "price": 5000
+          },
+          {
+            "name": "Panache",
+            "price": 5000
+          },
+          {
+            "name": "Red Bull",
+            "price": 4000
+          },
+          {
+            "name": "Hanson's",
+            "price": 4000
+          }
+        ]
+      },
+      {
+        "name": "Juices",
+        "items": [
+          {
+            "name": "Mango Juice",
+            "price": 3500
+          },
+          {
+            "name": "Pineapple Juice",
+            "price": 5000
+          },
+          {
+            "name": "Passion Juice",
+            "price": 1500
+          },
+          {
+            "name": "Cocktail Juice",
+            "price": 1500
+          },
+          {
+            "name": "Tomato Juice",
+            "price": 4000
+          }
+        ]
+      },
+      {
+        "name": "Coffee",
+        "items": [
+          {
+            "name": "Cappuccino",
+            "price": 4000
+          },
+          {
+            "name": "Latte Macchiato",
+            "price": 2500
+          },
+          {
+            "name": "Flat White",
+            "price": 2500
+          },
+          {
+            "name": "Hot Chocolate",
+            "price": 4000
+          },
+          {
+            "name": "Espresso",
+            "price": 2500
+          },
+          {
+            "name": "Double Espresso",
+            "price": 2500
+          },
+          {
+            "name": "Americano",
+            "price": 5000
+          }
+        ]
+      },
+      {
+        "name": "Desserts",
+        "items": [
+          {
+            "name": "Macedoine Fruits",
+            "price": 5500
+          },
+          {
+            "name": "Plate of Shunks Fruits",
+            "price": 6000
+          },
+          {
+            "name": "Regular Crepe",
+            "quantity": "3 pieces",
+            "price": 3000
+          },
+          {
+            "name": "Chocolate Crepe",
+            "quantity": "3 pieces",
+            "price": 3000
+          },
+          {
+            "name": "Honey Crepe",
+            "quantity": "3 pieces",
+            "price": 3000
+          },
+          {
+            "name": "Regular Chapati",
+            "quantity": "3 pieces",
+            "price": 3000
+          },
+          {
+            "name": "Chocolate Chapati",
+            "quantity": "3 pieces",
+            "price": 3000
+          },
+          {
+            "name": "Cake",
+            "price": 7000
+          },
+          {
+            "name": "Ice",
+            "price": 8000
+          }
+        ]
+      },
+      {
+        "name": "Red Wine",
+        "items": [
+          {
+            "name": "Franschhoek C. Merlot",
+            "price": 35000
+          },
+          {
+            "name": "Franschhoek C. Pinotage Red",
+            "price": 40000
+          },
+          {
+            "name": "Franschhoek Cellar Shiraz Red",
+            "price": 45000
+          },
+          {
+            "name": "Heritades Cotes du Rhone Red",
+            "price": 40000
+          },
+          {
+            "name": "J. Balmont Cabernet Sauvignon Red",
+            "price": 45000
+          },
+          {
+            "name": "JP Chenet Merlot Red",
+            "price": 45000
+          },
+          {
+            "name": "Patriarche Cabernet Sauvignon Red",
+            "price": 45000
+          },
+          {
+            "name": "Patriarche Merlot Red",
+            "price": 40000
+          },
+          {
+            "name": "Lamothe Parrot 1989, France",
+            "price": 45000
+          },
+          {
+            "name": "Franschhoek Cellar",
+            "price": 45000
+          },
+          {
+            "name": "Rero Marone 2023, Italy",
+            "price": 45000
+          },
+          {
+            "name": "Demon Noir 2022, France",
+            "price": 40000
+          },
+          {
+            "name": "Kiwi Cuvee",
+            "price": 40000
+          },
+          {
+            "name": "La Baume",
+            "price": 40000
+          },
+          {
+            "name": "Pinta Negra Rose",
+            "price": 35000
+          }
+        ]
+      },
+      {
+        "name": "White and Rose Wine",
+        "items": [
+          {
+            "name": "JP Chenet, France, 1984",
+            "price": 40000
+          },
+          {
+            "name": "Pinta Negra San Milonga",
+            "price": 40000
+          },
+          {
+            "name": "Freixenet, Spain",
+            "price": 40000
+          },
+          {
+            "name": "Prosecco Canetelli, Italy",
+            "price": 35000
+          },
+          {
+            "name": "Moscato Rosate",
+            "price": 45000
+          },
+          {
+            "name": "Moscato Dolce",
+            "price": 50000
+          },
+          {
+            "name": "Baron D'Arignac",
+            "price": 50000
+          },
+          {
+            "name": "Baron Demi Sec",
+            "price": 50000
+          },
+          {
+            "name": "Baron D'Arignac Ice",
+            "price": 50000
+          },
+          {
+            "name": "Nederburg",
+            "price": 50000
+          },
+          {
+            "name": "Jacobs",
+            "price": 50000
+          },
+          {
+            "name": "Pinta Negra 2023, Portugal",
+            "price": 50000
+          },
+          {
+            "name": "Los Molinos 2015, Spain",
+            "price": 60000
+          },
+          {
+            "name": "Villa Blanch",
+            "price": 40000
+          },
+          {
+            "name": "Four Cousins",
+            "price": 40000
+          },
+          {
+            "name": "Grande Vertus",
+            "price": 40000
+          },
+          {
+            "name": "Domaine Bergeron 2023, France",
+            "price": 50000
+          },
+          {
+            "name": "El Chivo Merlot 2023, France",
+            "price": 50000
+          },
+          {
+            "name": "Cabernet Sauvignon 2020, Spain",
+            "description": "Viña Albali",
+            "price": 50000
+          },
+          {
+            "name": "Belle Emilie 2018, France",
+            "price": 60000
+          },
+          {
+            "name": "Varietals Calvet 2023, France",
+            "price": 60000
+          }
+        ]
+      },
+      {
+        "name": "Champagne",
+        "items": [
+          {
+            "name": "Moët Chandon",
+            "price": 250000
+          },
+          {
+            "name": "Moët Chandon Rose",
+            "price": 280000
+          },
+          {
+            "name": "Veuve Clicquot Brut",
+            "price": 350000
+          },
+          {
+            "name": "Veuve Clicquot Rich",
+            "price": 300000
+          },
+          {
+            "name": "Veuve Clicquot Rosé",
+            "price": 250000
+          },
+          {
+            "name": "Dom Pérignon",
+            "price": 1500000
+          },
+          {
+            "name": "Taittinger",
+            "price": 300000
+          },
+          {
+            "name": "Laurent Perrier Brut",
+            "price": 150000
+          },
+          {
+            "name": "Ruinart Blanc de Blanc",
+            "price": 700000
+          },
+          {
+            "name": "Ruinart Brut",
+            "price": 600000
+          },
+          {
+            "name": "Moët Nectar Imperial",
+            "price": 250000
+          }
+        ]
+      },
+      {
+        "name": "Rum",
+        "items": [
+          {
+            "name": "Malibu",
+            "bottle_price": 80000,
+            "total_price": 5000
+          },
+          {
+            "name": "Bacardi Black",
+            "bottle_price": 80000,
+            "total_price": 5000
+          },
+          {
+            "name": "Bacardi Gold",
+            "bottle_price": 80000,
+            "total_price": 5000
+          },
+          {
+            "name": "Bacardi White",
+            "bottle_price": 80000,
+            "total_price": 5000
+          },
+          {
+            "name": "Captain Morgan",
+            "bottle_price": 90000,
+            "total_price": 5000
+          }
+        ]
+      },
+      {
+        "name": "Tequila",
+        "items": [
+          {
+            "name": "Clase Azul",
+            "bottle_price": 150000,
+            "total_price": 7000
+          },
+          {
+            "name": "Tequila Olmeca Silver",
+            "bottle_price": 100000,
+            "total_price": 6000
+          },
+          {
+            "name": "Tequila Olmeca Gold",
+            "bottle_price": 100000,
+            "total_price": 5000
+          },
+          {
+            "name": "Tequila Camino",
+            "bottle_price": 1500000
+          },
+          {
+            "name": "Jose Cuervo",
+            "bottle_price": 100000,
+            "total_price": 6000
+          },
+          {
+            "name": "Patron Silver",
+            "bottle_price": 80000,
+            "total_price": 5000
+          },
+          {
+            "name": "Don Julio Silver",
+            "bottle_price": 100000,
+            "total_price": 6000
+          },
+          {
+            "name": "Don Julio Reposado",
+            "bottle_price": 100000,
+            "total_price": 6000
+          },
+          {
+            "name": "Don Julio Blanco",
+            "bottle_price": 250000,
+            "total_price": 10000
+          }
+        ]
+      },
+      {
+        "name": "Gin",
+        "items": [
+          {
+            "name": "Hendrick's",
+            "bottle_price": 350000,
+            "total_price": 15000
+          },
+          {
+            "name": "Roku Gin",
+            "bottle_price": 400000,
+            "total_price": 14000
+          },
+          {
+            "name": "Bombay Sapphire",
+            "bottle_price": 230000,
+            "total_price": 12000
+          },
+          {
+            "name": "Bulldog",
+            "bottle_price": 200000,
+            "total_price": 8000
+          },
+          {
+            "name": "Beefeater Silver",
+            "bottle_price": 200000,
+            "total_price": 7000
+          },
+          {
+            "name": "Beefeater Pink",
+            "bottle_price": 100000,
+            "total_price": 7000
+          },
+          {
+            "name": "Gordon's",
+            "bottle_price": 80000,
+            "total_price": 5000
+          },
+          {
+            "name": "Volcano Silver",
+            "bottle_price": 80000,
+            "total_price": 5000
+          },
+          {
+            "name": "Volcano Pink",
+            "bottle_price": 120000,
+            "total_price": 6000
+          }
+        ]
+      },
+      {
+        "name": "Liqueurs",
+        "items": [
+          {
+            "name": "Amarula",
+            "bottle_price": 120000,
+            "total_price": 6000
+          },
+          {
+            "name": "Baileys",
+            "bottle_price": 80000,
+            "total_price": 5000
+          },
+          {
+            "name": "Cointreau",
+            "bottle_price": 250000,
+            "total_price": 10000
+          },
+          {
+            "name": "Jägermeister",
+            "bottle_price": 180000,
+            "total_price": 8000
+          },
+          {
+            "name": "Kahlua",
+            "bottle_price": 80000,
+            "total_price": 5000
+          }
+        ]
+      },
+      {
+        "name": "Vodka",
+        "items": [
+          {
+            "name": "Absolut Vodka Citron",
+            "bottle_price": 100000,
+            "glass_price": 10000
+          },
+          {
+            "name": "Absolut Vodka",
+            "bottle_price": 150000,
+            "glass_price": 15000
+          },
+          {
+            "name": "Belvedere",
+            "bottle_price": 150000,
+            "glass_price": 7000
+          },
+          {
+            "name": "Grey Goose",
+            "bottle_price": 100000,
+            "glass_price": 6000
+          },
+          {
+            "name": "Cîroc Blue",
+            "bottle_price": 100000,
+            "glass_price": 5000
+          },
+          {
+            "name": "Absolut Blue",
+            "bottle_price": 150000,
+            "glass_price": 7000
+          },
+          {
+            "name": "Absolut Vanilla",
+            "bottle_price": 200000,
+            "glass_price": 8000
+          },
+          {
+            "name": "Absolut Vodka",
+            "bottle_price": 200000
+          },
+          {
+            "name": "Belvedere 1L",
+            "bottle_price": 10000,
+            "glass_price": 7000
+          },
+          {
+            "name": "Mamont North South",
+            "bottle_price": 100000,
+            "glass_price": 7000
+          }
+        ]
+      },
+      {
+        "name": "Whisky",
+        "items": [
+          {
+            "name": "Jack Daniels",
+            "bottle_price": 300000,
+            "total_price": 15000
+          },
+          {
+            "name": "Jameson Irish",
+            "bottle_price": 220000,
+            "total_price": 12000
+          },
+          {
+            "name": "Black Label",
+            "bottle_price": 350000,
+            "total_price": 15000
+          },
+          {
+            "name": "Double Black",
+            "bottle_price": 150000,
+            "total_price": 7000
+          },
+          {
+            "name": "Chivas 12 Years",
+            "bottle_price": 90000,
+            "total_price": 6000
+          },
+          {
+            "name": "Dimple Golden",
+            "bottle_price": 100000,
+            "total_price": 7000
+          },
+          {
+            "name": "Dimple Golden Selection",
+            "bottle_price": 200000,
+            "total_price": 8000
+          },
+          {
+            "name": "Jameson Black Barrel",
+            "bottle_price": 150000,
+            "total_price": 7000
+          },
+          {
+            "name": "Barcelo Imperial",
+            "bottle_price": 150000,
+            "total_price": 7000
+          },
+          {
+            "name": "Glenlivet 18 Years",
+            "bottle_price": 1200000,
+            "total_price": 7000
+          },
+          {
+            "name": "Jack Gentleman",
+            "bottle_price": 100000,
+            "total_price": 7000
+          },
+          {
+            "name": "Malt",
+            "bottle_price": 150000
+          },
+          {
+            "name": "Statesman",
+            "bottle_price": 350000,
+            "total_price": 15000
+          }
+        ]
+      },
+      {
+        "name": "Cognac",
+        "items": [
+          {
+            "name": "Hennessy VS",
+            "bottle_price": 200000,
+            "total_price": 10000
+          },
+          {
+            "name": "Hennessy VSOP",
+            "bottle_price": 200000,
+            "total_price": 12000
+          },
+          {
+            "name": "Martell VSOP",
+            "bottle_price": 80000
+          },
+          {
+            "name": "Rémy Martin VSOP",
+            "bottle_price": 320000,
+            "total_price": 12000
+          },
+          {
+            "name": "Hennessy XO",
+            "bottle_price": 250000,
+            "total_price": 10000
+          },
+          {
+            "name": "Martell XO",
+            "bottle_price": 350000,
+            "total_price": 15000
+          },
+          {
+            "name": "Rémy Martin XO",
+            "bottle_price": 350000,
+            "total_price": 15000
+          },
+          {
+            "name": "Courvoisier VSOP",
+            "bottle_price": 300000,
+            "total_price": 12000
+          },
+          {
+            "name": "Meukow VSOP",
+            "bottle_price": 900000
+          },
+          {
+            "name": "Martell XO",
+            "bottle_price": 900000
+          },
+          {
+            "name": "Martell VSOP",
+            "bottle_price": 800000
+          },
+          {
+            "name": "Courvoisier VSOP",
+            "bottle_price": 300000
+          }
+        ]
+      }
+    ]
+  },
+  "metadata": {
+    "currency_code": "RWF",
+    "currency_symbol": "Frw",
+    "extraction_notes": [
+      "Source PDF contains repeated pages and text encoding errors",
+      "Some prices difficult to align because PDF separates item names and prices into columns",
+      "Items with null prices could not be reliably identified",
+      "Some spelling normalized while preserving original meaning"
+    ],
+    "created": "2026-09-24",
+    "version": "1.0"
+  }
+}

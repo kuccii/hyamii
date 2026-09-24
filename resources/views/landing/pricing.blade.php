@@ -6,9 +6,9 @@
     <section class="hy-page-hero hy-section">
         <div class="container text-center">
             <span class="hy-pill mb-3"><span class="dot"></span> Pricing</span>
-            <h1 class="hy-h1 mb-3">Simple plans that scale with you</h1>
+            <h1 class="hy-h1 mb-3">Simple plans, no hidden details</h1>
             <p class="hy-lead mx-auto" style="max-width:620px;">
-                Start free, upgrade when you are ready. Every plan includes the core POS, kitchen display and reporting.
+                Start free, upgrade when you're ready. Every plan includes the core POS, kitchen display, and reporting.
             </p>
         </div>
     </section>
@@ -30,7 +30,7 @@
                                 {{ $currencyCode }} {{ number_format($t['annual'], 0) }}/yr · 2 months free
                             </div>
                             <ul>
-                                @foreach (array_slice($t['features'], 0, 6) as $f)
+                                @foreach ($t['features'] as $f)
                                     <li><i class="fa-solid fa-check"></i> {{ $f }}</li>
                                 @endforeach
                             </ul>
@@ -48,6 +48,57 @@
             <p class="text-center mt-4" style="color:var(--hy-muted);font-size:14px;">
                 Prices shown in <strong>{{ $currencyCode }}</strong> for <strong>{{ $countryName ?? '' }}</strong>.
                 Change your country in the menu above to see local pricing.
+            </p>
+        </div>
+    </section>
+
+    {{-- RraEbm Add-on Section --}}
+    <section class="hy-section" style="background:var(--hy-soft);">
+        <div class="container">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <span class="hy-pill mb-3"><span class="dot"></span> RRA Fiscal Compliance</span>
+                    <h2 class="hy-h2">RRA EBM / OSDC Ready</h2>
+                    <p class="hy-lead mx-auto" style="max-width:560px;">
+                        Rwanda Revenue Authority requires all businesses to use electronic billing.
+                        Add RRA fiscal compliance to any plan — cloud-signed receipts, no hardware needed.
+                    </p>
+                </div>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-6">
+                    <div class="hy-price">
+                        <h3 style="font-size:22px;font-weight:700;">Starter + RraEbm</h3>
+                        <p class="hy-lead">Single location with RRA compliance</p>
+                        <div class="amount">+{{ $currencySymbol }} 5,000<span style="font-size:16px;font-weight:600;color:var(--hy-muted);">/mo</span></div>
+                        <ul>
+                            <li><i class="fa-solid fa-check"></i> RRA OSDC filing</li>
+                            <li><i class="fa-solid fa-check"></i> Cloud-signed receipts</li>
+                            <li><i class="fa-solid fa-check"></i> No hardware device needed</li>
+                            <li><i class="fa-solid fa-check"></i> Automatic daily filing</li>
+                        </ul>
+                        <a href="{{ url('/login') }}" class="hy-btn hy-btn-ghost w-100">Add to Starter</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hy-price featured">
+                        <span class="hy-pill mb-2" style="align-self:flex-start;"><span class="dot"></span> Most popular</span>
+                        <h3 style="font-size:22px;font-weight:700;">Growth + RraEbm</h3>
+                        <p class="hy-lead">Multi-branch with RRA compliance</p>
+                        <div class="amount">+{{ $currencySymbol }} 8,000<span style="font-size:16px;font-weight:600;color:var(--hy-muted);">/mo</span></div>
+                        <ul>
+                            <li><i class="fa-solid fa-check"></i> RRA OSDC filing</li>
+                            <li><i class="fa-solid fa-check"></i> Cloud-signed receipts</li>
+                            <li><i class="fa-solid fa-check"></i> No hardware device needed</li>
+                            <li><i class="fa-solid fa-check"></i> Batch filing & end-of-day reports</li>
+                        </ul>
+                        <a href="{{ url('/login') }}" class="hy-btn hy-btn-primary w-100">Add to Growth</a>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center mt-4" style="color:var(--hy-muted);font-size:14px;">
+                All RRA packages include CIS certification support.
+                <a href="{{ url('/contact') }}">Contact us</a> to get started with RRA certification.
             </p>
         </div>
     </section>

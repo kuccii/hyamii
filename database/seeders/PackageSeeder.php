@@ -156,5 +156,79 @@ class PackageSeeder extends Seeder
                 ]);
             }
         }
+
+        // --- RraEbm Add-on Packages ---
+        $ebmModuleId = optional($byName['RraEbm'])->id;
+        $ebmAddons = [
+            'Starter + RraEbm' => [
+                'description' => 'Single-location POS with RRA fiscal compliance (OSDC).',
+                'monthly' => 17000, 'annual' => 170000,
+                'branch_limit' => 1, 'staff_limit' => 3, 'menu_items_limit' => 50,
+                'order_limit' => -1, 'multipos_limit' => 0, 'ai_monthly_request_limit' => 1000,
+                'is_recommended' => 0, 'sort_order' => 2,
+                'base_modules' => $core,
+                'ebm' => true,
+                'prices' => [
+                    'RWF' => [17000, 170000], 'TZS' => [42000, 420000], 'UGX' => [50000, 500000],
+                    'KES' => [1600, 16000], 'BIF' => [42000, 420000], 'USD' => [14.99, 149],
+                ],
+            ],
+            'Growth + RraEbm' => [
+                'description' => 'Multi-branch POS with RRA fiscal compliance (OSDC).',
+                'monthly' => 47000, 'annual' => 470000,
+                'branch_limit' => 5, 'staff_limit' => 15, 'menu_items_limit' => 500,
+                'order_limit' => -1, 'multipos_limit' => 1, 'ai_monthly_request_limit' => 5000,
+                'is_recommended' => 1, 'sort_order' => 3,
+                'base_modules' => $growth,
+                'ebm' => true,
+                'prices' => [
+                    'RWF' => [47000, 470000], 'TZS' => [115000, 1150000], 'UGX' => [135000, 1350000],
+                    'KES' => [4200, 42000], 'BIF' => [115000, 1150000], 'USD' => [39.99, 399],
+                ],
+            ],
+        ];
+
+        foreach ($ebmAddons as $name => $cfg) {
+            $package = Package::updateOrCreate(
+                ['package_name' => $name],
+                [
+                    'description' => $cfg['description'],
+                    'currency_id' => $currencyID,
+                    'monthly_status' => 1,
+                    'annual_status' => 1,
+                    'monthly_price' => $cfg['monthly'],
+                    'annual_price' => $cfg['annual'],
+                    'price' => 0,
+                    'is_free' => 0,
+                    'billing_cycle' => 12,
+                    'sort_order' => $cfg['sort_order'],
+                    'is_private' => 0,
+                    'is_recommended' => $cfg['is_recommended'],
+                    'additional_features' => json_encode(Package::ADDITIONAL_FEATURES),
+                    'package_type' => PackageType::STANDARD,
+                    'branch_limit' => $cfg['branch_limit'],
+                    'staff_limit' => $cfg['staff_limit'],
+                    'menu_items_limit' => $cfg['menu_items_limit'],
+                    'order_limit' => $cfg['order_limit'],
+                    'multipos_limit' => $cfg['multipos_limit'],
+                    'ai_monthly_token_limit' => $cfg['ai_monthly_request_limit'],
+                ]
+            );
+
+            $baseModuleIds = $idsFor($cfg['base_modules']);
+            $allModuleIds = $cfg['ebm'] && $ebmModuleId ? array_merge($baseModuleIds, [$ebmModuleId]) : $baseModuleIds;
+            $package->modules()->sync($allModuleIds);
+
+            // (Re)create localized prices
+            $package->prices()->delete();
+            foreach ($cfg['prices'] as $code => [$m, $a]) {
+                PackagePrice::create([
+                    'package_id' => $package->id,
+                    'currency_code' => $code,
+                    'monthly_price' => $m,
+                    'annual_price' => $a,
+                ]);
+            }
+        }
     }
 }
