@@ -229,47 +229,33 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
         <div class="mx-4 mt-6">
             <h4 class="font-label text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3 font-semibold">@lang('modules.menu.category')</h4>
             
-            <!-- Mobile Custom Selector Dropdown (Sleek Glassmorphic Pill) -->
-            <div class="relative lg:hidden mb-4" x-data="{ open: false }">
-                <button type="button" @click="open = !open" @click.away="open = false"
-                    class="w-full bg-white/70 dark:bg-gray-900/60 backdrop-blur-md border border-gray-200 dark:border-gray-800 text-gray-800 dark:text-gray-200 rounded-xl px-4 py-3 flex items-center justify-between shadow-sm hover:bg-white dark:hover:bg-gray-900 transition-all duration-200">
-                    <span class="text-sm font-semibold truncate flex items-center gap-2">
-                        <span class="material-symbols-outlined text-lg text-gray-400">layers</span>
-                        {{ is_null($filterCategories) ? __('app.showAll') : $this->categoryList->firstWhere('id', $filterCategories)?->getTranslation('category_name', session('locale', app()->getLocale())) }}
-                    </span>
-                    <svg class="w-4 h-4 transition-transform duration-250 text-gray-400" :class="{ 'rotate-180': open }" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
+            {{-- Mobile Category Rail: horizontally scrollable pills (fast browsing, no dropdown) --}}
+            <div class="lg:hidden mb-4 -mx-4 px-4">
+                <div class="flex gap-2 overflow-x-auto scrollbar-none snap-x snap-mandatory pb-1 -mx-4 px-4">
+                    <button type="button" wire:click="filterMenu(null)" wire:key="cat-m-all"
+                        @class([
+                            'snap-start flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 border',
+                            'bg-[rgb(163,59,56)] text-white border-transparent shadow-[0_6px_16px_-6px_rgba(163,59,56,0.4)]' => is_null($filterCategories),
+                            'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800' => !is_null($filterCategories),
+                        ])>
+                        @lang('app.showAll')
+                    </button>
 
-                <!-- Dropdown menu -->
-                <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 translate-y-1"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 translate-y-1"
-                    class="absolute left-0 right-0 z-50 mt-2 overflow-hidden bg-white/95 dark:bg-gray-950/95 backdrop-blur-lg rounded-xl shadow-xl border border-gray-200 dark:border-gray-800">
-                    <div class="overflow-y-auto max-h-80 py-1.5">
-                        <button wire:click="filterMenu(null); $nextTick(() => { open = false })"
-                            class="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors flex items-center justify-between
-                            {{ is_null($filterCategories) ? 'bg-[rgb(163,59,56)]/10 text-[rgb(163,59,56)]' : 'text-gray-700 dark:text-gray-300' }}">
-                            <span>@lang('app.showAll')</span>
-                            <span class="material-symbols-outlined text-base">check</span>
+                    @foreach ($this->categoryList as $item)
+                        <button type="button" wire:click="filterMenu({{ $item->id }})" wire:key="cat-m-{{ $item->id }}"
+                            @class([
+                                'snap-start flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 border inline-flex items-center gap-1.5',
+                                'bg-[rgb(163,59,56)] text-white border-transparent shadow-[0_6px_16px_-6px_rgba(163,59,56,0.4)]' => $filterCategories == $item->id,
+                                'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800' => $filterCategories != $item->id,
+                            ])>
+                            {{ $item->getTranslation('category_name', session('locale', app()->getLocale())) }}
+                            <span @class([
+                                'text-[11px] px-1.5 py-0.5 rounded-full font-bold',
+                                'bg-white/25 text-white' => $filterCategories == $item->id,
+                                'bg-gray-100 dark:bg-gray-800 text-gray-500' => $filterCategories != $item->id,
+                            ])>{{ $item->items_count }}</span>
                         </button>
-
-                        @foreach ($this->categoryList as $item)
-                            <button wire:click="filterMenu({{ $item->id }}); $nextTick(() => { open = false })"
-                                class="w-full px-4 py-2.5 text-left text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors flex items-center justify-between
-                                {{ $filterCategories == $item->id ? 'bg-[rgb(163,59,56)]/10 text-[rgb(163,59,56)]' : 'text-gray-700 dark:text-gray-300' }}">
-                                <span>{{ $item->getTranslation('category_name', session('locale', app()->getLocale())) }}</span>
-                                <span class="px-2 py-0.5 text-xs font-semibold bg-gray-150/80 dark:bg-gray-800/80 rounded-full text-gray-500 dark:text-gray-400">
-                                    {{ $item->items_count }}
-                                </span>
-                            </button>
-                        @endforeach
-                    </div>
+                    @endforeach
                 </div>
             </div>
 

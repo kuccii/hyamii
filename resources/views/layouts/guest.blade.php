@@ -23,11 +23,9 @@
     <meta name="description" content="{{ $restaurant->meta_description ?? $restaurant->name }}">
     <title>{{ $restaurant->name }}</title>
 
-    {{-- Fonts: Manrope & Hanken Grotesk + Material Symbols --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Hanken+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    {{-- Fonts: fully self-hosted (Manrope, Hanken Grotesk, Material Symbols) — zero external requests --}}
+    <link rel="stylesheet" href="{{ asset('vendor/custom-home/fonts/hyamii-fonts.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/custom-home/fonts/material-symbols.css') }}">
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
