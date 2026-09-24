@@ -5,19 +5,19 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
 
 <div>
     <!-- Order Type Selection Modal -->
-    <x-dialog-modal wire:model.live="showOrderTypeModal" maxWidth="xl">
+    <x-dialog-modal wire:model.live="showOrderTypeModal" maxWidth="lg">
         <x-slot name="title">
             <div class="text-center">
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+                <h2 class="text-lg font-bold text-gray-900 dark:text-white">
                     @lang('modules.order.selectOrderType')
                 </h2>
-                <p class="mt-1.5 text-sm text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                     @lang('modules.order.selectOrderTypeDescription')
                 </p>
             </div>
         </x-slot>
         <x-slot name="content">
-            <div class="grid grid-cols-1 gap-3 py-2 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="grid grid-cols-1 gap-2.5 py-1 sm:grid-cols-3">
                 @foreach($orderTypes ?? [] as $orderType)
                     @if($orderType->type === 'room_service' || $orderType->slug === 'room_service')
                         @continue
@@ -25,12 +25,20 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                     <button
                         type="button"
                         wire:click="selectOrderTypeFromModal({{ $orderType->id }})"
-                        class="group flex flex-col items-center justify-center p-5 transition-all duration-200 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md hover:-translate-y-0.5 hover:border-[rgb(var(--color-base))] dark:hover:border-[rgb(var(--color-base))]"
+                        wire:loading.attr="disabled"
+                        wire:target="selectOrderTypeFromModal"
+                        class="group flex flex-col items-center justify-center p-4 transition-all duration-200 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md hover:-translate-y-0.5 hover:border-[rgb(var(--color-base))] dark:hover:border-[rgb(var(--color-base))] disabled:opacity-50 disabled:pointer-events-none"
                         wire:key="modal-order-type-{{ $orderType->id }}">
                         <!-- Icon -->
-                        <div class="flex items-center justify-center w-14 h-14 mb-3 rounded-xl transition-all duration-200 group-hover:scale-110"
+                        <div class="flex items-center justify-center w-12 h-12 mb-2 rounded-xl transition-all duration-200 group-hover:scale-110"
                              style="background-color: rgba({{ $restaurant->theme_rgb }}, 0.08)">
-                            <svg class="w-7 h-7" style="color: rgb({{ $restaurant->theme_rgb }})" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6" style="color: rgb({{ $restaurant->theme_rgb }})" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <span wire:loading wire:target="selectOrderTypeFromModal" class="hidden">
+                                    <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                                    </svg>
+                                </span>
                                 @if($orderType->type === 'dine_in')
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                                 @elseif($orderType->type === 'delivery')
@@ -179,11 +187,11 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
 
 
 
-    @if (!$showCart && !$showOrderTypeModal)
+    @if (!$showCart)
 
         {{-- Sleek Menu Pills Carousel (Horizontal Scroll) --}}
-        <div class="px-4 my-6" x-data="{ showAll: false }">
-            <h4 class="font-label text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3 font-semibold">@lang('modules.menu.menu')</h4>
+        <div class="px-4 mt-4" x-data="{ showAll: false }">
+            <h4 class="font-label text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2 font-semibold">@lang('modules.menu.menu')</h4>
             
             <div class="flex items-center gap-3 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory">
                 <!-- All Menu Pill -->
@@ -226,8 +234,8 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
         </div>
 
         {{-- Unified Category Section --}}
-        <div class="mx-4 mt-6">
-            <h4 class="font-label text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3 font-semibold">@lang('modules.menu.category')</h4>
+        <div class="mx-4 mt-4">
+            <h4 class="font-label text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2 font-semibold">@lang('modules.menu.category')</h4>
             
             {{-- Mobile Category Rail: horizontally scrollable pills (fast browsing, no dropdown) --}}
             <div class="lg:hidden mb-4 -mx-4 px-4">
@@ -293,7 +301,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
         </div>
 
         {{-- Search & Filters Row --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mx-4 my-8 items-end">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mx-4 mt-5 mb-6 items-end">
             {{-- Modern Input Field --}}
             <div class="md:col-span-2">
                 <label for="menu_name" class="block mb-1.5 font-label text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
@@ -337,7 +345,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
 
     @endif
 
-    @if ($showMenu && !$showOrderTypeModal)
+    @if ($showMenu)
         <div class="px-4 mb-32 space-y-4 lg:gap-8 lg:mb-20"
             x-data="{
                 loadedCount: @entangle('menuItemsLoaded'),
@@ -379,42 +387,44 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                 <span>{{ $key }}</span>
                                 <span class="h-px flex-1 bg-gray-200 dark:bg-gray-700"></span>
                             </h3>
-                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            {{-- Compact horizontal food cards: thumbnail left, content right --}}
+                            <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                                 @foreach ($itemCat as $item)
                                     <div @class([
-                                        'menu-item-card card overflow-hidden',
+                                        'menu-item-card card p-2.5 flex gap-3',
                                         'opacity-60' => !$item->in_stock,
-                                        'cursor-pointer' => $item->in_stock,
-                                    ]) wire:key='menu-item-{{ $item->id . microtime() }}'>
-                                        {{-- Image --}}
+                                    ]) wire:key='menu-item-{{ $item->id }}'>
+                                        {{-- Thumbnail --}}
                                         @if ($restaurant && !$restaurant->hide_menu_item_image_on_customer_site)
-                                            <div class="relative">
-                                                <img class="w-full h-40 sm:h-48 object-cover cursor-pointer"
+                                            <div class="relative flex-shrink-0">
+                                                <img class="w-24 h-24 rounded-xl object-cover cursor-pointer bg-gray-100 dark:bg-gray-800"
                                                     wire:click="showItemDetail({{ $item->id }})"
                                                     src="{{ $item->item_photo_url }}" alt="{{ $item->item_name }}"
-                                                    loading="lazy">
+                                                    width="96" height="96"
+                                                    loading="lazy" decoding="async">
                                                 @if(!$item->in_stock)
-                                                    <div class="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
-                                                        <span class="text-xs font-medium text-gray-500 bg-white/80 px-3 py-1 rounded-full">@lang('app.outOfStock')</span>
+                                                    <div class="absolute inset-0 rounded-xl bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
+                                                        <span class="text-[10px] font-semibold text-gray-600 bg-white/90 px-2 py-0.5 rounded-full">@lang('app.outOfStock')</span>
                                                     </div>
                                                 @endif
                                             </div>
                                         @endif
                                         {{-- Content --}}
-                                        <div class="p-3">
+                                        <div class="flex flex-col flex-1 min-w-0">
                                             <div class="flex items-start justify-between gap-2">
                                                 <div class="min-w-0">
                                                     <div class="flex items-center gap-1.5">
                                                         <img src="{{ asset('img/' . $item->type . '.svg') }}" class="h-3.5 w-3.5 flex-shrink-0"
                                                             title="@lang('modules.menu.' . $item->type)" alt="" />
-                                                        <span class="font-semibold text-gray-900 dark:text-white text-sm leading-tight truncate">
+                                                        <span class="font-semibold text-gray-900 dark:text-white text-sm leading-tight truncate cursor-pointer"
+                                                            wire:click="showItemDetail({{ $item->id }})">
                                                             {{ $item->getTranslatedValue('item_name', session('locale')) }}
                                                         </span>
                                                     </div>
                                                     @if ($item->description)
-                                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2 cursor-pointer"
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1 cursor-pointer"
                                                             wire:click="showItemDetail({{ $item->id }})">
-                                                            {{ str($item->getTranslatedValue('description', session('locale')))->limit(80) }}
+                                                            {{ str($item->getTranslatedValue('description', session('locale')))->limit(60) }}
                                                         </p>
                                                     @endif
                                                 </div>
@@ -425,7 +435,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                                 @endif
                                             </div>
                                             @if ($item->preparation_time)
-                                                <div class="inline-flex items-center gap-1 mt-1.5 text-[11px] text-gray-400 dark:text-gray-500">
+                                                <div class="inline-flex items-center gap-1 mt-1 text-[11px] text-gray-400 dark:text-gray-500">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/>
                                                         <circle cx="12" cy="12" r="10"/>
@@ -433,8 +443,9 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                                     {{ $item->preparation_time }} @lang('modules.menu.minutes')
                                                 </div>
                                             @endif
-                                            @if ($canCreateOrder)
-                                                <div class="mt-2.5">
+                                            {{-- Action row pinned to bottom --}}
+                                            <div class="mt-auto pt-2 flex justify-end">
+                                                @if ($canCreateOrder)
                                                     @if (!$item->in_stock)
                                                         <span class="text-xs text-red-500 font-medium">@lang('app.outOfStock')</span>
                                                     @elseif ($restaurant->allow_customer_orders)
@@ -450,14 +461,14 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                                                             subQty('{{ $item->id }}')
                                                                         @endif
                                                                     "
-                                                                    class="w-8 h-8 flex items-center justify-center rounded-l-lg border border-gray-300 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                                                    class="w-7 h-7 flex items-center justify-center rounded-l-lg border border-gray-300 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                                                                     <svg class="w-2 h-2 text-gray-900 dark:text-white" viewBox="0 0 18 2">
                                                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
                                                                     </svg>
                                                                 </button>
                                                                 <input type="text"
                                                                     wire:model='cartItemQty.{{ $item->id }}'
-                                                                    class="w-10 h-8 text-center text-xs font-medium border-y border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                                                    class="w-9 h-7 text-center text-xs font-medium border-y border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                                                 <button type="button"
                                                                     wire:click="
                                                                         @if ($item->variations_count > 0 || $item->modifier_groups_count > 0)
@@ -466,7 +477,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                                                             addQty('{{ $item->id }}')
                                                                         @endif
                                                                     "
-                                                                    class="w-8 h-8 flex items-center justify-center rounded-r-lg border border-gray-300 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                                                    class="w-7 h-7 flex items-center justify-center rounded-r-lg border border-gray-300 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                                                                     <svg class="w-2 h-2 text-gray-900 dark:text-white" viewBox="0 0 18 18">
                                                                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
                                                                     </svg>
@@ -479,11 +490,11 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                                             @if(($orderStats['unlimited'] || $orderStats['current_count'] < $orderStats['order_limit']))
                                                                 <button type="button"
                                                                     wire:click='addCartItems({{ $item->id }}, {{ $item->variations_count }} , {{ $item->modifier_groups_count }})'
-                                                                    wire:key='item-input-{{ $item->id . microtime() }}'
+                                                                    wire:key='item-input-{{ $item->id }}'
                                                                     wire:loading.attr="disabled"
                                                                     wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})"
                                                                     x-on:click="window.dispatchEvent(new CustomEvent('addToCart'))"
-                                                                    class="w-full h-8 flex items-center justify-center gap-1.5 rounded-lg border border-skin-base text-skin-base hover:bg-skin-base hover:text-white transition-all text-xs font-semibold">
+                                                                    class="h-8 px-4 flex items-center justify-center gap-1.5 rounded-lg border border-skin-base text-skin-base hover:bg-skin-base hover:text-white transition-all text-xs font-semibold">
                                                                     <span wire:loading.remove wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
                                                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
@@ -502,7 +513,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                                     @elseif ($item->variations_count > 0 && $restaurant->allow_customer_orders)
                                                         <button type="button"
                                                             wire:click='showItemVariations({{ $item->id }})'
-                                                            class="w-full h-8 flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all text-xs font-semibold">
+                                                            class="h-8 px-3 flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all text-xs font-semibold">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                                                                 <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
                                                             </svg>
@@ -510,10 +521,11 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                                         </button>
                                                     @endif
                                                 @endif
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach
-                    </div>
+                            </div>
                 </div>
             @empty
                 <div
