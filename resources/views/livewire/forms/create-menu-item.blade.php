@@ -66,6 +66,13 @@
                         <x-input-error for="itemDescription" class="mt-2" />
                     </div>
 
+                    <div class="mt-4">
+                        <x-label for="itemIngredients" :value="__('modules.menu.itemIngredients')" />
+                        <x-textarea class="block mt-1 w-full" :placeholder="__('placeholders.itemIngredientsPlaceholder')" wire:model='itemIngredients'
+                            rows='2' data-gramm="false" />
+                        <x-input-error for="itemIngredients" class="mt-2" />
+                    </div>
+
                     <!-- Translation Preview -->
                     <div>
                         @if(count($languages) > 1 && (array_filter($translationNames) ||

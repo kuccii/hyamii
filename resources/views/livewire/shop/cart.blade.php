@@ -271,7 +271,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                 <nav class="flex gap-1.5 overflow-x-auto scrollbar-none py-1" aria-label="Categories">
                     <button type="button" wire:click="filterMenu(null)" @class([
                         'px-5 py-2.5 text-sm font-semibold rounded-lg transition-all whitespace-nowrap flex items-center gap-1.5',
-                        'bg-white dark:bg-gray-900 text-skin-base shadow-sm border border-gray-200 dark:border-gray-800' => is_null($filterCategories),
+                        'bg-white dark:bg-gray-900 text-skin-base dark:text-skin-secondary shadow-sm border border-gray-200 dark:border-gray-800' => is_null($filterCategories),
                         'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/50 dark:hover:bg-gray-900/50' => !is_null($filterCategories),
                     ])>
                         <span>@lang('app.showAll')</span>
@@ -282,13 +282,13 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                             wire:key="category-desktop-{{ $item->id }}"
                             @class([
                                 'px-5 py-2.5 text-sm font-semibold rounded-lg transition-all whitespace-nowrap inline-flex items-center gap-2',
-                                'bg-white dark:bg-gray-900 text-skin-base shadow-sm border border-gray-200 dark:border-gray-800' => $filterCategories == $item->id,
+                                'bg-white dark:bg-gray-900 text-skin-base dark:text-skin-secondary shadow-sm border border-gray-200 dark:border-gray-800' => $filterCategories == $item->id,
                                 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/50 dark:hover:bg-gray-900/50' => $filterCategories != $item->id,
                             ])>
                             <span>{{ $item->getTranslation('category_name', session('locale', app()->getLocale())) }}</span>
                             <span @class([
                                 'px-2 py-0.5 text-xs rounded-full font-label font-bold',
-                                'bg-skin-base/10 text-skin-base' => $filterCategories == $item->id,
+                                'bg-skin-base/10 text-skin-base dark:text-skin-secondary' => $filterCategories == $item->id,
                                 'bg-gray-100 dark:bg-gray-800 text-gray-500' => $filterCategories != $item->id,
                             ])>
                                 {{ $item->items_count }}
@@ -428,7 +428,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                                     @endif
                                                 </div>
                                                 @if ($item->variations_count == 0)
-                                                    <span class="text-sm font-bold text-skin-base whitespace-nowrap">
+                                                    <span class="text-sm font-bold text-skin-base dark:text-skin-secondary whitespace-nowrap">
                                                         {{ currency_format($item->price, $restaurant->currency_id) }}
                                                     </span>
                                                 @endif
@@ -493,7 +493,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                                                     wire:loading.attr="disabled"
                                                                     wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})"
                                                                     x-on:click="window.dispatchEvent(new CustomEvent('addToCart'))"
-                                                                    class="h-8 px-4 flex items-center justify-center gap-1.5 rounded-lg border border-skin-base text-skin-base hover:bg-skin-base hover:text-white transition-all text-xs font-semibold">
+                                                                    class="h-8 px-4 flex items-center justify-center gap-1.5 rounded-full bg-skin-base text-white shadow-[0_4px_12px_-4px_rgb(var(--color-base)/0.5)] hover:opacity-90 active:scale-95 transition-all text-xs font-semibold">
                                                                     <span wire:loading.remove wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
                                                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
@@ -1297,6 +1297,17 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                     {{ $selectedItem->preparation_time }} @lang('modules.menu.minutes')
                                 </span>
                             </div>
+
+                            @if (trim((string) $selectedItem->ingredients) !== '')
+                                <div class="mt-1 rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-700 p-3">
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">
+                                        @lang('modules.menu.itemIngredients')
+                                    </p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                                        {{ $selectedItem->getTranslatedValue('ingredients', session('locale')) }}
+                                    </p>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

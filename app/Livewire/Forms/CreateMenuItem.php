@@ -38,6 +38,7 @@ class CreateMenuItem extends Component
 
     #[Validate('nullable|string')]
     public string $itemDescription = '';
+    public string $itemIngredients = '';
 
     #[Validate('required|in:veg,non-veg,other,spicy,mild,sweet')]
     public string $itemType = 'veg';
@@ -465,6 +466,7 @@ class CreateMenuItem extends Component
             'price' => $this->hasVariations ? 0 : (float)$this->itemPrice,
             'item_category_id' => $this->itemCategory,
             'description' => $this->translationDescriptions[$this->globalLocale],
+            'ingredients' => $this->itemIngredients,
             'is_available' => $this->isAvailable,
             'type' => $this->itemType,
             'menu_id' => $this->menu,

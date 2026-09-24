@@ -42,6 +42,7 @@ class UpdateMenuItem extends Component
 
     #[Validate('nullable|string')]
     public string $itemDescription = '';
+    public string $itemIngredients = '';
 
     #[Validate('required|in:veg,non-veg,egg,drink,halal,other')]
     public string $itemType = 'veg';
@@ -196,6 +197,7 @@ class UpdateMenuItem extends Component
 
         $this->translationNames[$this->globalLocale] = $this->menuItem->item_name;
         $this->translationDescriptions[$this->globalLocale] = $this->menuItem->description;
+        $this->itemIngredients = (string) ($this->menuItem->ingredients ?? '');
 
         // Load variations
         $this->hasVariations = $this->menuItem->variations->count() > 0;
@@ -663,6 +665,7 @@ class UpdateMenuItem extends Component
             'price' => (!$this->hasVariations) ? $this->itemPrice : 0,
             'item_category_id' => $this->itemCategory,
             'description' => $this->translationDescriptions[$this->globalLocale],
+            'ingredients' => $this->itemIngredients,
             'type' => $this->itemType,
             'preparation_time' => $this->preparationTime,
             'menu_id' => $this->menu,

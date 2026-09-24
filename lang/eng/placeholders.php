@@ -7,6 +7,7 @@ return array (
   'menuItemNamePlaceholder' => 'e.g., Margherita Pizza',
   'itemVariationPlaceholder' => 'e.g., Small, Medium, Large',
   'itemDescriptionPlaceholder' => 'e.g., A classic Italian pizza with fresh tomatoes and basil.',
+  'itemIngredientsPlaceholder' => 'e.g., Wheat flour, mozzarella, tomato, basil, olive oil',
   'categoryNamePlaceholder' => 'e.g., Desserts',
   'searchItemCategory' => 'Search your item category here',
   'areaNamePlaceholder' => 'e.g. Rooftop',

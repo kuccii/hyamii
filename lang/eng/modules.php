@@ -38,6 +38,7 @@ return [
         'editMenuItemHelp' => 'Update the details below to modify the menu item.',
         'itemName' => 'Item Name',
         'itemDescription' => 'Item Description',
+        'itemIngredients' => 'Ingredients',
         'categoryName' => 'Item Category Name',
         'setPrice' => 'Price',
         'showVariations' => 'Show Variations',
