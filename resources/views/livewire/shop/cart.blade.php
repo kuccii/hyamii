@@ -30,9 +30,8 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                         class="group flex flex-col items-center justify-center p-4 transition-all duration-200 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md hover:-translate-y-0.5 hover:border-[rgb(var(--color-base))] dark:hover:border-[rgb(var(--color-base))] disabled:opacity-50 disabled:pointer-events-none"
                         wire:key="modal-order-type-{{ $orderType->id }}">
                         <!-- Icon -->
-                        <div class="flex items-center justify-center w-12 h-12 mb-2 rounded-xl transition-all duration-200 group-hover:scale-110"
-                             style="background-color: rgba({{ $restaurant->theme_rgb }}, 0.08)">
-                            <svg class="w-6 h-6" style="color: rgb({{ $restaurant->theme_rgb }})" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex items-center justify-center w-12 h-12 mb-2 rounded-xl transition-all duration-200 group-hover:scale-110 bg-skin-base/10">
+                            <svg class="w-6 h-6 text-skin-base" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <span wire:loading wire:target="selectOrderTypeFromModal" class="hidden">
                                     <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>

@@ -34,9 +34,18 @@
     @livewireStyles
 
     <style>
+        @php
+            // Derive both theme tokens from the restaurant's brand color.
+            // Secondary = base lightened 35% toward white (brand tint), so
+            // accents always share one hue instead of a hardcoded color.
+            $baseRgb = $restaurant->theme_rgb ?: '0, 37, 34';
+            [$__r, $__g, $__b] = array_map(fn ($v) => (int) trim($v), explode(',', $baseRgb));
+            $tint = fn ($c) => (int) round($c + (255 - $c) * 0.35);
+            $secondaryRgb = $tint($__r) . ', ' . $tint($__g) . ', ' . $tint($__b);
+        @endphp
         :root {
             --color-base: {{ $restaurant->theme_rgb }};
-            --color-secondary: 163, 59, 56;
+            --color-secondary: {{ $secondaryRgb }};
             --livewire-progress-bar-color: {{ $restaurant->theme_hex }};
             --spacing-section: 32px;
             --spacing-container: 24px;
