@@ -135,16 +135,27 @@
             overflow-x: hidden;
         }
 
-        /* Card styles following DESIGN.md Level 1 */
+        /* Card styles — theme-aware (works in light and dark mode) */
         .card {
             background: #fff;
             border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
             box-shadow: none;
+            color: #111827;
+        }
+
+        .dark .card {
+            background: #030712; /* gray-950 */
+            border-color: #1f2937; /* gray-800 */
+            color: #f3f4f6; /* gray-100 */
         }
 
         .card:hover {
             box-shadow: 0 4px 20px rgba(13, 60, 56, 0.05);
+        }
+
+        .dark .card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         /* Menu item card enhancement */
