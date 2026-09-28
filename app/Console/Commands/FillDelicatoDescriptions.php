@@ -259,20 +259,28 @@ class FillDelicatoDescriptions extends Command
         }
 
         // Wine & champagne categories: only fill items that still have no description
+        // (scope by category ids — whereHas('category') matches nothing on this model)
+        $branchId = Branch::where('restaurant_id', 9)->value('id');
+        $catId = fn (string $name) => \App\Models\ItemCategory::where('category_name', $name)->where('branch_id', $branchId)->value('id');
+
         foreach ($this->wineFallbacks as $cat => $desc) {
-            $filled += MenuItem::whereHas('branch', fn ($q) => $q->where('restaurant_id', 9))
-                ->whereHas('category', fn ($q) => $q->where('category_name', $cat))
-                ->where(function ($q) {
-                    $q->whereNull('description')->orWhere('description', '');
-                })
-                ->update(['description' => $desc]);
+            if ($id = $catId($cat)) {
+                $filled += MenuItem::where('branch_id', $branchId)
+                    ->where('item_category_id', $id)
+                    ->where(function ($q) {
+                        $q->whereNull('description')->orWhere('description', '');
+                    })
+                    ->update(['description' => $desc]);
+            }
         }
 
         // Beers/spirits/soft drinks: "Served chilled" fallback where empty
-        $filled += MenuItem::whereHas('branch', fn ($q) => $q->where('restaurant_id', 9))
-            ->whereHas('category', fn ($q) => $q->whereIn('category_name', [
+        $drinkCatIds = \App\Models\ItemCategory::where('branch_id', $branchId)
+            ->whereIn('category_name', [
                 'Beers and Ciders', 'Rum', 'Tequila', 'Gin', 'Liqueurs', 'Vodka', 'Whisky', 'Cognac', 'Soft Drinks',
-            ]))
+            ])->pluck('id');
+        $filled += MenuItem::where('branch_id', $branchId)
+            ->whereIn('item_category_id', $drinkCatIds)
             ->where(function ($q) {
                 $q->whereNull('description')->orWhere('description', '');
             })
