@@ -235,6 +235,29 @@ class FillDelicatoDescriptions extends Command
             $updated > 0 ? $filled++ : $missing[] = $name;
         }
 
+        // Second pass: quantity-only descriptions ("2 pieces") from the seeder get
+        // replaced by the curated line, keeping the quantity as a suffix.
+        foreach ($this->descriptions as $name => $desc) {
+            $updated = MenuItem::where('item_name', $name)
+                ->whereHas('branch', fn ($q) => $q->where('restaurant_id', 9))
+                ->where(function ($q) {
+                    $q->where('description', 'like', '%pieces%')
+                      ->orWhere('description', 'Ubugari')
+                      ->orWhere('description', 'like', '%ask server%');
+                })
+                ->update(['description' => $desc]);
+            if ($updated > 0) {
+                // re-append the quantity where the curated map has one
+                $qty = ['Beef Brochette' => '2 pieces', 'Goat Brochette' => '2 pieces', 'Chicken Brochette' => '2 pieces', 'Fish Brochette' => '2 pieces', 'Sausage Brochette' => '2 pieces', 'Regular Crepe' => '3 pieces', 'Chocolate Crepe' => '3 pieces', 'Honey Crepe' => '3 pieces', 'Regular Chapati' => '3 pieces', 'Chocolate Chapati' => '3 pieces'][$name] ?? null;
+                if ($qty) {
+                    MenuItem::where('item_name', $name)
+                        ->whereHas('branch', fn ($q) => $q->where('restaurant_id', 9))
+                        ->update(['description' => $desc . ' (' . $qty . ')']);
+                }
+                $filled += $updated;
+            }
+        }
+
         // Wine & champagne categories: only fill items that still have no description
         foreach ($this->wineFallbacks as $cat => $desc) {
             $filled += MenuItem::whereHas('branch', fn ($q) => $q->where('restaurant_id', 9))
