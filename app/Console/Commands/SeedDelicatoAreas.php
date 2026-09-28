@@ -13,25 +13,25 @@ class SeedDelicatoAreas extends Command
     protected $signature = 'hyamii:seed-delicato-areas {--force : wipe existing areas/tables first}';
     protected $description = 'Create areas + QR-coded tables for the DELICATO restaurant (terrace, rooftop, garden, restaurant, cigar room, rooms).';
 
-    // area_name => [ [code, seats], ... ]
+    // area_name => [ [full table name, seats], ... ]
     private array $layout = [
         'Terrasse Bar' => [
-            ['TB-1', 2], ['TB-2', 2], ['TB-3', 4], ['TB-4', 4],
+            ['Terrasse Bar 1', 2], ['Terrasse Bar 2', 2], ['Terrasse Bar 3', 4], ['Terrasse Bar 4', 4],
         ],
         'Terrasse Rooftop' => [
-            ['TR-1', 4], ['TR-2', 4], ['TR-3', 4], ['TR-4', 6],
+            ['Terrasse Rooftop 1', 4], ['Terrasse Rooftop 2', 4], ['Terrasse Rooftop 3', 4], ['Terrasse Rooftop 4', 6],
         ],
         'Garden' => [
-            ['GD-1', 4], ['GD-2', 4], ['GD-3', 4], ['GD-4', 6], ['GD-5', 6], ['GD-6', 8],
+            ['Garden 1', 4], ['Garden 2', 4], ['Garden 3', 4], ['Garden 4', 6], ['Garden 5', 6], ['Garden 6', 8],
         ],
         'Restaurant' => [
-            ['R-1', 4], ['R-2', 4], ['R-3', 4], ['R-4', 4], ['R-5', 6], ['VIP-1', 8],
+            ['Restaurant 1', 4], ['Restaurant 2', 4], ['Restaurant 3', 4], ['Restaurant 4', 4], ['Restaurant 5', 6], ['Restaurant VIP', 8],
         ],
         'Cigar Room' => [
-            ['CR-1', 4],
+            ['Cigar Room', 4],
         ],
         'Rooms' => [
-            ['Room 1', 2], ['Room 2', 2], ['Room 3', 2], ['VIP Room', 2],
+            ['Bedroom 1', 2], ['Bedroom 2', 2], ['Bedroom 3', 2], ['VIP Bedroom', 2],
         ],
     ];
 
