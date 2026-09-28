@@ -258,10 +258,12 @@ class FillDelicatoDescriptions extends Command
             }
         }
 
-        // Wine & champagne categories: only fill items that still have no description
-        // (scope by category ids — whereHas('category') matches nothing on this model)
+        // Wine & champagne categories: only fill items that still have no description.
+        // NOTE: category_name is stored as JSON translations ({"en":"Vodka"}),
+        // so match inside the JSON rather than equality.
         $branchId = Branch::where('restaurant_id', 9)->value('id');
-        $catId = fn (string $name) => \App\Models\ItemCategory::where('category_name', $name)->where('branch_id', $branchId)->value('id');
+        $catId = fn (string $name) => \App\Models\ItemCategory::where('branch_id', $branchId)
+            ->where('category_name', 'like', '%"' . $name . '"%')->value('id');
 
         foreach ($this->wineFallbacks as $cat => $desc) {
             if ($id = $catId($cat)) {
@@ -276,9 +278,11 @@ class FillDelicatoDescriptions extends Command
 
         // Beers/spirits/soft drinks: "Served chilled" fallback where empty
         $drinkCatIds = \App\Models\ItemCategory::where('branch_id', $branchId)
-            ->whereIn('category_name', [
-                'Beers and Ciders', 'Rum', 'Tequila', 'Gin', 'Liqueurs', 'Vodka', 'Whisky', 'Cognac', 'Soft Drinks',
-            ])->pluck('id');
+            ->where(function ($q) {
+                foreach (['Beers and Ciders', 'Rum', 'Tequila', 'Gin', 'Liqueurs', 'Vodka', 'Whisky', 'Cognac', 'Soft Drinks'] as $n) {
+                    $q->orWhere('category_name', 'like', '%"' . $n . '"%');
+                }
+            })->pluck('id');
         $filled += MenuItem::where('branch_id', $branchId)
             ->whereIn('item_category_id', $drinkCatIds)
             ->where(function ($q) {
