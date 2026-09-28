@@ -427,7 +427,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                         {{-- Thumbnail: brand monogram tile when no photo was uploaded --}}
                                         @if ($restaurant && !$restaurant->hide_menu_item_image_on_customer_site)
                                             <div class="relative flex-shrink-0">
-                                                @if (str($item->item_photo_url)->contains('no-image'))
+                                                @if (str($item->item_photo_url)->contains('/img/'))
                                                     <div class="menu-monogram w-24 h-24 rounded-xl flex items-center justify-center cursor-pointer select-none"
                                                         wire:click="showItemDetail({{ $item->id }})"
                                                         aria-hidden="true">
@@ -1308,9 +1308,14 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                 <div class="flex flex-col gap-2">
                     <div class="flex flex-col gap-2">
                         @if ($restaurant && !$restaurant->hide_menu_item_image_on_customer_site)
-
-                            <img src="{{ $selectedItem->item_photo_url }}" alt="{{ $selectedItem->item_name }}"
-                                class="object-cover w-full rounded-md">
+                            @if (str($selectedItem->item_photo_url)->contains('/img/'))
+                                <div class="menu-monogram w-full h-28 rounded-xl flex items-center justify-center select-none" aria-hidden="true">
+                                    <span class="font-display text-5xl font-semibold">{{ mb_strtoupper(mb_substr(trim($selectedItem->item_name), 0, 1)) }}</span>
+                                </div>
+                            @else
+                                <img src="{{ $selectedItem->item_photo_url }}" alt="{{ $selectedItem->item_name }}"
+                                    class="object-cover w-full rounded-md">
+                            @endif
                         @endif
                         <div class="flex flex-col gap-1">
                             <div class="flex items-start justify-between gap-3">
