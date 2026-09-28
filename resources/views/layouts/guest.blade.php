@@ -47,24 +47,101 @@
             --color-base: {{ $restaurant->theme_rgb }};
             --color-secondary: {{ $secondaryRgb }};
             --livewire-progress-bar-color: {{ $restaurant->theme_hex }};
-            --spacing-section: 32px;
-            --spacing-container: 24px;
-            --spacing-stack-sm: 8px;
-            --spacing-stack-md: 16px;
-            --spacing-stack-lg: 24px;
+
+            /* Design tokens — surfaces & ink */
+            --surface: 255, 255, 255;
+            --surface-2: 247, 246, 243;
+            --ink: 22, 24, 29;
+            --ink-muted: 107, 114, 128;
+            --line: 229, 231, 235;
+        }
+
+        .dark {
+            --surface: 21, 22, 25;
+            --surface-2: 10, 10, 11;
+            --ink: 243, 244, 246;
+            --ink-muted: 156, 163, 175;
+            --line: 39, 43, 51;
         }
 
         html {
             scroll-behavior: smooth;
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
         body {
             font-family: 'Manrope', sans-serif;
-            background: #f8f9fa;
+            background: rgb(var(--surface-2));
+            color: rgb(var(--ink));
+        }
+
+        .dark body {
+            background: rgb(var(--surface-2));
         }
 
         .font-label, .font-hanken {
             font-family: 'Hanken Grotesk', sans-serif;
+        }
+
+        /* Display type — headers, restaurant name, section titles */
+        .font-display {
+            font-family: 'Hanken Grotesk', sans-serif;
+            letter-spacing: -0.015em;
+        }
+
+        /* Utility type — eyebrows, counts, prep time */
+        .font-utility {
+            font-family: 'Manrope', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        /* Prices: one treatment site-wide, tabular so they align in columns */
+        .price {
+            font-family: 'Hanken Grotesk', sans-serif;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            color: rgb(var(--color-base));
+        }
+
+        .dark .price {
+            color: rgb(var(--color-secondary));
+        }
+
+        /* Category eyebrow: label + count + rule — structure that encodes the menu */
+        .menu-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .menu-eyebrow .rule {
+            height: 1px;
+            flex: 1;
+            background: rgb(var(--line));
+        }
+
+        /* Bottom-sheet motion: one orchestrated entrance */
+        @keyframes sheet-in {
+            from { transform: translateY(24px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .sheet-enter {
+            animation: sheet-in 0.2s ease-out;
         }
 
         /* Subtle reveal animation */
@@ -135,27 +212,90 @@
             overflow-x: hidden;
         }
 
-        /* Card styles — theme-aware (works in light and dark mode) */
+        /* Card surface — token-driven so dark mode is coherent everywhere */
         .card {
-            background: #fff;
-            border: 1px solid #e5e7eb;
+            background: rgb(var(--surface));
+            border: 1px solid rgb(var(--line));
             border-radius: 0.5rem;
             box-shadow: none;
-            color: #111827;
-        }
-
-        .dark .card {
-            background: #030712; /* gray-950 */
-            border-color: #1f2937; /* gray-800 */
-            color: #f3f4f6; /* gray-100 */
+            color: rgb(var(--ink));
         }
 
         .card:hover {
-            box-shadow: 0 4px 20px rgba(13, 60, 56, 0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
         }
 
         .dark .card:hover {
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Monogram tile: items without a photo get a brand-tinted letter tile */
+        .menu-monogram {
+            background: rgb(var(--color-base) / 0.08);
+            color: rgb(var(--color-base));
+        }
+
+        .dark .menu-monogram {
+            background: rgb(var(--color-secondary) / 0.12);
+            color: rgb(var(--color-secondary));
+        }
+
+        /* Sticky table band — the diner's anchor while scrolling the menu */
+        .table-band {
+            position: sticky;
+            top: 64px;
+            z-index: 30;
+            background: rgb(var(--surface) / 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgb(var(--line));
+        }
+
+        /* Cart badge bump when an item is added */
+        @keyframes band-bump {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+
+        .band-bump {
+            animation: band-bump 0.3s ease-in-out;
+        }
+
+        /* Skeleton pulse while lazy menu chunks load */
+        @keyframes skeleton-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.45; }
+        }
+
+        .skeleton {
+            background: rgb(var(--line));
+            animation: skeleton-pulse 1.4s ease-in-out infinite;
+            border-radius: 0.5rem;
+        }
+
+        /* Item detail: bottom sheet on phones, centered modal from sm up.
+           Scoped to .item-sheet so shared dialog markup stays untouched. */
+        @media (max-width: 639px) {
+            .item-sheet > div:nth-child(2) > div {
+                margin-top: auto !important;
+                margin-bottom: 0 !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 1.25rem 1.25rem 0 0 !important;
+                animation: sheet-in 0.2s ease-out;
+            }
+            .item-sheet > div:nth-child(2) > div::before {
+                content: '';
+                display: block;
+                width: 40px;
+                height: 4px;
+                border-radius: 9999px;
+                background: rgb(var(--line));
+                margin: 10px auto 0;
+            }
         }
 
         /* Menu item card enhancement */

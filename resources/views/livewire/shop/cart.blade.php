@@ -57,6 +57,14 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                             <span class="mt-1.5 text-xs text-center text-gray-500 dark:text-gray-400 leading-relaxed">
                                 @lang('messages.dineInDescription')
                             </span>
+                            @if ($table)
+                                <span class="mt-1 inline-flex items-center gap-1 rounded-full bg-skin-base/10 px-2.5 py-0.5 text-xs font-semibold text-skin-base dark:bg-skin-secondary/10 dark:text-skin-secondary">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                    </svg>
+                                    {{ $table->table_code }}
+                                </span>
+                            @endif
                         @elseif($orderType->type === 'delivery')
                             <span class="mt-1.5 text-xs text-center text-gray-500 dark:text-gray-400 leading-relaxed">
                                 @lang('messages.deliveryDescription')
@@ -345,6 +353,26 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
     @endif
 
     @if ($showMenu)
+        {{-- Your Table band: scan context + live cart count, sticky while browsing --}}
+        @if ($cameFromQR && $table)
+            <div class="table-band">
+                <div class="container-lg flex items-center justify-between gap-3 py-2.5">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-skin-base/10 text-skin-base dark:bg-skin-secondary/10 dark:text-skin-secondary">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                            </svg>
+                        </span>
+                        <span class="font-utility text-gray-500 dark:text-gray-400 truncate">{{ $table->table_code }}</span>
+                    </div>
+                    @if (($cartQty ?? 0) > 0)
+                        <span class="font-utility text-skin-base dark:text-skin-secondary whitespace-nowrap">
+                            {{ __('messages.yourTableItems', ['count' => $cartQty]) }}
+                        </span>
+                    @endif
+                </div>
+            </div>
+        @endif
         <div class="px-4 mb-32 space-y-4 lg:gap-8 lg:mb-20"
             x-data="{
                 loadedCount: @entangle('menuItemsLoaded'),
@@ -382,10 +410,13 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
             @scroll.window.throttle.200ms="scrollHandler()">
 
             @forelse ($this->menuItems as $key => $itemCat)
-                <div class="mb-8">                            <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                                <span>{{ $key }}</span>
-                                <span class="h-px flex-1 bg-gray-200 dark:bg-gray-700"></span>
-                            </h3>
+                <div class="mb-8">
+                            {{-- Category eyebrow: name + live count + rule — structure encodes the menu --}}
+                            <div class="menu-eyebrow">
+                                <span class="font-utility text-gray-500 dark:text-gray-400">{{ $key }}</span>
+                                <span class="font-utility text-skin-base dark:text-skin-secondary">{{ count($itemCat) }}</span>
+                                <span class="rule"></span>
+                            </div>
                             {{-- Compact horizontal food cards: thumbnail left, content right --}}
                             <div class="grid grid-cols-1 gap-2.5 md:grid-cols-2 xl:grid-cols-3">
                                 @foreach ($itemCat as $item)
@@ -393,14 +424,22 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                         'menu-item-card card p-2.5 flex gap-3',
                                         'opacity-60' => !$item->in_stock,
                                     ]) wire:key='menu-item-{{ $item->id }}'>
-                                        {{-- Thumbnail --}}
+                                        {{-- Thumbnail: brand monogram tile when no photo was uploaded --}}
                                         @if ($restaurant && !$restaurant->hide_menu_item_image_on_customer_site)
                                             <div class="relative flex-shrink-0">
-                                                <img class="w-24 h-24 rounded-xl object-cover cursor-pointer bg-gray-100 dark:bg-gray-800"
-                                                    wire:click="showItemDetail({{ $item->id }})"
-                                                    src="{{ $item->item_photo_url }}" alt="{{ $item->item_name }}"
-                                                    width="96" height="96"
-                                                    loading="lazy" decoding="async">
+                                                @if (str($item->item_photo_url)->contains('no-image'))
+                                                    <div class="menu-monogram w-24 h-24 rounded-xl flex items-center justify-center cursor-pointer select-none"
+                                                        wire:click="showItemDetail({{ $item->id }})"
+                                                        aria-hidden="true">
+                                                        <span class="font-display text-3xl font-semibold">{{ mb_strtoupper(mb_substr(trim($item->getTranslatedValue('item_name', session('locale'))), 0, 1)) }}</span>
+                                                    </div>
+                                                @else
+                                                    <img class="w-24 h-24 rounded-xl object-cover cursor-pointer bg-gray-100 dark:bg-gray-800"
+                                                        wire:click="showItemDetail({{ $item->id }})"
+                                                        src="{{ $item->item_photo_url }}" alt="{{ $item->item_name }}"
+                                                        width="96" height="96"
+                                                        loading="lazy" decoding="async">
+                                                @endif
                                                 @if(!$item->in_stock)
                                                     <div class="absolute inset-0 rounded-xl bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
                                                         <span class="text-[10px] font-semibold text-gray-600 bg-white/90 px-2 py-0.5 rounded-full">@lang('app.outOfStock')</span>
@@ -428,13 +467,13 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                                     @endif
                                                 </div>
                                                 @if ($item->variations_count == 0)
-                                                    <span class="text-sm font-bold text-skin-base dark:text-skin-secondary whitespace-nowrap">
+                                                    <span class="price text-sm whitespace-nowrap">
                                                         {{ currency_format($item->price, $restaurant->currency_id) }}
                                                     </span>
                                                 @endif
                                             </div>
                                             @if ($item->preparation_time)
-                                                <div class="inline-flex items-center gap-1 mt-1 text-[11px] text-gray-400 dark:text-gray-500">
+                                                <div class="font-utility inline-flex items-center gap-1 mt-1.5 text-gray-400 dark:text-gray-500">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/>
                                                         <circle cx="12" cy="12" r="10"/>
@@ -525,10 +564,8 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                     </div>
                                 @endforeach
                             </div>
-                </div>
-            @empty
-                <div
-                    class="flex flex-col items-center justify-center p-6 text-center text-gray-500 dark:text-gray-400">
+                </div>            @empty
+                <div class="flex flex-col items-center justify-center p-6 text-center text-gray-500 dark:text-gray-400">
                     <svg width="100" height="100" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
                         fill="none">
                         <path d="M4 14a8 8 0 0 1 16 0z" fill="#e5e7eb" />
@@ -540,6 +577,15 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                     <span class="text-lg">
                         @lang('messages.noItemAdded')
                     </span>
+                    @if (($this->categoryList ?? collect())->count() > 0)
+                        @php $firstCategoryWithItems = collect($this->menuItems)->keys()->first(); @endphp
+                        @if ($firstCategoryWithItems)
+                            <button type="button" wire:click="$set('filterCategories', null)"
+                                class="mt-2 text-sm font-semibold text-skin-base dark:text-skin-secondary hover:underline">
+                                {{ __('messages.showAllItems', ['category' => $firstCategoryWithItems]) }}
+                            </button>
+                        @endif
+                    @endif
                 </div>
             @endforelse
 
@@ -1252,7 +1298,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
         </x-slot>
     </x-dialog-modal>
 
-    <x-dialog-modal wire:model.live="showItemDetailModal" maxWidth="sm">
+    <x-dialog-modal wire:model.live="showItemDetailModal" maxWidth="sm" class="item-sheet">
         <x-slot name="title">
             @lang('modules.menu.itemDescription')
         </x-slot>
@@ -1267,7 +1313,12 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                 class="object-cover w-full rounded-md">
                         @endif
                         <div class="flex flex-col gap-1">
-                            <h3 class="text-lg font-semibold dark:text-white">{{ $selectedItem->item_name }}</h3>
+                            <div class="flex items-start justify-between gap-3">
+                                <h3 class="font-display text-lg font-bold text-gray-900 dark:text-white">{{ $selectedItem->item_name }}</h3>
+                                @if ($selectedItem->variations_count == 0)
+                                    <span class="price text-base whitespace-nowrap">{{ currency_format($selectedItem->price, $restaurant->currency_id) }}</span>
+                                @endif
+                            </div>
                             @if (strlen($selectedItem->description) > 100)
                                 <div x-data="{ expanded: false }">
                                     <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -1299,8 +1350,8 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                             </div>
 
                             @if (trim((string) $selectedItem->ingredients) !== '')
-                                <div class="mt-1 rounded-lg bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-700 p-3">
-                                    <p class="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">
+                                <div class="mt-1 rounded-xl bg-skin-base/10 dark:bg-skin-secondary/10 border border-skin-base/10 dark:border-skin-secondary/20 p-3">
+                                    <p class="font-utility text-skin-base dark:text-skin-secondary mb-1">
                                         @lang('modules.menu.itemIngredients')
                                     </p>
                                     <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">

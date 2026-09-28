@@ -415,4 +415,8 @@ return array(
     'orderDescription' => 'High-fidelity interaction models that reduce friction and increase average order value.',
     'pay' => 'Pay',
     'payDescription' => 'Seamlessly integrated checkout with elegant split-check logic and global security.',
+
+    // Customer menu — table band & empty states
+    'yourTableItems' => ':count item|:count items',
+    'showAllItems' => 'Nothing in ":category" right now — show the full menu',
 );
