@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 640" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Views rooftop brand banner">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#03181c"/>
+      <stop offset="0.55" stop-color="#0b3540"/>
+      <stop offset="0.82" stop-color="#155258"/>
+      <stop offset="1" stop-color="#1b6266"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#e8a24a" stop-opacity="0.85"/>
+      <stop offset="0.6" stop-color="#e8a24a" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#e8a24a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="dusk" cx="0.5" cy="1" r="0.8">
+      <stop offset="0" stop-color="#c96f2e" stop-opacity="0.4"/>
+      <stop offset="0.5" stop-color="#c96f2e" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#c96f2e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1600" height="640" fill="url(#sky)"/>
+
+  <!-- Stars -->
+  <g fill="#f5efe6">
+    <circle cx="180" cy="90" r="2" opacity="0.5"/>
+    <circle cx="420" cy="140" r="1.5" opacity="0.35"/>
+    <circle cx="760" cy="70" r="2" opacity="0.45"/>
+    <circle cx="1080" cy="120" r="1.5" opacity="0.3"/>
+    <circle cx="1320" cy="80" r="2" opacity="0.4"/>
+    <circle cx="1480" cy="170" r="1.5" opacity="0.3"/>
+    <circle cx="300" cy="220" r="1.5" opacity="0.25"/>
+    <circle cx="950" cy="200" r="1.5" opacity="0.3"/>
+  </g>
+
+  <!-- Setting sun over the horizon -->
+  <circle cx="1120" cy="330" r="150" fill="url(#sun)"/>
+  <circle cx="1120" cy="330" r="72" fill="#e8a24a" opacity="0.8"/>
+
+  <!-- Dusk band -->
+  <rect y="300" width="1600" height="340" fill="url(#dusk)"/>
+
+  <!-- Skyline silhouette -->
+  <g fill="#02100f">
+    <rect x="0" y="440" width="180" height="200"/>
+    <rect x="150" y="380" width="130" height="260"/>
+    <rect x="260" y="470" width="120" height="170"/>
+    <rect x="360" y="410" width="160" height="230"/>
+    <rect x="500" y="480" width="110" height="160"/>
+    <rect x="590" y="360" width="150" height="280"/>
+    <rect x="720" y="450" width="120" height="190"/>
+    <rect x="820" y="400" width="140" height="240"/>
+    <rect x="940" y="470" width="120" height="170"/>
+    <rect x="1040" y="430" width="150" height="210"/>
+    <rect x="1170" y="480" width="110" height="160"/>
+    <rect x="1260" y="400" width="150" height="240"/>
+    <rect x="1390" y="460" width="110" height="180"/>
+    <rect x="1480" y="420" width="120" height="220"/>
+  </g>
+
+  <!-- Rooftop railing line (the terrace you dine on) -->
+  <g stroke="#f5efe6" stroke-opacity="0.35" stroke-width="3" fill="none">
+    <line x1="0" y1="560" x2="1600" y2="560"/>
+  </g>
+  <g stroke="#f5efe6" stroke-opacity="0.16" stroke-width="2">
+    <line x1="120" y1="560" x2="120" y2="640"/>
+    <line x1="320" y1="560" x2="320" y2="640"/>
+    <line x1="520" y1="560" x2="520" y2="640"/>
+    <line x1="720" y1="560" x2="720" y2="640"/>
+    <line x1="920" y1="560" x2="920" y2="640"/>
+    <line x1="1120" y1="560" x2="1120" y2="640"/>
+    <line x1="1320" y1="560" x2="1320" y2="640"/>
+    <line x1="1520" y1="560" x2="1520" y2="640"/>
+  </g>
+
+  <!-- Window lights -->
+  <g fill="#f0c987" opacity="0.65">
+    <rect x="180" y="410" width="10" height="10"/><rect x="210" y="440" width="10" height="10"/>
+    <rect x="390" y="440" width="10" height="10"/><rect x="430" y="480" width="10" height="10"/>
+    <rect x="620" y="400" width="10" height="10"/><rect x="660" y="430" width="10" height="10"/>
+    <rect x="860" y="440" width="10" height="10"/><rect x="900" y="470" width="10" height="10"/>
+    <rect x="1080" y="470" width="10" height="10"/><rect x="1120" y="500" width="10" height="10"/>
+    <rect x="1300" y="440" width="10" height="10"/><rect x="1340" y="470" width="10" height="10"/>
+    <rect x="1500" y="450" width="10" height="10"/>
+  </g>
+
+  <!-- Bottom vignette -->
+  <rect y="470" width="1600" height="170" fill="#010a0c" opacity="0.5"/>
+</svg>

@@ -210,7 +210,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                         'bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-800 hover:border-skin-base hover:shadow-sm' => !is_null($menuId),
                     ])
                     wire:key='menu-all-pill'>
-                    <span class="material-symbols-outlined text-lg">restaurant_menu</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2M7 2v20M21 15V2a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>
                     <span>@lang('app.showAll')</span>
                 </button>
 
@@ -224,7 +224,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                             'bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-800 hover:border-skin-base hover:shadow-sm' => $menuId != $item->id,
                         ])
                         wire:key='menu-pill-{{ $item->id }}'>
-                        <span class="material-symbols-outlined text-lg">dinner_dining</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17 21a1 1 0 001-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 00-2.134-7.589 5 5 0 00-9.186 0 4 4 0 00-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 001 1Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 17h12"/></svg>
                         <span>{{ $item->getTranslation('menu_name', session('locale', app()->getLocale())) }}</span>
                         <span @class([
                             'text-xs px-2 py-0.5 rounded-full font-label font-medium',
@@ -316,7 +316,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                 </label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
-                        <span class="material-symbols-outlined text-lg">search</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" stroke-linejoin="round" d="m20 20-3.5-3.5"/></svg>
                     </span>
                     <input id="menu_name" 
                         class="block w-full font-label pl-10 pr-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-skin-base/20 focus:border-skin-base transition-all duration-200" 

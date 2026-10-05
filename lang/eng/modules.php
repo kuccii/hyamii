@@ -16,6 +16,7 @@ return [
         'addItemCategory' => 'Add Item Category',
         'category' => 'Category',
         'menuCollection' => 'Menu',
+        'menu' => 'Menu',
         'description' => 'Description',
         'inStock' => 'In Stock',
         'taxInclusive' => 'Tax Inclusive',

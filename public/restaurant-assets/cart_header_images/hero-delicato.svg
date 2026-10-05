@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 640" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Delicato brand banner">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#011c19"/>
+      <stop offset="0.55" stop-color="#002522"/>
+      <stop offset="1" stop-color="#0a463e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.78" cy="0.18" r="0.75">
+      <stop offset="0" stop-color="#0e5c52" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#0e5c52" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.12" cy="0.85" r="0.6">
+      <stop offset="0" stop-color="#a33b38" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#a33b38" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="lines" width="46" height="46" patternUnits="userSpaceOnUse" patternTransform="rotate(24)">
+      <rect width="46" height="46" fill="none"/>
+      <line x1="0" y1="0" x2="0" y2="46" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1.4"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="640" fill="url(#bg)"/>
+  <rect width="1600" height="640" fill="url(#lines)"/>
+  <rect width="1600" height="640" fill="url(#glow)"/>
+  <rect width="1600" height="640" fill="url(#glow2)"/>
+
+  <!-- Plate motif: concentric circles, top right -->
+  <g fill="none" stroke="#f5efe6" stroke-opacity="0.16" stroke-width="2">
+    <circle cx="1370" cy="210" r="150"/>
+    <circle cx="1370" cy="210" r="112"/>
+    <circle cx="1370" cy="210" r="74"/>
+  </g>
+  <circle cx="1370" cy="210" r="30" fill="none" stroke="#a33b38" stroke-opacity="0.55" stroke-width="2.5"/>
+
+  <!-- Amaranth brush arc -->
+  <path d="M -60 520 C 320 430 620 610 1000 505 C 1180 455 1330 470 1660 540" fill="none" stroke="#a33b38" stroke-opacity="0.5" stroke-width="7" stroke-linecap="round"/>
+  <path d="M -60 555 C 340 470 640 640 1020 540 C 1195 495 1340 505 1660 570" fill="none" stroke="#a33b38" stroke-opacity="0.22" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Fine fork-and-knife mark, left -->
+  <g fill="none" stroke="#f5efe6" stroke-opacity="0.28" stroke-width="5" stroke-linecap="round">
+    <path d="M 150 170 v 66 c 0 16 13 28 28 28 s 28 -12 28 -28 v -66"/>
+    <path d="M 178 170 v 132"/>
+    <path d="M 262 300 v -60 c 0 -34 24 -60 24 -60 v 96 c 0 8 6 14 14 14 h 6 v -132"/>
+  </g>
+
+  <!-- Bottom vignette for text legibility -->
+  <rect y="430" width="1600" height="210" fill="#00110f" opacity="0.55"/>
+  <rect y="430" width="1600" height="2" fill="#f5efe6" opacity="0.14"/>
+</svg>
