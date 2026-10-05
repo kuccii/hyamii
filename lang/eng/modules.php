@@ -1336,7 +1336,7 @@ return [
         'headerText' => 'Header Text',
         'headerTextDescription' => 'Enter the text to display in the cart page header.',
         'headerImages' => 'Header Images',
-        'headerImagesDescription' => 'Upload multiple images to create a slider in the cart page header.',
+        'headerImagesDescription' => 'Upload images for the cart page header. The first image will be displayed as a static header image.',
         'headerImagesUploadHelp' => 'Supported formats: JPEG, PNG, JPG, GIF, SVG, WEBP. Maximum size: 2MB. Recommended size: 1024 × 1014 pixels.',
         'existingImages' => 'Existing Images',
         'noPhoneCodesFound' => 'No phone codes found',

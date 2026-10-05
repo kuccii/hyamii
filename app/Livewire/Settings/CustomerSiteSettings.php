@@ -323,6 +323,12 @@ class CustomerSiteSettings extends Component
             ]);
         }
 
+        // Ensure storage/framework/cache exists — tempnam() in AliasLoader needs this
+        $cacheDir = storage_path('framework/cache');
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0755, true);
+        }
+
         // Handle image uploads using Files::uploadLocalOrS3
         if ($this->headerType === 'image' && is_array($this->newImages) && count($this->newImages) > 0) {
             foreach ($this->newImages as $image) {
