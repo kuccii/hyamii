@@ -53,7 +53,22 @@
                 default    => [$tint($__r, 0.965), $tint($__g, 0.965), $tint($__b, 0.965)],
             };
             $plate = array_map(fn ($c) => $tint($c, 0.6), $paper);   // cards float on paper
-            $line  = [$mix($paper[0], $__r, 0.14), $mix($paper[1], $__g, 0.14), $mix($paper[2], $__b, 0.14)];
+
+            // Line: paper deepened toward a darkened brand so dot leaders,
+            // rules, and card borders stay readable (WCAG >= 4.5 : 1 on white).
+            $darkenBrand = fn ($c) => (int) ($c * 0.35);
+            $line  = [$mix($paper[0], $darkenBrand($__r), 0.65), $mix($paper[1], $darkenBrand($__g), 0.65), $mix($paper[2], $darkenBrand($__b), 0.65)];
+
+            // Luminance: WCAG relative luminance (0–1) for an [r,g,b] triple.
+            $relLum = fn ($r, $g, $b) => (function ($rs, $gs, $bs) {
+                $linR = $rs <= 0.03928 ? $rs / 12.92 : pow(($rs + 0.055) / 1.055, 2.4);
+                $linG = $gs <= 0.03928 ? $gs / 12.92 : pow(($gs + 0.055) / 1.055, 2.4);
+                $linB = $bs <= 0.03928 ? $bs / 12.92 : pow(($bs + 0.055) / 1.055, 2.4);
+                return 0.2126 * $linR + 0.7152 * $linG + 0.0722 * $linB;
+            })($__r / 255, $__g / 255, $__b / 255);
+
+            // Text color that always contrasts on --color-base: white on dark, dark on light.
+            $onBaseRgb = $relLum($__r, $__g, $__b) >= 0.5 ? '26, 26, 26' : '255, 255, 255';
 
             // Dark mode: the brand color deepened to near-black, not gray.
             $darkSurface = [round($__r * 0.14) + 3, round($__g * 0.14) + 3, round($__b * 0.14) + 3];
@@ -73,6 +88,7 @@
             --ink: 24, 22, 19;
             --ink-muted: 112, 107, 98;
             --line: {{ $rgbStr($line) }};
+            --color-on-base: {{ $onBaseRgb }};
         }
 
         .dark {
@@ -81,6 +97,7 @@
             --ink: 240, 238, 232;
             --ink-muted: 158, 161, 156;
             --line: {{ $rgbStr($darkLine) }};
+            --color-on-base: {{ $onBaseRgb }};
         }
 
         html {

@@ -196,59 +196,73 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
 
     @if (!$showCart)
 
-                {{-- Carte index: menus as quiet text, not pills --}}
-        <div class="px-4 mt-5" x-data="{ showAll: false }">
-            <div class="flex items-center gap-5 overflow-x-auto pb-1 scrollbar-none">
-                <button type="button" wire:click='filterMenuItems(null)' wire:key='menu-all-pill'
-                    @class([
-                        'flex-shrink-0 pb-1.5 pt-1 text-sm font-semibold border-b-2 transition-colors duration-200',
-                        'border-skin-base text-skin-base dark:text-skin-secondary' => is_null($menuId),
-                        'border-transparent text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white' => !is_null($menuId),
-                    ])>
-                    @lang('app.showAll')
-                </button>
-
-                @forelse ($this->menuList as $index => $item)
-                    <button type="button" wire:click='filterMenuItems({{ $item->id }})' wire:key='menu-pill-{{ $item->id }}'
+                {{-- Menu filter: brand-tinted pills, not border-bottom tabs --}}
+        <div class="px-4 mt-5">
+            <div class="flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none">
+                <span class="font-utility text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">Menu</span>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <button type="button" wire:click='filterMenuItems(null)' wire:key='menu-all-pill'
                         @class([
-                            'flex-shrink-0 pb-1.5 pt-1 text-sm font-semibold border-b-2 transition-colors duration-200 whitespace-nowrap',
-                            'border-skin-base text-skin-base dark:text-skin-secondary' => $menuId == $item->id,
-                            'border-transparent text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white' => $menuId != $item->id,
+                            'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200',
+                            'bg-[rgb(var(--color-base))] text-[rgb(var(--color-on-base))]' => is_null($menuId),
+                            'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800' => !is_null($menuId),
                         ])>
-                        {{ $item->getTranslation('menu_name', session('locale', app()->getLocale())) }}
-                        <span class="font-utility text-gray-400 ml-1">{{ $item->items_count }}</span>
+                        @lang('app.showAll')
                     </button>
-                @empty
-                    <div class="inline-flex items-center text-sm text-gray-400 font-light">
-                        @lang('messages.noMenuAdded')
-                    </div>
-                @endforelse
+
+                    @forelse ($this->menuList as $index => $item)
+                        <button type="button" wire:click='filterMenuItems({{ $item->id }})' wire:key='menu-pill-{{ $item->id }}'
+                            @class([
+                                'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 whitespace-nowrap',
+                                'bg-[rgb(var(--color-base))] text-[rgb(var(--color-on-base))]' => $menuId == $item->id,
+                                'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800' => $menuId != $item->id,
+                            ])>
+                            {{ $item->getTranslation('menu_name', session('locale', app()->getLocale())) }}
+                            <span @class([
+                                'font-utility text-xs',
+                                'text-[rgb(var(--color-on-base))]/70' => $menuId == $item->id,
+                                'text-gray-400 dark:text-gray-500' => $menuId != $item->id,
+                            ])>({{ $item->items_count }})</span>
+                        </button>
+                    @empty
+                        <div class="inline-flex items-center text-sm text-gray-400 font-light">
+                            @lang('messages.noMenuAdded')
+                        </div>
+                    @endforelse
+                </div>
             </div>
         </div>
 
-                {{-- The carte's chapter index — one quiet row, mobile and desktop alike --}}
+                {{-- Category filter: brand-tinted pills for chapter navigation --}}
         <div class="mx-4 mt-4">
-            <div class="flex gap-x-5 overflow-x-auto scrollbar-none pb-0.5 lg:flex-wrap" aria-label="Categories">
-                <button type="button" wire:click="filterMenu(null)" wire:key="cat-idx-all"
-                    @class([
-                        'flex-shrink-0 pb-1.5 pt-1 text-sm font-semibold border-b-2 transition-colors duration-200',
-                        'border-skin-base text-skin-base dark:text-skin-secondary' => is_null($filterCategories),
-                        'border-transparent text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white' => !is_null($filterCategories),
-                    ])>
-                    @lang('app.showAll')
-                </button>
-
-                @foreach ($this->categoryList as $item)
-                    <button type="button" wire:click="filterMenu({{ $item->id }})" wire:key="cat-idx-{{ $item->id }}"
+            <div class="flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none" aria-label="Categories">
+                <span class="font-utility text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">Category</span>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <button type="button" wire:click="filterMenu(null)" wire:key="cat-idx-all"
                         @class([
-                            'flex-shrink-0 pb-1.5 pt-1 text-sm font-semibold border-b-2 transition-colors duration-200 whitespace-nowrap',
-                            'border-skin-base text-skin-base dark:text-skin-secondary' => $filterCategories == $item->id,
-                            'border-transparent text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white' => $filterCategories != $item->id,
+                            'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200',
+                            'bg-[rgb(var(--color-base))] text-[rgb(var(--color-on-base))]' => is_null($filterCategories),
+                            'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800' => !is_null($filterCategories),
                         ])>
-                        {{ $item->getTranslation('category_name', session('locale', app()->getLocale())) }}
-                        <span class="font-utility text-gray-400 ml-1">{{ $item->items_count }}</span>
+                        @lang('app.showAll')
                     </button>
-                @endforeach
+
+                    @foreach ($this->categoryList as $item)
+                        <button type="button" wire:click="filterMenu({{ $item->id }})" wire:key="cat-idx-{{ $item->id }}"
+                            @class([
+                                'inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 whitespace-nowrap',
+                                'bg-[rgb(var(--color-base))] text-[rgb(var(--color-on-base))]' => $filterCategories == $item->id,
+                                'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800' => $filterCategories != $item->id,
+                            ])>
+                            {{ $item->getTranslation('category_name', session('locale', app()->getLocale())) }}
+                            <span @class([
+                                'font-utility text-xs',
+                                'text-[rgb(var(--color-on-base))]/70' => $filterCategories == $item->id,
+                                'text-gray-400 dark:text-gray-500' => $filterCategories != $item->id,
+                            ])>({{ $item->items_count }})</span>
+                        </button>
+                    @endforeach
+                </div>
             </div>
         </div>
 
@@ -451,7 +465,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                                     wire:loading.attr="disabled"
                                     wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})"
                                     x-on:click="window.dispatchEvent(new CustomEvent('addToCart'))"
-                                    class="h-8 px-4 flex items-center justify-center rounded-full bg-[rgb(var(--color-base))] text-white text-xs font-semibold hover:opacity-90 active:scale-95 transition-all shadow-[0_4px_12px_-4px_rgb(var(--color-base)/0.5)]">
+                                    class="h-8 px-4 flex items-center justify-center rounded-full bg-[rgb(var(--color-base))] text-[rgb(var(--color-on-base))] text-xs font-semibold hover:opacity-90 active:scale-95 transition-all shadow-[0_4px_12px_-4px_rgb(var(--color-base)/0.5)]">
                                     <span wire:loading.remove wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">@lang('app.add')</span>
                                     <span wire:loading wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
                                         <svg class="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
@@ -528,7 +542,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
             @if ($cartQty > 0)
                 <button type="button" wire:click="showCartItems"
                     wire:loading.class="opacity-80"
-                    class="fixed inset-x-0 bottom-0 z-30 mx-0 flex items-center justify-between gap-3 bg-[rgb(var(--color-base))] text-white shadow-lg py-3.5 px-5 lg:mx-auto lg:max-w-6xl lg:rounded-t-xl lg:bottom-2 lg:inset-x-4 lg:shadow-xl hover:brightness-110 transition-all">
+                    class="fixed inset-x-0 bottom-0 z-30 mx-0 flex items-center justify-between gap-3 bg-[rgb(var(--color-base))] text-[rgb(var(--color-on-base))] shadow-lg py-3.5 px-5 lg:mx-auto lg:max-w-6xl lg:rounded-t-xl lg:bottom-2 lg:inset-x-4 lg:shadow-xl hover:brightness-110 transition-all">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="relative flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
                             <span wire:loading.remove class="flex items-center justify-center w-full h-full">
