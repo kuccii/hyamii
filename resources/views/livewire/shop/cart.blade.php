@@ -196,41 +196,27 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
 
     @if (!$showCart)
 
-        {{-- Sleek Menu Pills Carousel (Horizontal Scroll) --}}
-        <div class="px-4 mt-4" x-data="{ showAll: false }">
-            <h4 class="font-label text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2 font-semibold">@lang('modules.menu.menu')</h4>
-            
-            <div class="flex items-center gap-3 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory">
-                <!-- All Menu Pill -->
-                <button type="button"
-                    wire:click='filterMenuItems(null)'
+                {{-- Carte index: menus as quiet text, not pills --}}
+        <div class="px-4 mt-5" x-data="{ showAll: false }">
+            <div class="flex items-center gap-5 overflow-x-auto pb-1 scrollbar-none">
+                <button type="button" wire:click='filterMenuItems(null)' wire:key='menu-all-pill'
                     @class([
-                        'snap-start flex-shrink-0 px-6 py-3 rounded-xl border font-semibold text-sm transition-all duration-300 flex items-center gap-2.5',
-                        'bg-skin-base text-white border-transparent shadow-[0_8px_20px_-6px_rgb(var(--color-base)/0.35)]' => is_null($menuId),
-                        'bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-800 hover:border-skin-base hover:shadow-sm' => !is_null($menuId),
-                    ])
-                    wire:key='menu-all-pill'>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2M7 2v20M21 15V2a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>
-                    <span>@lang('app.showAll')</span>
+                        'flex-shrink-0 pb-1.5 pt-1 text-sm font-semibold border-b-2 transition-colors duration-200',
+                        'border-skin-base text-skin-base dark:text-skin-secondary' => is_null($menuId),
+                        'border-transparent text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white' => !is_null($menuId),
+                    ])>
+                    @lang('app.showAll')
                 </button>
 
-                <!-- Dynamic Menu Pills -->
                 @forelse ($this->menuList as $index => $item)
-                    <button type="button"
-                        wire:click='filterMenuItems({{ $item->id }})'
+                    <button type="button" wire:click='filterMenuItems({{ $item->id }})' wire:key='menu-pill-{{ $item->id }}'
                         @class([
-                            'snap-start flex-shrink-0 px-6 py-3 rounded-xl border font-semibold text-sm transition-all duration-300 flex items-center gap-2.5',
-                            'bg-skin-base text-white border-transparent shadow-[0_8px_20px_-6px_rgb(var(--color-base)/0.35)]' => $menuId == $item->id,
-                            'bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-800 hover:border-skin-base hover:shadow-sm' => $menuId != $item->id,
-                        ])
-                        wire:key='menu-pill-{{ $item->id }}'>
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17 21a1 1 0 001-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 00-2.134-7.589 5 5 0 00-9.186 0 4 4 0 00-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 001 1Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M6 17h12"/></svg>
-                        <span>{{ $item->getTranslation('menu_name', session('locale', app()->getLocale())) }}</span>
-                        <span @class([
-                            'text-xs px-2 py-0.5 rounded-full font-label font-medium',
-                            'bg-white/20 text-white' => $menuId == $item->id,
-                            'bg-gray-100 dark:bg-gray-850 text-gray-500 dark:text-gray-400' => $menuId != $item->id,
-                        ])>{{ $item->items_count }}</span>
+                            'flex-shrink-0 pb-1.5 pt-1 text-sm font-semibold border-b-2 transition-colors duration-200 whitespace-nowrap',
+                            'border-skin-base text-skin-base dark:text-skin-secondary' => $menuId == $item->id,
+                            'border-transparent text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white' => $menuId != $item->id,
+                        ])>
+                        {{ $item->getTranslation('menu_name', session('locale', app()->getLocale())) }}
+                        <span class="font-utility text-gray-400 ml-1">{{ $item->items_count }}</span>
                     </button>
                 @empty
                     <div class="inline-flex items-center text-sm text-gray-400 font-light">
@@ -240,70 +226,29 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
             </div>
         </div>
 
-        {{-- Unified Category Section --}}
+                {{-- The carte's chapter index — one quiet row, mobile and desktop alike --}}
         <div class="mx-4 mt-4">
-            <h4 class="font-label text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2 font-semibold">@lang('modules.menu.category')</h4>
-            
-            {{-- Mobile Category Rail: horizontally scrollable pills (fast browsing, no dropdown) --}}
-            <div class="lg:hidden mb-4">
-                <div class="flex gap-2 overflow-x-auto scrollbar-none snap-x snap-mandatory pb-1">
-                    <button type="button" wire:click="filterMenu(null)" wire:key="cat-m-all"
-                        @class([
-                            'snap-start flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 border',
-                            'bg-skin-base text-white border-transparent shadow-[0_6px_16px_-6px_rgb(var(--color-base)/0.4)]' => is_null($filterCategories),
-                            'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800' => !is_null($filterCategories),
-                        ])>
-                        @lang('app.showAll')
-                    </button>
-
-                    @foreach ($this->categoryList as $item)
-                        <button type="button" wire:click="filterMenu({{ $item->id }})" wire:key="cat-m-{{ $item->id }}"
-                            @class([
-                                'snap-start flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 border inline-flex items-center gap-1.5',
-                                'bg-skin-base text-white border-transparent shadow-[0_6px_16px_-6px_rgb(var(--color-base)/0.4)]' => $filterCategories == $item->id,
-                                'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800' => $filterCategories != $item->id,
-                            ])>
-                            {{ $item->getTranslation('category_name', session('locale', app()->getLocale())) }}
-                            <span @class([
-                                'text-[11px] px-1.5 py-0.5 rounded-full font-bold',
-                                'bg-white/25 text-white' => $filterCategories == $item->id,
-                                'bg-gray-100 dark:bg-gray-800 text-gray-500' => $filterCategories != $item->id,
-                            ])>{{ $item->items_count }}</span>
-                        </button>
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- Desktop Category Navigation (Sleek Outline Capsule Bar) -->
-            <div class="hidden p-2 rounded-xl lg:block bg-gray-50 dark:bg-gray-950 border border-gray-200/50 dark:border-gray-850">
-                <nav class="flex gap-1.5 overflow-x-auto scrollbar-none py-1" aria-label="Categories">
-                    <button type="button" wire:click="filterMenu(null)" @class([
-                        'px-5 py-2.5 text-sm font-semibold rounded-lg transition-all whitespace-nowrap flex items-center gap-1.5',
-                        'bg-white dark:bg-gray-900 text-skin-base dark:text-skin-secondary shadow-sm border border-gray-200 dark:border-gray-800' => is_null($filterCategories),
-                        'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/50 dark:hover:bg-gray-900/50' => !is_null($filterCategories),
+            <div class="flex gap-x-5 overflow-x-auto scrollbar-none pb-0.5 lg:flex-wrap" aria-label="Categories">
+                <button type="button" wire:click="filterMenu(null)" wire:key="cat-idx-all"
+                    @class([
+                        'flex-shrink-0 pb-1.5 pt-1 text-sm font-semibold border-b-2 transition-colors duration-200',
+                        'border-skin-base text-skin-base dark:text-skin-secondary' => is_null($filterCategories),
+                        'border-transparent text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white' => !is_null($filterCategories),
                     ])>
-                        <span>@lang('app.showAll')</span>
-                    </button>
+                    @lang('app.showAll')
+                </button>
 
-                    @foreach ($this->categoryList as $item)
-                        <button type="button" wire:click="filterMenu({{ $item->id }})"
-                            wire:key="category-desktop-{{ $item->id }}"
-                            @class([
-                                'px-5 py-2.5 text-sm font-semibold rounded-lg transition-all whitespace-nowrap inline-flex items-center gap-2',
-                                'bg-white dark:bg-gray-900 text-skin-base dark:text-skin-secondary shadow-sm border border-gray-200 dark:border-gray-800' => $filterCategories == $item->id,
-                                'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100/50 dark:hover:bg-gray-900/50' => $filterCategories != $item->id,
-                            ])>
-                            <span>{{ $item->getTranslation('category_name', session('locale', app()->getLocale())) }}</span>
-                            <span @class([
-                                'px-2 py-0.5 text-xs rounded-full font-label font-bold',
-                                'bg-skin-base/10 text-skin-base dark:text-skin-secondary' => $filterCategories == $item->id,
-                                'bg-gray-100 dark:bg-gray-800 text-gray-500' => $filterCategories != $item->id,
-                            ])>
-                                {{ $item->items_count }}
-                            </span>
-                        </button>
-                    @endforeach
-                </nav>
+                @foreach ($this->categoryList as $item)
+                    <button type="button" wire:click="filterMenu({{ $item->id }})" wire:key="cat-idx-{{ $item->id }}"
+                        @class([
+                            'flex-shrink-0 pb-1.5 pt-1 text-sm font-semibold border-b-2 transition-colors duration-200 whitespace-nowrap',
+                            'border-skin-base text-skin-base dark:text-skin-secondary' => $filterCategories == $item->id,
+                            'border-transparent text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white' => $filterCategories != $item->id,
+                        ])>
+                        {{ $item->getTranslation('category_name', session('locale', app()->getLocale())) }}
+                        <span class="font-utility text-gray-400 ml-1">{{ $item->items_count }}</span>
+                    </button>
+                @endforeach
             </div>
         </div>
 
@@ -311,7 +256,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mx-4 mt-5 mb-6 items-end">
             {{-- Modern Input Field --}}
             <div class="md:col-span-2">
-                <label for="menu_name" class="block mb-1.5 font-label text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                <label for="menu_name" class="block mb-1.5 font-utility text-gray-500 dark:text-gray-400">
                     @lang('modules.menu.searchMenuItems')
                 </label>
                 <div class="relative">
@@ -319,7 +264,7 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" stroke-linejoin="round" d="m20 20-3.5-3.5"/></svg>
                     </span>
                     <input id="menu_name" 
-                        class="block w-full font-label pl-10 pr-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-skin-base/20 focus:border-skin-base transition-all duration-200" 
+                        class="block w-full pl-10 pr-4 py-2.5 bg-[rgb(var(--surface))] border border-[rgb(var(--line))] rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-skin-base/20 focus:border-skin-base transition-all duration-200" 
                         type="text"
                         placeholder="{{ __('placeholders.searchMenuItems') }}" 
                         wire:model.live.debounce.500ms="search" />
@@ -353,22 +298,23 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
     @endif
 
     @if ($showMenu)
-        {{-- Your Table band: scan context + live cart count, sticky while browsing --}}
+                {{-- Your Table band: the diner's receipt in brand ink, sticky while browsing --}}
         @if ($cameFromQR && $table)
             <div class="table-band">
-                <div class="container-lg flex items-center justify-between gap-3 py-2.5">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <span class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-skin-base/10 text-skin-base dark:bg-skin-secondary/10 dark:text-skin-secondary">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                            </svg>
-                        </span>
-                        <span class="font-utility text-gray-500 dark:text-gray-400 truncate">{{ $table->table_code }}</span>
+                <div class="container-lg flex items-center justify-between gap-3 py-3">
+                    <div class="flex items-baseline gap-2.5 min-w-0">
+                        <span class="font-utility text-white/60">Table</span>
+                        <span class="font-display text-base font-semibold text-white truncate">{{ $table->table_code }}</span>
                     </div>
                     @if (($cartQty ?? 0) > 0)
-                        <span class="font-utility text-skin-base dark:text-skin-secondary whitespace-nowrap">
-                            {{ __('messages.yourTableItems', ['count' => $cartQty]) }}
-                        </span>
+                        <div class="flex items-center gap-3 flex-shrink-0">
+                            <span class="font-utility text-white/85">{{ __('messages.yourTableItems', ['count' => $cartQty]) }}</span>
+                            <button type="button" wire:click="showCartItems"
+                                class="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-white/25 transition-colors">
+                                @lang('modules.order.viewCart')
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                            </button>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -411,158 +357,119 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
 
             @forelse ($this->menuItems as $key => $itemCat)
                 <div class="mb-8">
-                            {{-- Category eyebrow: name + live count + rule — structure encodes the menu --}}
+                            {{-- Carte chapter: display-face title + count + rule --}}
                             <div class="menu-eyebrow">
-                                <span class="font-utility text-gray-500 dark:text-gray-400">{{ $key }}</span>
-                                <span class="font-utility text-skin-base dark:text-skin-secondary">{{ count($itemCat) }}</span>
+                                <h3 class="font-display text-[22px] sm:text-2xl font-semibold text-gray-900 dark:text-white tracking-tight leading-none">{{ $key }}</h3>
+                                <span class="font-utility text-gray-400 dark:text-gray-500">{{ count($itemCat) }}</span>
                                 <span class="rule"></span>
                             </div>
                             {{-- Compact horizontal food cards: thumbnail left, content right --}}
-                            <div class="grid grid-cols-1 gap-2.5 md:grid-cols-2 xl:grid-cols-3">
+                            <div class="grid grid-cols-1 gap-2.5 md:grid-cols-2 xl:gap-x-8">
                                 @foreach ($itemCat as $item)
-                                    <div @class([
-                                        'menu-item-card card p-2.5 flex gap-3',
-                                        'opacity-60' => !$item->in_stock,
-                                    ]) wire:key='menu-item-{{ $item->id }}'>
-                                        {{-- Thumbnail: brand monogram tile when no photo was uploaded --}}
-                                        @if ($restaurant && !$restaurant->hide_menu_item_image_on_customer_site)
-                                            <div class="relative flex-shrink-0">
-                                                @if (str($item->item_photo_url)->contains('/img/'))
-                                                    <div class="menu-monogram w-24 h-24 rounded-xl flex items-center justify-center cursor-pointer select-none"
-                                                        wire:click="showItemDetail({{ $item->id }})"
-                                                        aria-hidden="true">
-                                                        <span class="font-display text-3xl font-semibold">{{ mb_strtoupper(mb_substr(trim($item->getTranslatedValue('item_name', session('locale'))), 0, 1)) }}</span>
-                                                    </div>
-                                                @else
-                                                    <img class="w-24 h-24 rounded-xl object-cover cursor-pointer bg-gray-100 dark:bg-gray-800"
-                                                        wire:click="showItemDetail({{ $item->id }})"
-                                                        src="{{ $item->item_photo_url }}" alt="{{ $item->item_name }}"
-                                                        width="96" height="96"
-                                                        loading="lazy" decoding="async">
-                                                @endif
-                                                @if(!$item->in_stock)
-                                                    <div class="absolute inset-0 rounded-xl bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
-                                                        <span class="text-[10px] font-semibold text-gray-600 bg-white/90 px-2 py-0.5 rounded-full">@lang('app.outOfStock')</span>
-                                                    </div>
-                                                @endif
-                                            </div>
+    @php
+        $hasPhoto = $restaurant && !$restaurant->hide_menu_item_image_on_customer_site && !str($item->item_photo_url)->contains('/img/');
+        $inCartQty = $cartItemQty[$item->id] ?? 0;
+        $orderStats = getRestaurantOrderStats($shopBranch->id);
+    @endphp
+    <div @class([
+            'menu-row',
+            'card p-2.5 flex gap-3' => $hasPhoto,
+            'px-3 py-2.5 -mx-3' => !$hasPhoto,
+            'opacity-60' => !$item->in_stock,
+        ]) wire:key='menu-item-{{ $item->id }}'>
+        @if ($hasPhoto)
+            <div class="relative flex-shrink-0">
+                <img class="w-24 h-24 rounded-lg object-cover cursor-pointer bg-[rgb(var(--surface-2))]"
+                    wire:click="showItemDetail({{ $item->id }})"
+                    src="{{ $item->item_photo_url }}" alt="{{ $item->item_name }}"
+                    width="96" height="96" loading="lazy" decoding="async">
+                @if(!$item->in_stock)
+                    <div class="absolute inset-0 rounded-lg bg-white/60 dark:bg-black/50 backdrop-blur-[2px] flex items-center justify-center">
+                        <span class="text-[10px] font-semibold text-gray-600 dark:text-gray-300 bg-white/90 dark:bg-black/80 px-2 py-0.5 rounded-full">@lang('app.outOfStock')</span>
+                    </div>
+                @endif
+            </div>
+        @endif
+        <div class="flex flex-col flex-1 min-w-0">
+            <div class="flex items-baseline min-w-0">
+                <img src="{{ asset('img/' . $item->type . '.svg') }}" class="h-3.5 w-3.5 flex-shrink-0 self-center mr-1.5 opacity-80"
+                    title="@lang('modules.menu.' . $item->type)" alt="" />
+                <span class="font-display text-[15px] font-semibold text-gray-900 dark:text-white leading-snug truncate cursor-pointer"
+                    wire:click="showItemDetail({{ $item->id }})">
+                    {{ $item->getTranslatedValue('item_name', session('locale')) }}
+                </span>
+                @if ($item->variations_count == 0)
+                    <span class="dots" aria-hidden="true"></span>
+                    <span class="price text-sm whitespace-nowrap">{{ currency_format($item->price, $restaurant->currency_id) }}</span>
+                @endif
+            </div>
+            @if ($item->description)
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2 cursor-pointer"
+                    wire:click="showItemDetail({{ $item->id }})">
+                    {{ str($item->getTranslatedValue('description', session('locale')))->limit(140) }}
+                </p>
+            @endif
+            <div class="mt-auto pt-1.5 flex justify-end">
+                @if ($canCreateOrder)
+                    @if (!$item->in_stock)
+                        <span class="text-xs text-red-500 font-medium">@lang('app.outOfStock')</span>
+                    @elseif ($restaurant->allow_customer_orders)
+                        @if ($inCartQty > 0)
+                            <div class="flex items-center rounded-full border border-[rgb(var(--color-base))]/30 bg-[rgb(var(--color-base))]/5">
+                                <button type="button"
+                                    wire:click="
+                                        @if ($item->variations_count > 0)
+                                            subCartItems({{ $item->id }})
+                                        @elseif($item->modifier_groups_count > 0)
+                                            subModifiers({{ $item->id }})
+                                        @else
+                                            subQty('{{ $item->id }}')
                                         @endif
-                                        {{-- Content --}}
-                                        <div class="flex flex-col flex-1 min-w-0">
-                                            <div class="flex items-start justify-between gap-2">
-                                                <div class="min-w-0">
-                                                    <div class="flex items-center gap-1.5">
-                                                        <img src="{{ asset('img/' . $item->type . '.svg') }}" class="h-3.5 w-3.5 flex-shrink-0"
-                                                            title="@lang('modules.menu.' . $item->type)" alt="" />
-                                                        <span class="font-semibold text-gray-900 dark:text-white text-sm leading-tight truncate cursor-pointer"
-                                                            wire:click="showItemDetail({{ $item->id }})">
-                                                            {{ $item->getTranslatedValue('item_name', session('locale')) }}
-                                                        </span>
-                                                    </div>
-                                                    @if ($item->description)
-                                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1 cursor-pointer"
-                                                            wire:click="showItemDetail({{ $item->id }})">
-                                                            {{ str($item->getTranslatedValue('description', session('locale')))->limit(60) }}
-                                                        </p>
-                                                    @endif
-                                                </div>
-                                                @if ($item->variations_count == 0)
-                                                    <span class="price text-sm whitespace-nowrap">
-                                                        {{ currency_format($item->price, $restaurant->currency_id) }}
-                                                    </span>
-                                                @endif
-                                            </div>
-                                            @if ($item->preparation_time)
-                                                <div class="font-utility inline-flex items-center gap-1 mt-1.5 text-gray-400 dark:text-gray-500">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/>
-                                                        <circle cx="12" cy="12" r="10"/>
-                                                    </svg>
-                                                    {{ $item->preparation_time }} @lang('modules.menu.minutes')
-                                                </div>
-                                            @endif
-                                            {{-- Action row pinned to bottom --}}
-                                            <div class="mt-auto pt-2 flex justify-end">
-                                                @if ($canCreateOrder)
-                                                    @if (!$item->in_stock)
-                                                        <span class="text-xs text-red-500 font-medium">@lang('app.outOfStock')</span>
-                                                    @elseif ($restaurant->allow_customer_orders)
-                                                        @if (isset($cartItemQty[$item->id]) && $cartItemQty[$item->id] > 0)
-                                                            <div class="flex items-center">
-                                                                <button type="button"
-                                                                    wire:click="
-                                                                        @if ($item->variations_count > 0)
-                                                                            subCartItems({{ $item->id }})
-                                                                        @elseif($item->modifier_groups_count > 0)
-                                                                            subModifiers({{ $item->id }})
-                                                                        @else
-                                                                            subQty('{{ $item->id }}')
-                                                                        @endif
-                                                                    "
-                                                                    class="w-7 h-7 flex items-center justify-center rounded-l-lg border border-gray-300 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                                                                    <svg class="w-2 h-2 text-gray-900 dark:text-white" viewBox="0 0 18 2">
-                                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
-                                                                    </svg>
-                                                                </button>
-                                                                <input type="text"
-                                                                    wire:model='cartItemQty.{{ $item->id }}'
-                                                                    class="w-9 h-7 text-center text-xs font-medium border-y border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                                                <button type="button"
-                                                                    wire:click="
-                                                                        @if ($item->variations_count > 0 || $item->modifier_groups_count > 0)
-                                                                            addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})
-                                                                        @else
-                                                                            addQty('{{ $item->id }}')
-                                                                        @endif
-                                                                    "
-                                                                    class="w-7 h-7 flex items-center justify-center rounded-r-lg border border-gray-300 bg-gray-50 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                                                                    <svg class="w-2 h-2 text-gray-900 dark:text-white" viewBox="0 0 18 18">
-                                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
-                                                                    </svg>
-                                                                </button>
-                                                            </div>
-                                                        @else
-                                                            @php
-                                                                $orderStats = getRestaurantOrderStats($shopBranch->id);
-                                                            @endphp
-                                                            @if(($orderStats['unlimited'] || $orderStats['current_count'] < $orderStats['order_limit']))
-                                                                <button type="button"
-                                                                    wire:click='addCartItems({{ $item->id }}, {{ $item->variations_count }} , {{ $item->modifier_groups_count }})'
-                                                                    wire:key='item-input-{{ $item->id }}'
-                                                                    wire:loading.attr="disabled"
-                                                                    wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})"
-                                                                    x-on:click="window.dispatchEvent(new CustomEvent('addToCart'))"
-                                                                    class="h-8 px-4 flex items-center justify-center gap-1.5 rounded-full bg-skin-base text-white shadow-[0_4px_12px_-4px_rgb(var(--color-base)/0.5)] hover:opacity-90 active:scale-95 transition-all text-xs font-semibold">
-                                                                    <span wire:loading.remove wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
-                                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-                                                                        </svg>
-                                                                        @lang('app.add')
-                                                                    </span>
-                                                                    <span wire:loading wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
-                                                                        <svg class="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24">
-                                                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                                                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-                                                                        </svg>
-                                                                    </span>
-                                                                </button>
-                                                            @endif
-                                                        @endif
-                                                    @elseif ($item->variations_count > 0 && $restaurant->allow_customer_orders)
-                                                        <button type="button"
-                                                            wire:click='showItemVariations({{ $item->id }})'
-                                                            class="h-8 px-3 flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all text-xs font-semibold">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                                                                <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
-                                                            </svg>
-                                                            @lang('modules.menu.showVariations') ({{ $item->variations_count }})
-                                                        </button>
-                                                    @endif
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
+                                    "
+                                    class="w-8 h-8 flex items-center justify-center rounded-l-full text-[rgb(var(--color-base))] dark:text-skin-secondary hover:bg-[rgb(var(--color-base))]/10 transition-colors">
+                                    <svg class="w-3 h-3" viewBox="0 0 18 2"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M1 1h16"/></svg>
+                                </button>
+                                <input type="text" wire:model='cartItemQty.{{ $item->id }}' readonly
+                                    class="w-8 h-8 text-center text-sm font-semibold bg-transparent border-0 text-gray-900 dark:text-white p-0 focus:outline-none focus:ring-0">
+                                <button type="button"
+                                    wire:click="
+                                        @if ($item->variations_count > 0 || $item->modifier_groups_count > 0)
+                                            addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})
+                                        @else
+                                            addQty('{{ $item->id }}')
+                                        @endif
+                                    "
+                                    class="w-8 h-8 flex items-center justify-center rounded-r-full text-[rgb(var(--color-base))] dark:text-skin-secondary hover:bg-[rgb(var(--color-base))]/10 transition-colors">
+                                    <svg class="w-3 h-3" viewBox="0 0 18 18"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9 1v16M1 9h16"/></svg>
+                                </button>
+                            </div>
+                        @else
+                            @if(($orderStats['unlimited'] || $orderStats['current_count'] < $orderStats['order_limit']))
+                                <button type="button"
+                                    wire:click='addCartItems({{ $item->id }}, {{ $item->variations_count }} , {{ $item->modifier_groups_count }})'
+                                    wire:key='item-input-{{ $item->id }}'
+                                    wire:loading.attr="disabled"
+                                    wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})"
+                                    x-on:click="window.dispatchEvent(new CustomEvent('addToCart'))"
+                                    class="h-8 px-4 flex items-center justify-center rounded-full bg-[rgb(var(--color-base))] text-white text-xs font-semibold hover:opacity-90 active:scale-95 transition-all shadow-[0_4px_12px_-4px_rgb(var(--color-base)/0.5)]">
+                                    <span wire:loading.remove wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">@lang('app.add')</span>
+                                    <span wire:loading wire:target="addCartItems({{ $item->id }}, {{ $item->variations_count }}, {{ $item->modifier_groups_count }})">
+                                        <svg class="animate-spin h-3.5 w-3.5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
+                                    </span>
+                                </button>
+                            @endif
+                        @endif
+                    @endif
+                @elseif ($item->variations_count > 0 && $restaurant->allow_customer_orders)
+                    <button type="button" wire:click='showItemVariations({{ $item->id }})'
+                        class="h-8 px-3 flex items-center justify-center gap-1.5 rounded-full border border-[rgb(var(--line))] text-gray-700 dark:text-gray-300 hover:bg-[rgb(var(--color-base))]/5 transition-all text-xs font-semibold">
+                        @lang('modules.menu.showVariations') ({{ $item->variations_count }})
+                    </button>
+                @endif
+            </div>
+        </div>
+    </div>
+@endforeach
                             </div>
                 </div>            @empty
                 <div class="flex flex-col items-center justify-center p-6 text-center text-gray-500 dark:text-gray-400">
@@ -1319,16 +1226,16 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                         @endif
                         <div class="flex flex-col gap-1">
                             <div class="flex items-start justify-between gap-3">
-                                <h3 class="font-display text-lg font-bold text-gray-900 dark:text-white">{{ $selectedItem->item_name }}</h3>
+                                <h3 class="font-display text-xl font-semibold text-gray-900 dark:text-white leading-tight">{{ $selectedItem->item_name }}</h3>
                                 @if ($selectedItem->variations_count == 0)
                                     <span class="price text-base whitespace-nowrap">{{ currency_format($selectedItem->price, $restaurant->currency_id) }}</span>
                                 @endif
                             </div>
-                            @if (strlen($selectedItem->description) > 100)
+                            @if (strlen($selectedItem->description) > 240)
                                 <div x-data="{ expanded: false }">
                                     <p class="text-sm text-gray-500 dark:text-gray-400">
                                         <span
-                                            x-show="!expanded">{{ Str::limit($selectedItem->description, 100) }}</span>
+                                            x-show="!expanded">{{ Str::limit($selectedItem->description, 240) }}</span>
                                         <span x-show="expanded">{{ $selectedItem->description }}</span>
                                     </p>
                                     <button @click="expanded = !expanded"

@@ -35,33 +35,52 @@
 
     <style>
         @php
-            // Derive both theme tokens from the restaurant's brand color.
-            // Secondary = base lightened 35% toward white (brand tint), so
-            // accents always share one hue instead of a hardcoded color.
+            // Brand-derived token system: every surface carries a trace of the
+            // restaurant's own color, so no two restaurants share a page.
+            // Secondary = base lightened 35% toward white (brand tint).
             $baseRgb = $restaurant->theme_rgb ?: '0, 37, 34';
             [$__r, $__g, $__b] = array_map(fn ($v) => (int) trim($v), explode(',', $baseRgb));
-            $tint = fn ($c) => (int) round($c + (255 - $c) * 0.35);
-            $secondaryRgb = $tint($__r) . ', ' . $tint($__g) . ', ' . $tint($__b);
+
+            $mix = fn ($a, $b, $t) => (int) round($a + ($b - $a) * $t);
+            $tint = fn ($c, $amt) => (int) round($c + (255 - $c) * $amt);
+            $rgbStr = fn (array $c): string => $c[0] . ', ' . $c[1] . ', ' . $c[2];
+
+            // Light "paper" surface: hand-set per restaurant, brand-tinted otherwise.
+            $paper = match (strtoupper($restaurant->name)) {
+                'DELICATO' => [247, 244, 237],   // warm ivory — trattoria linen
+                'VIEWS'    => [240, 245, 246],   // cool mist — rooftop dusk
+                'TANIA'    => [249, 241, 230],   // cream — cafe morning
+                default    => [$tint($__r, 0.965), $tint($__g, 0.965), $tint($__b, 0.965)],
+            };
+            $plate = array_map(fn ($c) => $tint($c, 0.6), $paper);   // cards float on paper
+            $line  = [$mix($paper[0], $__r, 0.14), $mix($paper[1], $__g, 0.14), $mix($paper[2], $__b, 0.14)];
+
+            // Dark mode: the brand color deepened to near-black, not gray.
+            $darkSurface = [round($__r * 0.14) + 3, round($__g * 0.14) + 3, round($__b * 0.14) + 3];
+            $darkPlate   = array_map(fn ($c) => min(255, $c + 9), $darkSurface);
+            $darkLine    = array_map(fn ($c) => min(255, $c + 24), $darkSurface);
+
+            $secondaryRgb = $tint($__r, 0.35) . ', ' . $tint($__g, 0.35) . ', ' . $tint($__b, 0.35);
         @endphp
         :root {
             --color-base: {{ $restaurant->theme_rgb }};
             --color-secondary: {{ $secondaryRgb }};
             --livewire-progress-bar-color: {{ $restaurant->theme_hex }};
 
-            /* Design tokens — surfaces & ink */
-            --surface: 255, 255, 255;
-            --surface-2: 247, 246, 243;
-            --ink: 22, 24, 29;
-            --ink-muted: 107, 114, 128;
-            --line: 229, 231, 235;
+            /* Design tokens — paper, plates & ink */
+            --surface: {{ $rgbStr($plate) }};
+            --surface-2: {{ $rgbStr($paper) }};
+            --ink: 24, 22, 19;
+            --ink-muted: 112, 107, 98;
+            --line: {{ $rgbStr($line) }};
         }
 
         .dark {
-            --surface: 21, 22, 25;
-            --surface-2: 10, 10, 11;
-            --ink: 243, 244, 246;
-            --ink-muted: 156, 163, 175;
-            --line: 39, 43, 51;
+            --surface: {{ $rgbStr($darkPlate) }};
+            --surface-2: {{ $rgbStr($darkSurface) }};
+            --ink: 240, 238, 232;
+            --ink-muted: 158, 161, 156;
+            --line: {{ $rgbStr($darkLine) }};
         }
 
         html {
@@ -93,10 +112,11 @@
             font-family: 'Hanken Grotesk', sans-serif;
         }
 
-        /* Display type — headers, restaurant name, section titles */
+        /* Display type — hero name, carte chapters, item names */
         .font-display {
-            font-family: 'Hanken Grotesk', sans-serif;
-            letter-spacing: -0.015em;
+            font-family: 'Clash Display', 'Hanken Grotesk', sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.01em;
         }
 
         /* Utility type — eyebrows, counts, prep time */
@@ -120,18 +140,40 @@
             color: rgb(var(--color-secondary));
         }
 
-        /* Category eyebrow: label + count + rule — structure that encodes the menu */
+        /* Carte chapter header: display-face title + count + rule */
         .menu-eyebrow {
             display: flex;
-            align-items: center;
+            align-items: baseline;
             gap: 12px;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
 
         .menu-eyebrow .rule {
             height: 1px;
             flex: 1;
             background: rgb(var(--line));
+        }
+
+        /* Printed-menu row for photo-less items (wines, drinks, coffee) */
+        .menu-row {
+            transition: background-color .15s ease;
+            border-radius: .5rem;
+        }
+        .menu-row:hover { background: rgb(var(--color-base) / 0.05); }
+
+        /* Dot leaders — the printed carte signature */
+        .dots {
+            flex: 1 1 auto;
+            min-width: 16px;
+            border-bottom: 2px dotted rgb(var(--line));
+            margin: 0 10px;
+            transform: translateY(-4px);
+        }
+
+        /* Seat ticket — the scanned table as a place card */
+        .seat-ticket {
+            border: 1.5px dashed rgba(255,255,255,.75);
+            background: rgba(0,0,0,.18);
         }
 
         /* Bottom-sheet motion: one orchestrated entrance */
@@ -240,15 +282,14 @@
             color: rgb(var(--color-secondary));
         }
 
-        /* Sticky table band — the diner's anchor while scrolling the menu */
+        /* Sticky table band — the diner's receipt in brand ink, always visible */
         .table-band {
             position: sticky;
             top: 64px;
             z-index: 30;
-            background: rgb(var(--surface) / 0.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgb(var(--line));
+            background: rgb(var(--color-base));
+            color: #fff;
+            box-shadow: 0 8px 24px -14px rgb(var(--color-base) / 0.65);
         }
 
         /* Cart badge bump when an item is added */

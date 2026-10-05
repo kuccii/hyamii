@@ -10,81 +10,59 @@
 
 @section('content')
 
-{{-- Restaurant Hero Header --}}
+{{-- Restaurant Hero Header — the arrival --}}
 <section class="relative">
-    {{-- Cover image or gradient fallback --}}
-    <div class="relative h-44 sm:h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-[rgb(var(--color-base))] via-[rgb(var(--color-base))]/90 to-[rgb(var(--color-base))]/70">
+    <div class="relative h-[50vh] min-h-[340px] sm:h-[54vh] lg:h-[60vh] max-h-[600px] overflow-hidden"
+        @if(!$heroImage) style="background: linear-gradient(140deg, rgb(var(--color-base)) 0%, rgb(var(--color-base) / .9) 55%, rgb(var(--color-secondary)) 100%);" @endif>
         @if($heroImage)
             <img src="{{ $heroImage }}"
                  class="absolute inset-0 w-full h-full object-cover"
                  alt="{{ $restaurant->name }}"
                  loading="eager" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent"></div>
         @else
-            <div class="absolute inset-0 opacity-20"
-                 style="background-image: radial-gradient(circle at 25% 25%, rgba(255,255,255,.35) 0, transparent 40%), radial-gradient(circle at 75% 70%, rgba(255,255,255,.22) 0, transparent 45%);"></div>
+            <div class="absolute inset-0 opacity-25"
+                 style="background-image: radial-gradient(circle at 22% 28%, rgba(255,255,255,.5) 0, transparent 42%), radial-gradient(circle at 78% 72%, rgba(255,255,255,.32) 0, transparent 46%);"></div>
         @endif
+        {{-- Brand wash unifies any photo with the house color; dark scrim keeps the name legible --}}
+        <div class="absolute inset-0 bg-[rgb(var(--color-base))] opacity-20 mix-blend-multiply"></div>
+        <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(3,10,9,.78) 0%, rgba(3,10,9,.34) 36%, rgba(3,10,9,0) 64%);"></div>
 
-        {{-- Name + status over the cover --}}
-        <div class="absolute bottom-0 left-0 right-0">
-            <div class="container-lg px-4 pb-4">
-                <div class="flex items-end gap-3">
-                    <img src="{{ $restaurant->logoUrl }}"
-                         class="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl object-cover ring-4 ring-white dark:ring-gray-950 shadow-xl flex-shrink-0 -mb-2"
-                         alt="{{ $restaurant->name }}" />
-                    <div class="min-w-0 flex-1 pb-1">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <h1 class="text-xl sm:text-2xl font-hanken font-extrabold text-white truncate drop-shadow-md">
-                                {{ $restaurant->name }}
-                            </h1>
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide shadow-sm {{ $isOpen ? 'bg-emerald-500/95 text-white' : 'bg-red-500/95 text-white' }}">
-                                <span class="relative flex h-1.5 w-1.5">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full {{ $isOpen ? 'bg-white opacity-75' : 'bg-white opacity-60' }}"></span>
-                                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span>
-                                </span>
-                                {{ $isOpen ? __('app.open') : __('app.closed') }}
-                            </span>
-                        </div>
-                        @if($restaurant->short_description)
-                            <p class="text-sm text-white/85 mt-0.5 line-clamp-1 drop-shadow">{{ $restaurant->short_description }}</p>
-                        @endif
+        {{-- Name set like a front door: subtitle, display face, one quiet meta line --}}
+        <div class="absolute inset-x-0 bottom-0">
+            <div class="container-lg pb-7 sm:pb-9">
+                @isset($tableName)
+                    <div class="seat-ticket inline-flex items-baseline gap-2 rounded-lg px-3 py-1.5 mb-4 backdrop-blur-sm">
+                        <span class="font-utility text-white/70">Table</span>
+                        <span class="text-sm font-semibold text-white">{{ $tableName }}</span>
                     </div>
+                @endisset
+                @if($restaurant->subtitle)
+                    <p class="font-utility text-white/70 mb-1.5">{{ $restaurant->subtitle }}</p>
+                @endif
+                <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold text-white leading-[1.05] drop-shadow-sm">
+                    {{ $restaurant->name }}
+                </h1>
+                <div class="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[13px] text-white/85">
+                    <span class="inline-flex items-center gap-1.5">
+                        <span class="relative flex h-2 w-2">
+                            @if($isOpen)<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>@endif
+                            <span class="relative inline-flex rounded-full h-2 w-2 {{ $isOpen ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
+                        </span>
+                        {{ $isOpen ? __('app.open') : __('app.closed') }}
+                    </span>
+                    @if(isset($shopBranch) && $shopBranch->opening_time && $shopBranch->closing_time)
+                        <span class="text-white/40">·</span>
+                        <span>{{ $shopBranch->opening_time }} – {{ $shopBranch->closing_time }}</span>
+                    @endif
+                    @if(isset($shopBranch) && $shopBranch->address)
+                        <span class="text-white/40">·</span>
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($shopBranch->address) }}" target="_blank" rel="noopener" class="underline-offset-2 hover:underline truncate max-w-[240px] sm:max-w-none">{{ $shopBranch->address }}</a>
+                    @endif
+                    @if($restaurant->phone_number)
+                        <span class="text-white/40">·</span>
+                        <a href="tel:{{ $restaurant->phone_number }}" class="underline-offset-2 hover:underline">{{ $restaurant->phone_number }}</a>
+                    @endif
                 </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Info chips bar --}}
-    <div class="bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 shadow-[0_4px_16px_-8px_rgba(0,0,0,0.08)]">
-        <div class="container-lg">
-            <div class="flex flex-wrap items-center gap-2 px-4 py-3 text-xs">
-                @if(isset($shopBranch) && $shopBranch->address)
-                    <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($shopBranch->address) }}" target="_blank" rel="noopener"
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <svg class="w-4 h-4 text-[rgb(var(--color-base))]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1116 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                        <span class="truncate max-w-[200px]">{{ $shopBranch->address }}</span>
-                    </a>
-                @endif
-                @if(isset($shopBranch) && $shopBranch->opening_time && $shopBranch->closing_time)
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-full text-gray-600 dark:text-gray-300">
-                        <svg class="w-4 h-4 text-[rgb(var(--color-base))]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2"/></svg>
-                        <span>{{ $shopBranch->opening_time }} - {{ $shopBranch->closing_time }}</span>
-                    </span>
-                @endif
-                @if($restaurant->phone_number)
-                    <a href="tel:{{ $restaurant->phone_number }}"
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        <svg class="w-4 h-4 text-[rgb(var(--color-base))]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-                        <span>{{ $restaurant->phone_number }}</span>
-                    </a>
-                @endif
-                {{-- Currency chip --}}
-                @if($restaurant->currency)
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-full text-gray-600 dark:text-gray-300">
-                        <svg class="w-4 h-4 text-[rgb(var(--color-base))]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path stroke-linecap="round" d="M2 10h20"/></svg>
-                        <span>{{ $restaurant->currency->currency_code }}</span>
-                    </span>
-                @endif
             </div>
         </div>
     </div>

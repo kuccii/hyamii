@@ -257,6 +257,7 @@ class ShopController extends Controller
             'getTable' => $getTable,
             'canCreateOrder' => in_array('Order', $packageModules),
             'heroImageUrl' => $heroImageUrl,
+            'tableName' => $table?->table_code,
         ]);
     }
 
