@@ -135,13 +135,14 @@ app()->setLocale(session('customer_locale', app()->getLocale()));
                         {{ $headerText }}
                     </h1>
                 </div>
-                @elseif($headerType === 'image' && count($headerImages) > 0)
+                @elseif($headerType === 'image' && collect($headerImages)->isNotEmpty())
+                    @php $firstHeaderImage = collect($headerImages)->first(); @endphp
                     <!-- Static Header Image (carousel removed per request) -->
                     <div class="relative w-full mx-4 sm:mx-0">
                         <div class="relative h-40 sm:h-48 md:h-56 lg:h-64 overflow-hidden rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-                            <img src="{{ $headerImages[0]->image_url }}"
+                            <img src="{{ $firstHeaderImage->image_url }}"
                                 class="absolute block object-cover w-full h-full"
-                                alt="{{ $headerImages[0]->alt_text ?? 'Header Image' }}">
+                                alt="{{ $firstHeaderImage->alt_text ?? 'Header Image' }}">
                         </div>
                     </div>
                 @else
