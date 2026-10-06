@@ -32,6 +32,12 @@ class RraEbmServiceProvider extends ServiceProvider
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'Database/Migrations'));
 
+        // Register Livewire components for the settings custom_module_plugins pattern
+        // (resources/views/livewire/settings/master.blade.php renders '<module>::restaurant.setting')
+        if (class_exists(\Livewire\Livewire::class)) {
+            \Livewire\Livewire::component('rraebm::restaurant.setting', \Modules\RraEbm\Livewire\Restaurant\RraEbm::class);
+        }
+
         if ($this->app->runningInConsole()) {
             $this->commands([
                 \Modules\RraEbm\Console\Commands\RraEodFilingCommand::class,

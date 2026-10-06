@@ -294,7 +294,9 @@ class CustomerSiteSettings extends Component
         $this->settings->save();
 
         // Save header settings
-        $this->saveHeaderSettings();
+        if (!$this->saveHeaderSettings()) {
+            return;
+        }
 
         $this->dispatch('settingsUpdated');
 
@@ -306,7 +308,7 @@ class CustomerSiteSettings extends Component
         ]);
     }
 
-    public function saveHeaderSettings()
+    public function saveHeaderSettings(): bool
     {
         if (!$this->cartHeaderSetting) {
             $this->cartHeaderSetting = CartHeaderSetting::create([
@@ -345,6 +347,8 @@ class CustomerSiteSettings extends Component
                             'toast' => true,
                             'position' => 'top-end',
                         ]);
+
+                        return false;
                     }
                 }
             }
@@ -354,6 +358,8 @@ class CustomerSiteSettings extends Component
 
         // Refresh the header images
         $this->headerImages = $this->cartHeaderSetting->fresh()->images;
+
+        return true;
     }
 
     public function removeImage($imageId)
