@@ -445,7 +445,7 @@
                                     <input type="file"
                                            wire:model.defer="newImages"
                                            multiple
-                                           accept="image/*"
+                                           accept="image/png, image/gif, image/jpeg, image/webp, image/svg+xml, image/avif, image/heic"
                                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-skin-base file:text-white hover:file:bg-skin-base/80 border border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                 </div>
                                 <x-input-error for="newImages" class="mt-2" />
@@ -472,7 +472,13 @@
                                             @foreach($newImages as $index => $image)
                                                 <div class="relative">
                                                     <div class="relative w-32 h-32">
-                                                        <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-full h-full object-cover rounded-lg shadow-md">
+                                                        @if($image->isPreviewable())
+                                                            <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-full h-full object-cover rounded-lg shadow-md">
+                                                        @else
+                                                            <div class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md text-gray-400 text-xs text-center px-1">
+                                                                Preview not available
+                                                            </div>
+                                                        @endif
                                                     </div>
                                                     @error('newImages.' . $index)
                                                         <p class="mt-1 text-xs text-red-500 max-w-[128px]">{{ $message }}</p>

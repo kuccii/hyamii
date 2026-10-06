@@ -143,9 +143,10 @@
                         @foreach (['upload_fav_icon_android_chrome_192', 'upload_fav_icon_android_chrome_512', 'upload_fav_icon_apple_touch_icon', 'upload_favicon_16', 'upload_favicon_32', 'favicon'] as $index => $name)
                             <div class="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow transition-shadow duration-300 border border-gray-200 dark:border-gray-700">
                                 <div class="flex flex-col items-center space-y-2">
+                                    @php $previewUrl = (isset(${$name}) && ${$name}) ? (${$name}->isPreviewable() ? ${$name}->temporaryUrl() : '') : restaurant()->{$name . "_url"}; @endphp
                                     <div id="filePreview{{ $name }}"
                                         class="h-10 w-10 rounded-lg bg-gray-50 dark:bg-gray-700 flex items-center justify-center overflow-hidden"
-                                        style="background-image: url('{{ ${$name} ? ${$name}->temporaryUrl() :  restaurant()->{$name."_url"} }}'); background-size: contain; background-position: center; background-repeat: no-repeat;">
+                                        style="background-image: url('{{ $previewUrl }}'); background-size: contain; background-position: center; background-repeat: no-repeat;">
                                     </div>
 
                                     <div class="text-center w-full">
