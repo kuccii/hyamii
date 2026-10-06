@@ -180,12 +180,13 @@ class CustomerSiteSettings extends Component
                         $width = $imageInfo[0];
                         $height = $imageInfo[1];
 
-                        // Only show error if dimensions are smaller than recommended (1024 × 1014)
-                        // Images larger than recommended size are acceptable and will not show an error
-                        if ($width < 1024 || $height < 1014) {
+                        // Banner slot is landscape (~4.7:1, rendered at h-40..h-64,
+                        // ~1200px wide). Reject only if the upload can't produce a
+                        // crisp 1280x256 render: width < 1280 or height < 272.
+                        if ($width < 1280 || $height < 272) {
                             $this->addError('newImages.' . $index, __('modules.settings.imageDimensionsTooSmall', [
-                                'width' => 1024,
-                                'height' => 1014,
+                                'width' => 1280,
+                                'height' => 272,
                                 'currentWidth' => $width,
                                 'currentHeight' => $height
                             ]));
@@ -336,7 +337,7 @@ class CustomerSiteSettings extends Component
             foreach ($this->newImages as $image) {
                 if ($image) {
                     try {
-                        $imagePath = Files::uploadLocalOrS3($image, 'cart_header_images', width: 1280, height: 224);
+                        $imagePath = Files::uploadLocalOrS3($image, 'cart_header_images', width: 1280, height: 256);
                         CartHeaderImage::create([
                             'cart_header_setting_id' => $this->cartHeaderSetting->id,
                             'image_path' => $imagePath,

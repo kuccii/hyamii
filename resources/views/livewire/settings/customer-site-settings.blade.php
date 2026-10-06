@@ -471,7 +471,8 @@
                                         <div class="flex flex-wrap gap-4">
                                             @foreach($newImages as $index => $image)
                                                 <div class="relative">
-                                                    <div class="relative w-32 h-32">
+                                                    @php $dims = $image->dimensions(); @endphp
+                                                    <div class="relative w-full max-w-[224px] h-16">
                                                         @if($image->isPreviewable())
                                                             <img src="{{ $image->temporaryUrl() }}" alt="Preview" class="w-full h-full object-cover rounded-lg shadow-md">
                                                         @else
@@ -480,8 +481,11 @@
                                                             </div>
                                                         @endif
                                                     </div>
+                                                    @if($dims)
+                                                        <p class="mt-1 text-[10px] text-gray-500 dark:text-gray-400">{{ $dims[0] }} × {{ $dims[1] }} px</p>
+                                                    @endif
                                                     @error('newImages.' . $index)
-                                                        <p class="mt-1 text-xs text-red-500 max-w-[128px]">{{ $message }}</p>
+                                                        <p class="mt-1 text-xs text-red-500 max-w-[224px]">{{ $message }}</p>
                                                     @enderror
                                                 </div>
                                             @endforeach
@@ -495,7 +499,7 @@
                                         <h5 class="text-sm font-medium text-gray-900 dark:text-white mb-2">@lang('modules.settings.existingImages')</h5>
                                         <div class="flex flex-wrap gap-4">
                                             @foreach($headerImages as $image)
-                                                <div class="relative group w-32 h-32">
+                                                <div class="relative group w-full max-w-[224px] h-16">
                                                     <img src="{{ $image->image_url }}" alt="{{ $image->alt_text }}" class="w-full h-full object-cover rounded-lg shadow-md">
                                                     <button type="button" wire:click="removeImage({{ $image->id }})" class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-red-600 shadow-lg hover:scale-110 z-10 pointer-events-auto">
                                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
